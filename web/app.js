@@ -2,12 +2,24 @@ const $=id=>document.getElementById(id);
 const jobs=[];
 let selected=null, tab='Fields', running=false, worker=null, pdfModule=null;
 const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,k=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[k]));
+function documentIdentity(job){
+ const matches=job.aiPages.filter(page=>page.document_type&&page.document_type!=='unknown'&&page.classification_status!=='unidentified');
+ const starts=matches.filter(page=>page.page_role!=='continuation');
+ const types=new Set(starts.map(page=>page.document_type+':'+(page.form_number||'')));
+ if(types.size>1)return {document_type:'mixed_documents',document_title:null,form_number:null};
+ const best=starts.find(page=>page.classification_status==='identified')||starts[0]||matches[0];
+ return {document_type:best?.document_type||job.classification.type,
+   document_title:best?.document_title||job.classification.title||null,
+   form_number:best?best.form_number:job.classification.form||null,
+   classification_status:best?.classification_status||'needs_review'};
+}
 function output(job){
  if(job.ai) return {
    schema_version:'2.0',
    source:{file_name:job.name,page_count:job.pages,ocr_pages:job.ocrPages},
-   processing_status:job.aiPages.some(page=>page.error)?'needs_review':'processed',
+   processing_status:job.aiPages.some(page=>page.error||page.classification_status!=='identified')?'needs_review':'processed',
    pages:job.aiPages,
+   ...documentIdentity(job),
    local_classification:job.classification,
    local_fields:job.fields,
    raw_text:job.text
@@ -17,7 +29,9 @@ function output(job){
    source:{file_name:job.name,page_count:job.pages,ocr_pages:job.ocrPages},
    document_type:job.classification.type,
    classification_basis:job.classification.basis,
-   acord_form_number:job.classification.form||null,
+   form_number:job.classification.form||null,
+   document_title:job.classification.title||formNumbers[job.classification.form]||null,
+   acord_form_number:job.classification.type==='acord_form'?job.classification.form||null:null,
    acord_form_title:formNumbers[job.classification.form]||null,
    fields:job.fields,
    raw_text:job.text
@@ -39,16 +53,17 @@ function render(){
    return;
  }
  const c=job.classification;
- area.innerHTML='<div class="tabs" role="tablist" aria-label="Review views">'+(job.ai?['AI review','Fields','Source','Raw text','JSON']:['Fields','Source','Raw text','JSON']).map(name=>'<button role="tab" data-tab="'+name+'" aria-selected="'+(tab===name)+'">'+name+'</button>').join('')+'</div><div id="tabBody"></div>';
+ const analyzeButton=!job.ai&&!$('ai').disabled?'<button id="analyze-ai">Identify with AI</button> ':'';
+ area.innerHTML=analyzeButton+'<div class="tabs" role="tablist" aria-label="Review views">'+(job.ai?['AI review','Fields','Source','Raw text','JSON']:['Fields','Source','Raw text','JSON']).map(name=>'<button role="tab" data-tab="'+name+'" aria-selected="'+(tab===name)+'">'+name+'</button>').join('')+'</div><div id="tabBody"></div>';
  const body=$('tabBody');
  if(tab==='AI review'){
    body.innerHTML=job.aiPages.map(page=>{
-     const heading='<h3>Page '+page.page+' · '+escapeHtml(page.document_title||page.document_type||'Needs review')+'</h3>';
+     const heading='<h3>Page '+page.page+' · '+escapeHtml(page.document_title||page.document_type?.replaceAll('_',' ')||'Needs review')+'</h3>';
      if(page.error)return '<details open class="ai-page"><summary>'+heading+'</summary><p class="warn">'+escapeHtml(page.error)+'</p></details>';
-     const metadata=[page.form_number&&'Form '+page.form_number,page.form_revision&&'Edition '+page.form_revision,page.page_role].filter(Boolean).map(escapeHtml).join(' · ');
+     const metadata=[page.issuer,page.classification_status==='identified'?'Identified':'Needs review',page.form_number&&'Form '+page.form_number,page.form_revision&&'Edition '+page.form_revision,page.page_role].filter(Boolean).map(escapeHtml).join(' · ');
      const fields=page.fields.map((field,i)=>'<label>'+escapeHtml([field.section,field.label].filter(Boolean).join(' / '))+'<input data-ai-page="'+page.page+'" data-ai-field="'+i+'" value="'+escapeHtml(field.value)+'" placeholder="'+escapeHtml(field.state)+'"><small>'+escapeHtml(field.state+(field.evidence?' · '+field.evidence:''))+'</small></label>').join('');
      const tables=page.tables.map(table=>'<h4>'+escapeHtml(table.title||'Table')+'</h4><div class="table-scroll"><table><thead><tr>'+table.columns.map(column=>'<th>'+escapeHtml(column)+'</th>').join('')+'</tr></thead><tbody>'+table.rows.map(row=>'<tr>'+row.map(cell=>'<td>'+escapeHtml(cell??'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>').join('');
-     return '<details open class="ai-page"><summary>'+heading+'</summary><p class="meta">'+metadata+'</p><div class="fields">'+fields+'</div>'+tables+page.review_notes.map(note=>'<p class="warn">'+escapeHtml(note)+'</p>').join('')+'</details>';
+     return '<details open class="ai-page"><summary>'+heading+'</summary><p class="meta">'+metadata+'</p>'+((page.classification_evidence||[]).length?'<p class="meta">Evidence · '+page.classification_evidence.map(escapeHtml).join(' · ')+'</p>':'')+'<div class="fields">'+fields+'</div>'+tables+page.review_notes.map(note=>'<p class="warn">'+escapeHtml(note)+'</p>').join('')+'</details>';
    }).join('');
    return;
  }
@@ -62,7 +77,7 @@ function render(){
    body.append(source);return;
  }
  const captured=Object.values(job.fields).filter(f=>f.value!==null).length;
- body.innerHTML='<div class="toolbar"><label for="kind">Document type</label><select id="kind">'+Object.entries(typeLabels).map(([k,v])=>'<option value="'+k+'" '+(c.type===k?'selected':'')+'>'+v+'</option>').join('')+'</select>'+(c.type==='acord_form'?'<label for="formNo">ACORD #</label><input id="formNo" inputmode="numeric" maxlength="4" size="5" value="'+escapeHtml(c.form)+'">':'')+'<span class="tag">'+(job.ocrPages.length?'OCR used':'PDF text layer')+'</span></div><p class="meta">'+escapeHtml(formNumbers[c.form]||c.basis)+' · <span id="captured">'+captured+'</span> of '+Object.keys(job.fields).length+' fields filled</p><p class="warn">Compare extracted values with the source before export. Missing fields export as null.</p><div class="fields">'+Object.entries(job.fields).map(([k,f])=>'<label>'+escapeHtml(k.replaceAll('_',' ').replace(/^./,s=>s.toUpperCase()))+'<input data-field="'+k+'" value="'+escapeHtml(f.value)+'" placeholder="No value extracted"><small id="origin-'+k+'">'+(f.page?'Page '+f.page:f.reviewed?'Edited':'')+'</small></label>').join('')+'</div>';
+ body.innerHTML='<div class="toolbar"><label for="kind">Document type</label><select id="kind">'+Object.entries(typeLabels).map(([k,v])=>'<option value="'+k+'" '+(c.type===k?'selected':'')+'>'+v+'</option>').join('')+'</select>'+(c.type==='acord_form'?'<label for="formNo">ACORD #</label><input id="formNo" inputmode="numeric" maxlength="4" size="5" value="'+escapeHtml(c.form)+'">':'')+'<span class="tag">'+(job.ocrPages.length?'OCR used':'PDF text layer')+'</span></div><p class="meta">'+escapeHtml([c.form&&'Form '+c.form,c.title||formNumbers[c.form]||c.basis].filter(Boolean).join(' · '))+' · <span id="captured">'+captured+'</span> of '+Object.keys(job.fields).length+' fields filled</p><p class="warn">Compare extracted values with the source before export. Missing fields export as null.</p><div class="fields">'+Object.entries(job.fields).map(([k,f])=>'<label>'+escapeHtml(k.replaceAll('_',' ').replace(/^./,s=>s.toUpperCase()))+'<input data-field="'+k+'" value="'+escapeHtml(f.value)+'" placeholder="No value extracted"><small id="origin-'+k+'">'+(f.page?'Page '+f.page:f.reviewed?'Edited':'')+'</small></label>').join('')+'</div>';
 }
 function status(job,phase,progress){
  job.phase=phase;
@@ -106,6 +121,12 @@ async function extractWithAI(job,page,canvas,text){
    });
    const result=await response.json();
    if(!response.ok)throw new Error(result.error||'AI could not extract this page.');
+   const printed=identifyPrintedForm(text);
+   if(printed?.type==='uscis_form'&&(!result.form_number||/^[I1l]\s*[-–—]\s*539$/i.test(result.form_number))){
+     result.form_number=printed.form;
+     if(!result.document_type||result.document_type==='unknown')result.document_type=printed.type;
+     result.document_title||=printed.title;
+   }
    job.aiPages.push({page,...result});
  }catch(error){job.aiPages.push({page,error:error.message});}
 }
@@ -124,14 +145,17 @@ async function readPdf(job){
      status(job,'Checking page '+n+' of '+pdf.numPages);
      const page=await pdf.getPage(n);
      let text=pdfLines((await page.getTextContent()).items);
-     const needsOcr=text.replace(/\s/g,'').length<45;
+     const needsOcr=text.replace(/\s/g,'').length<45||classify(text).type==='other';
      if(needsOcr||job.ai){
        const base=page.getViewport({scale:1});
        const viewport=page.getViewport({scale:Math.min(3,2300/Math.max(base.width,base.height))});
        const canvas=document.createElement('canvas');
        canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);
        await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
-       if(needsOcr){text=await recognize(job,canvas,n);job.ocrPages.push(n);}
+       if(needsOcr){
+         try{const scanned=await recognize(job,canvas,n);if(scanned.trim())text=text.trim()?text+'\n'+scanned:scanned;job.ocrPages.push(n);}
+         catch(error){if(!text.trim()&&!job.ai)throw error;}
+       }
        if(job.ai)await extractWithAI(job,n,canvas,text);
        canvas.width=0;canvas.height=0;
      }
@@ -203,6 +227,12 @@ $('jobs').addEventListener('click',e=>{const b=e.target.closest('[data-job]');if
 $('result').addEventListener('click',e=>{
  const t=e.target.closest('[data-tab]');
  if(t){tab=t.dataset.tab;render();$('result').querySelector('[aria-selected=true]').focus();}
+ if(e.target.id==='analyze-ai'){
+   const job=jobs.find(j=>j.id===selected);
+   if(window.confirm('Send this document’s page images and OCR text to OpenAI for identification and extraction?')){
+     job.ai=true;job.status='Queued';render();void run();
+   }
+ }
  if(e.target.id==='retry'){const job=jobs.find(j=>j.id===selected);if(job.valid){job.status='Queued';render();void run();}}
 });
 $('result').addEventListener('input',e=>{
@@ -244,5 +274,6 @@ render();
 
 fetch('/api/ai/status').then(response=>response.json()).then(({configured})=>{
  $('ai').disabled=!configured;
+ render();
  $('ai-status').textContent=configured?'Optional. Sends page images and OCR text to OpenAI.':'AI setup required. Local OCR is available.';
 }).catch(()=>{$('ai-status').textContent='AI availability could not be checked. Local OCR is available.';});

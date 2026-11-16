@@ -29,8 +29,30 @@ const lineFields={
  '130':{annual_payroll:['estimated annual payroll','annual payroll','total payroll'],employee_count:['number of employees','employee count'],experience_modification:['experience modification','experience mod'],states:['states covered','states']},
  '140':{premises:['premises number','premises #','premises'],building:['building number','building #'],construction:['construction type','construction'],occupancy:['occupancy'],year_built:['year built'],building_limit:['building limit','building value'],deductible:['deductible']}
 };
-const typeLabels={acord_form:'ACORD form',invoice:'Invoice',purchase_order:'Purchase order',receipt:'Receipt',loss_run:'Loss run',w9:'IRS Form W-9',other:'Unclassified'};
+const typeLabels={acord_form:'ACORD form',invoice:'Invoice',purchase_order:'Purchase order',receipt:'Receipt',loss_run:'Loss run',w9:'IRS Form W-9',uscis_form:'USCIS form',government_form:'Government form',other:'Unclassified'};
+function identifyPrintedForm(text){
+ const normalized=text.normalize('NFKC').replace(/[‐‑‒–—−]/g,'-');
+ const uscis=/\bU\s*\.?\s*S\s*\.?\s*C\s*\.?\s*I\s*\.?\s*S\b|U\.?S\.? Citizenship and Immigration Services|Department of Homeland Security/i;
+ const explicit=normalized.match(/\b(?:USCIS|DHS)\s+Form\s+([I1l]\s*-\s*\d{2,4}[A-Z]{0,3})\b/i);
+ const title=normalized.match(/Application\s+To\s+Extend\s*\/\s*Change\s+Nonimmigrant\s+Status/i);
+ const printed=normalized.match(/\bForm\s+(?:No\.?\s*)?([I1l]\s*-\s*\d{2,4}[A-Z]{0,3})\b/i);
+ const bare=title&&normalized.match(/\b[I1l]\s*-\s*539\b/i);
+ const identifier=explicit?.[1]||((uscis.test(normalized)||title)&&printed?.[1])||bare?.[0];
+ if(identifier){
+   const form='I'+identifier.replace(/\s+/g,'').slice(1).toUpperCase();
+   return {type:'uscis_form',form,title:form==='I-539'?'Application to Extend/Change Nonimmigrant Status':null,basis:'Printed USCIS form identifier'};
+ }
+ if(title)return {type:'uscis_form',form:'I-539',title:'Application to Extend/Change Nonimmigrant Status',basis:'Recognized USCIS application title'};
+ const agency=normalized.match(/\b(IRS|SSA|CMS|FEMA|VA|DHS|USCIS)\s+Form\s+([A-Z0-9]+(?:\s*-\s*[A-Z0-9]+){0,3})\b/i);
+ if(agency&&/\d/.test(agency[2])){
+   const issuer=agency[1].toUpperCase(),form=agency[2].replace(/\s/g,'').toUpperCase();
+   return {type:issuer==='IRS'&&form==='W-9'?'w9':'government_form',form,title:null,basis:'Printed '+issuer+' form identifier'};
+ }
+ return null;
+}
 function classify(text){
+ const identified=identifyPrintedForm(text);
+ if(identified)return identified;
  const acord=text.match(/\bAC[O0]RD\s*(?:FORM\s*)?[:#-]?\s*(\d{2,4})\b/i);
  if(acord)return {type:'acord_form',form:acord[1],basis:'ACORD form number'};
  const title=Object.entries(formNumbers).find(([,name])=>text.toLowerCase().includes(name.toLowerCase()));
@@ -44,7 +66,7 @@ function classify(text){
  return {type:'other',form:'',basis:'No recognized heading'};
 }
 function extractFields(text,result){
- const schema=result.type==='acord_form'?{...common,...lineFields[result.form]}:types[result.type];
+ const schema=result.type==='acord_form'?{...common,...lineFields[result.form]}:(types[result.type]||types.other);
  const rows=text.split(/\r?\n/);
  const fields={};
  for(const [key,aliases] of Object.entries(schema)){
