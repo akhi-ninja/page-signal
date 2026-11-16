@@ -1,5 +1,7 @@
 const $=id=>document.getElementById(id);
 const jobs=[];
+const uploadLimits={files:10,fileBytes:30*1024*1024,batchBytes:100*1024*1024,pdfPages:40,imageDataChars:3800000};
+const isSupportedFile=name=>/\.(pdf|png|jpe?g|webp|bmp)$/i.test(name);
 let selected=null, tab='Fields', running=false, worker=null, pdfModule=null;
 const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,k=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[k]));
 function documentIdentity(job){
@@ -41,7 +43,11 @@ function renderQueue(){
  $('count').textContent=jobs.length;
  $('jobs').innerHTML=jobs.length?jobs.map(j=>'<button class="job" data-job="'+j.id+'" aria-current="'+(selected===j.id)+'">'+escapeHtml(j.name)+'<small>'+escapeHtml(j.status)+'</small></button>').join(''):'<p>Uploaded files will appear here.</p>';
 }
+const aiCandidates=()=>jobs.filter(job=>job.valid&&!job.ai&&!job.requestAI&&job.status!=='Failed');
 function render(){
+ const candidates=aiCandidates(), identify=$('analyze-ai');
+ identify.hidden=$('ai').disabled||candidates.length===0;
+ identify.textContent=candidates.length>1?'Identify '+candidates.length+' files with AI':'Identify with AI';
  renderQueue();
  const job=jobs.find(j=>j.id===selected);
  $('download').disabled=!job||job.status!=='Complete';
@@ -49,12 +55,11 @@ function render(){
  const area=$('result');
  if(!job){area.innerHTML='<div class="empty"><div class="glyph">{ }</div><h2>No document selected</h2><p>Upload a file or try the sample scans.</p></div>';return;}
  if(job.status!=='Complete'){
-   area.innerHTML=job.status==='Failed'?'<div class="empty"><h2>Could not process this file</h2><p>'+escapeHtml(job.error)+'</p><button id="retry">Retry</button></div>':'<div class="empty"><h2>'+escapeHtml(job.status)+'</h2><p id="phase">'+escapeHtml(job.phase||'Waiting for processing')+'</p><progress id="progress" max="1"></progress></div>';
+   area.innerHTML=job.status==='Failed'?'<div class="empty"><h2>Could not process this file</h2><p>'+escapeHtml(job.error)+'</p>'+(job.valid?'<button id="retry">Retry</button>':'')+'</div>':'<div class="empty"><h2>'+escapeHtml(job.status)+'</h2><p id="phase">'+escapeHtml(job.phase||'Waiting for processing')+'</p><progress id="progress" max="1"></progress></div>';
    return;
  }
  const c=job.classification;
- const analyzeButton=!job.ai&&!$('ai').disabled?'<button id="analyze-ai">Identify with AI</button> ':'';
- area.innerHTML=analyzeButton+'<div class="tabs" role="tablist" aria-label="Review views">'+(job.ai?['AI review','Fields','Source','Raw text','JSON']:['Fields','Source','Raw text','JSON']).map(name=>'<button role="tab" data-tab="'+name+'" aria-selected="'+(tab===name)+'">'+name+'</button>').join('')+'</div><div id="tabBody"></div>';
+ area.innerHTML='<div class="tabs" role="tablist" aria-label="Review views">'+(job.ai?['AI review','Fields','Source','Raw text','JSON']:['Fields','Source','Raw text','JSON']).map(name=>'<button role="tab" data-tab="'+name+'" aria-selected="'+(tab===name)+'">'+name+'</button>').join('')+'</div><div id="tabBody"></div>';
  const body=$('tabBody');
  if(tab==='AI review'){
    body.innerHTML=job.aiPages.map(page=>{
@@ -87,7 +92,13 @@ function status(job,phase,progress){
  if(meter){if(progress===undefined)meter.removeAttribute('value');else meter.value=progress;}
 }
 let activeOCR=null;
-async function recognize(job,image,page){
+let ocrTail=Promise.resolve();
+function recognize(job,image,page){
+ const task=ocrTail.then(()=>readWithOCR(job,image,page));
+ ocrTail=task.catch(()=>{});
+ return task;
+}
+async function readWithOCR(job,image,page){
  activeOCR={job,page};
  if(!worker){
    if(!window.Tesseract)throw new Error('The OCR library could not load. Check your internet connection and retry.');
@@ -115,9 +126,12 @@ function pdfLines(items){
 async function extractWithAI(job,page,canvas,text){
  status(job,'Analyzing layout and fields on page '+page);
  try{
+   let image=canvas.toDataURL('image/jpeg',.85);
+   if(image.length>uploadLimits.imageDataChars)image=canvas.toDataURL('image/jpeg',.65);
+   if(image.length>uploadLimits.imageDataChars)throw new Error('This page image is too large for AI extraction.');
    const response=await fetch('/api/ai/extract',{
      method:'POST',headers:{'Content-Type':'application/json'},
-     body:JSON.stringify({image:canvas.toDataURL('image/jpeg',.85),text:text.slice(0,20000)})
+     body:JSON.stringify({image,text:text.slice(0,20000)})
    });
    const result=await response.json();
    if(!response.ok)throw new Error(result.error||'AI could not extract this page.');
@@ -140,7 +154,7 @@ async function readPdf(job){
  try{
    const pdf=await documentTask.promise;
    job.pages=pdf.numPages;
-   if(pdf.numPages>40)throw new Error('This file has more than 40 pages. Split it into smaller PDFs and upload again.');
+   if(pdf.numPages>uploadLimits.pdfPages)throw new Error('This file has more than 40 pages. Split it into smaller PDFs and upload again.');
    for(let n=1;n<=pdf.numPages;n++){
      status(job,'Checking page '+n+' of '+pdf.numPages);
      const page=await pdf.getPage(n);
@@ -168,9 +182,9 @@ async function readPdf(job){
 async function run(){
  if(running)return;
  running=true;
- try{
-   for(const job of jobs){
-     if(job.status!=='Queued')continue;
+ async function processNext(){
+   let job;
+   while((job=jobs.find(item=>item.status==='Queued'))){
      job.status='Processing';job.ocrPages=[];job.aiPages=[];render();
      try{
        if(job.pdf){job.text=await readPdf(job);}
@@ -191,19 +205,40 @@ async function run(){
        job.classification=classify(job.text);
        job.fields=extractFields(job.text,job.classification);
        job.status='Complete';
+       if(job.requestAI){job.requestAI=false;job.ai=true;job.status='Queued';}
        if(job.ai&&selected===job.id)tab='AI review';
      }catch(error){job.status='Failed';job.error=error?.message||'OCR could not read the document.';}
      render();
    }
- }finally{running=false;}
+ }
+ try{await Promise.all(Array.from({length:3},()=>processNext()));}
+ finally{running=false;}
 }
 function enqueue(files){
- const added=Array.from(files).map(file=>{
-   const valid=/\.(pdf|png|jpe?g|webp|bmp)$/i.test(file.name)&&file.size>0&&file.size<=30*1024*1024;
-   return {ai:$('ai').checked,id:crypto.randomUUID(),name:file.name,file,url:valid?URL.createObjectURL(file):'',pdf:/\.pdf$/i.test(file.name),status:valid?'Queued':'Failed',error:valid?'':'Choose a supported file up to 30 MB.',valid};
+ const batch=Array.from(files);
+ if(!batch.length)return;
+ const notice=$('upload-notice');
+ if(batch.length>uploadLimits.files){
+   notice.textContent='Choose up to 10 files at a time. No files from this batch were queued.';
+   return;
+ }
+ if(batch.reduce((total,file)=>total+file.size,0)>uploadLimits.batchBytes){
+   notice.textContent='This batch exceeds 100 MiB. Split it into smaller batches.';
+   return;
+ }
+ const added=batch.map(file=>{
+   let error='';
+   if(!isSupportedFile(file.name))error='Unsupported format. Choose PDF, PNG, JPG, WEBP, or BMP.';
+   else if(!file.size)error='This file is empty.';
+   else if(file.size>uploadLimits.fileBytes)error='This file exceeds the 30 MiB limit.';
+   const valid=!error;
+   return {ai:$('ai').checked,id:crypto.randomUUID(),name:file.name,file,url:valid?URL.createObjectURL(file):'',pdf:/\.pdf$/i.test(file.name),status:valid?'Queued':'Failed',error,valid};
  });
  jobs.push(...added);
- if(added.length){selected=added[0].id;tab='Fields';}
+ const count=added.filter(job=>job.valid).length;
+ notice.textContent=count+' of '+added.length+' files queued.'+(count<added.length?' Select a failed file for details.':'');
+ selected=(added.find(job=>job.valid)||added[0]).id;
+ tab='Fields';
  render();void run();
 }
 async function sample(){
@@ -221,18 +256,25 @@ async function sample(){
 }
 $('file').addEventListener('change',e=>{enqueue(e.target.files);e.target.value='';});
 const drop=$('drop');
-for(const name of ['dragover','dragleave','drop'])drop.addEventListener(name,e=>{e.preventDefault();drop.classList.toggle('drag',name==='dragover');if(name==='drop')enqueue(e.dataTransfer.files);});
+const isFileDrag=event=>Array.from(event.dataTransfer?.types||[]).includes('Files');
+window.addEventListener('dragover',event=>{if(isFileDrag(event))event.preventDefault();});
+window.addEventListener('drop',event=>{if(isFileDrag(event))event.preventDefault();});
+drop.addEventListener('dragover',event=>{
+ if(!isFileDrag(event))return;
+ event.preventDefault();event.dataTransfer.dropEffect='copy';drop.classList.add('drag');
+});
+drop.addEventListener('dragleave',event=>{
+ if(!drop.contains(event.relatedTarget))drop.classList.remove('drag');
+});
+drop.addEventListener('drop',event=>{
+ if(!isFileDrag(event))return;
+ event.preventDefault();drop.classList.remove('drag');enqueue(event.dataTransfer.files);
+});
 $('sample').addEventListener('click',sample);
 $('jobs').addEventListener('click',e=>{const b=e.target.closest('[data-job]');if(b){selected=b.dataset.job;tab=jobs.find(j=>j.id===selected)?.ai?'AI review':'Fields';render();}});
 $('result').addEventListener('click',e=>{
  const t=e.target.closest('[data-tab]');
  if(t){tab=t.dataset.tab;render();$('result').querySelector('[aria-selected=true]').focus();}
- if(e.target.id==='analyze-ai'){
-   const job=jobs.find(j=>j.id===selected);
-   if(window.confirm('Send this document’s page images and OCR text to OpenAI for identification and extraction?')){
-     job.ai=true;job.status='Queued';render();void run();
-   }
- }
  if(e.target.id==='retry'){const job=jobs.find(j=>j.id===selected);if(job.valid){job.status='Queued';render();void run();}}
 });
 $('result').addEventListener('input',e=>{
@@ -262,6 +304,17 @@ $('result').addEventListener('change',e=>{
  job.fields=extractFields(job.text,job.classification);
  for(const key of Object.keys(job.fields))if(previous[key]?.reviewed)job.fields[key]=previous[key];
  render();
+});
+$('analyze-ai').addEventListener('click',()=>{
+ const candidates=aiCandidates();
+ if(!candidates.length)return;
+ const subject=candidates.length===1?'this document':candidates.length+' documents';
+ if(!window.confirm('Send page images and OCR text from '+subject+' to OpenAI for identification and extraction?'))return;
+ for(const job of candidates){
+   if(job.status==='Processing')job.requestAI=true;
+   else{job.ai=true;job.status='Queued';}
+ }
+ render();void run();
 });
 $('download').addEventListener('click',()=>{
  const job=jobs.find(j=>j.id===selected);
