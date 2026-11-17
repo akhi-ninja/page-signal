@@ -1,6 +1,6 @@
 {
   "name": "@pagesignal/react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "license": "MIT",
   "description": "Embed a self-hosted PageSignal Community workspace in React",
@@ -18,7 +18,7 @@
     "url": "git+https://github.com/akhi-ninja/page-signal.git",
     "directory": "packages/react"
   },
-  "homepage": "https://github.com/akhi-ninja/page-signal#readme",
+  "homepage": "https://page-signal.vercel.app/docs#react-package",
   "bugs": {
     "url": "https://github.com/akhi-ninja/page-signal/issues"
   },
