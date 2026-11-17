@@ -5,6 +5,25 @@
   "license": "MIT",
   "description": "Server-side Node client for a PageSignal Community endpoint",
   "exports": "./index.mjs",
-  "files": ["index.mjs", "README.md", "LICENSE"],
-  "engines": {"node": ">=22"}
+  "files": [
+    "index.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akhi-ninja/page-signal.git",
+    "directory": "packages/sdk"
+  },
+  "homepage": "https://github.com/akhi-ninja/page-signal#readme",
+  "bugs": {
+    "url": "https://github.com/akhi-ninja/page-signal/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }
