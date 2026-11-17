@@ -1,0 +1,10 @@
+{
+  "name": "@pagesignal/core",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "PageSignal page extraction engine with an injected model credential",
+  "exports": "./index.mjs",
+  "files": ["index.mjs", "extraction.mjs", "README.md", "LICENSE"],
+  "engines": {"node": ">=22"}
+}
