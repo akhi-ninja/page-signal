@@ -1,6 +1,6 @@
 {
   "name": "@pagesignal/sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "license": "MIT",
   "description": "Server-side Node client for a PageSignal Community endpoint",
@@ -18,7 +18,7 @@
     "url": "git+https://github.com/akhi-ninja/page-signal.git",
     "directory": "packages/sdk"
   },
-  "homepage": "https://github.com/akhi-ninja/page-signal#readme",
+  "homepage": "https://page-signal.vercel.app/docs#sdk-package",
   "bugs": {
     "url": "https://github.com/akhi-ninja/page-signal/issues"
   },
