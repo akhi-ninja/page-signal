@@ -10,6 +10,10 @@ if (!token || token.length < 24) {
 const maximumBody = 4000000;
 const assets = {
   '/': ['web/index.html', 'text/html; charset=utf-8'],
+  '/docs': ['web/docs.html', 'text/html; charset=utf-8'],
+  '/docs/': ['web/docs.html', 'text/html; charset=utf-8'],
+  '/docs.html': ['web/docs.html', 'text/html; charset=utf-8'],
+  '/openapi.json': ['web/openapi.json', 'application/json; charset=utf-8'],
   '/app.js': ['web/app.js', 'text/javascript; charset=utf-8'],
   '/engine.js': ['web/engine.js', 'text/javascript; charset=utf-8'],
   '/style.css': ['web/style.css', 'text/css; charset=utf-8']
