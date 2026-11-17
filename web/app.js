@@ -129,7 +129,11 @@ function render(){
      const heading='<h3>Page '+page.page+' · '+escapeHtml(page.document_title||page.document_type?.replaceAll('_',' ')||'Needs review')+'</h3>';
      if(page.error)return '<details open class="ai-page"><summary>'+heading+'</summary><p class="warn">'+escapeHtml(page.error)+'</p></details>';
      const metadata=[page.issuer,page.classification_status==='identified'?'Identified':'Needs review',page.form_number&&'Form '+page.form_number,page.form_revision&&'Edition '+page.form_revision,page.page_role].filter(Boolean).map(escapeHtml).join(' · ');
-     const fields=page.fields.map((field,i)=>'<label>'+escapeHtml([field.section,field.label].filter(Boolean).join(' / '))+'<input data-ai-page="'+page.page+'" data-ai-field="'+i+'" value="'+escapeHtml(field.value)+'" placeholder="'+escapeHtml(field.state)+'"><small>'+escapeHtml(field.state)+'</small></label>'+sourceButtons(field.evidence?[{page:page.page,excerpt:field.evidence}]:[])).join('');
+     const fields=page.fields.map((field,i)=>{
+       const checkbox=['checked','unchecked'].includes(field.state)||field.checkbox;
+       const control=checkbox?'<select aria-label="'+escapeHtml(field.label)+'" data-checkbox-page="'+page.page+'" data-checkbox-field="'+i+'">'+['checked','unchecked','blank'].map(state=>'<option value="'+state+'" '+(field.state===state?'selected':'')+'>'+state+'</option>').join('')+'</select>':'<input data-ai-page="'+page.page+'" data-ai-field="'+i+'" value="'+escapeHtml(field.value)+'" placeholder="'+escapeHtml(field.state)+'">';
+       return '<label>'+escapeHtml([field.section,field.label].filter(Boolean).join(' / '))+control+'<small>'+escapeHtml(field.state)+'</small></label>'+sourceButtons(field.evidence?[{page:page.page,excerpt:field.evidence}]:[]);
+     }).join('');
      const tables=page.tables.map(table=>'<h4>'+escapeHtml(table.title||'Table')+'</h4><div class="table-scroll"><table><thead><tr>'+table.columns.map(column=>'<th>'+escapeHtml(column)+'</th>').join('')+'</tr></thead><tbody>'+table.rows.map(row=>'<tr>'+row.map(cell=>'<td>'+escapeHtml(cell??'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>').join('');
      return '<details open class="ai-page"><summary>'+heading+'</summary><p class="meta">'+metadata+'</p>'+((page.classification_evidence||[]).length?'<p class="meta">Evidence · '+page.classification_evidence.map(escapeHtml).join(' · ')+'</p>':'')+'<div class="fields">'+fields+'</div>'+tables+page.review_notes.map(note=>'<p class="warn">'+escapeHtml(note)+'</p>').join('')+'</details>';
    }).join('');
@@ -413,6 +417,12 @@ $('result').addEventListener('input',e=>{
  $('captured').textContent=Object.values(job.fields).filter(f=>f.value!==null).length;
 });
 $('result').addEventListener('change',e=>{
+ if(e.target.dataset.checkboxPage){
+   const job=jobs.find(j=>j.id===selected);
+   const field=job.aiPages.find(p=>p.page===Number(e.target.dataset.checkboxPage)).fields[Number(e.target.dataset.checkboxField)];
+   field.checkbox=true;field.state=e.target.value;field.value=null;field.reviewed=true;
+   render();return;
+ }
  if(!['kind','formNo'].includes(e.target.id))return;
  const job=jobs.find(j=>j.id===selected);
  const type=$('kind').value;
