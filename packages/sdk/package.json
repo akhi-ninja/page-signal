@@ -1,0 +1,10 @@
+{
+  "name": "@pagesignal/sdk",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "Server-side Node client for a PageSignal Community endpoint",
+  "exports": "./index.mjs",
+  "files": ["index.mjs", "README.md", "LICENSE"],
+  "engines": {"node": ">=22"}
+}
