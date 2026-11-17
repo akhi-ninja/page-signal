@@ -5,6 +5,25 @@
   "license": "MIT",
   "description": "Embed a self-hosted PageSignal Community workspace in React",
   "exports": "./index.mjs",
-  "files": ["index.mjs", "README.md", "LICENSE"],
-  "peerDependencies": {"react": ">=18 <20"}
+  "files": [
+    "index.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "react": ">=18 <20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akhi-ninja/page-signal.git",
+    "directory": "packages/react"
+  },
+  "homepage": "https://github.com/akhi-ninja/page-signal#readme",
+  "bugs": {
+    "url": "https://github.com/akhi-ninja/page-signal/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }
