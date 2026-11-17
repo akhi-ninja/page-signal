@@ -18,5 +18,6 @@ jobs:
           node-version: '24'
           package-manager-cache: false
       - run: npm test
+      - run: npm run docs:check
       - run: node scripts/publish-packages.mjs --check
       - run: npm run pack:packages
