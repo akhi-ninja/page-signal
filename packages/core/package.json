@@ -5,6 +5,26 @@
   "license": "MIT",
   "description": "PageSignal page extraction engine with an injected model credential",
   "exports": "./index.mjs",
-  "files": ["index.mjs", "extraction.mjs", "README.md", "LICENSE"],
-  "engines": {"node": ">=22"}
+  "files": [
+    "index.mjs",
+    "extraction.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akhi-ninja/page-signal.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/akhi-ninja/page-signal#readme",
+  "bugs": {
+    "url": "https://github.com/akhi-ninja/page-signal/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }
