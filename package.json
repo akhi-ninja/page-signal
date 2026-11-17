@@ -1,0 +1,12 @@
+{
+  "name": "pagesignal-community",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "pack:packages": "npm pack --workspace @pagesignal/core --workspace @pagesignal/sdk --workspace @pagesignal/react"
+  }
+}
