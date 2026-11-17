@@ -1,0 +1,40 @@
+name: Publish npm packages
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: ${{ !github.event.release.prerelease && !github.event.release.draft }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+      - name: Require a stable release from main
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          git merge-base --is-ancestor HEAD origin/main
+          node scripts/publish-packages.mjs --check
+      - run: npm test
+      - run: npm run docs:check
+      - run: npm run pack:packages
+      - name: Publish using npm trusted publishing
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: node scripts/publish-packages.mjs

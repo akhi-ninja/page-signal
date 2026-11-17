@@ -3,6 +3,18 @@
   "framework": null,
   "outputDirectory": "web",
   "functions": {
-    "api/ai/extract.mjs": { "maxDuration": 120 }
-  }
+    "api/ai/extract.mjs": {
+      "maxDuration": 120
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/docs",
+      "destination": "/docs.html"
+    },
+    {
+      "source": "/docs/",
+      "destination": "/docs.html"
+    }
+  ]
 }
