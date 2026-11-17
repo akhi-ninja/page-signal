@@ -1,0 +1,10 @@
+{
+  "name": "@pagesignal/react",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "Embed a self-hosted PageSignal Community workspace in React",
+  "exports": "./index.mjs",
+  "files": ["index.mjs", "README.md", "LICENSE"],
+  "peerDependencies": {"react": ">=18 <20"}
+}
