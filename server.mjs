@@ -32,8 +32,8 @@ function authorized(request) {
 }
 let active = 0;
 createServer(async (request, response) => {
-  const path = new URL(request.url, 'http://localhost').pathname;
   try {
+    const path = new URL(request.url, 'http://localhost').pathname;
     if (!authorized(request)) {
       response.setHeader('WWW-Authenticate', 'Basic realm="PageSignal Community", charset="UTF-8"');
       return json(response, 401, { error: 'Sign in with the Community service credential.' });
