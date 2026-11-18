@@ -1,7 +1,10 @@
+import { DocumentViewer, pdfWordBoxes, ocrWordBoxes } from '/document-viewer.mjs';
 const $=id=>document.getElementById(id);
 const jobs=[];
 const uploadLimits={files:10,fileBytes:30*1024*1024,batchBytes:100*1024*1024,pdfPages:40,imageDataChars:3800000};
 const isSupportedFile=name=>/\.(pdf|png|jpe?g|webp|bmp)$/i.test(name);
+let viewer=null;
+const workspaceAllowed=()=>window.PageSignalAccount.state.authRequired===false||Boolean(window.PageSignalAccount.state.user);
 let selected=null, tab='Fields', running=false, worker=null, pdfModule=null;
 const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,k=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[k]));
 function documentIdentity(job){
@@ -91,7 +94,7 @@ function renderQueue(){
 }
 const aiCandidates=()=>jobs.filter(job=>job.valid&&!job.ai&&!job.requestAI&&job.status!=='Failed');
 function sourceButtons(sources){
- return (sources||[]).map(source=>'<div class="review-evidence"><button type="button" data-source-page="'+source.page+'">Page '+source.page+'</button> '+escapeHtml(source.excerpt)+'</div>').join('');
+ return (sources||[]).map(source=>'<div class="review-evidence"><button type="button" data-source-page="'+source.page+'" data-source-excerpt="'+escapeHtml(source.excerpt)+'">Page '+source.page+'</button> '+escapeHtml(source.excerpt)+'</div>').join('');
 }
 function renderDocumentTools(job){
  const fields=Object.entries(job.requestedFields||{}).map(([key,field])=>
@@ -104,6 +107,7 @@ function renderDocumentTools(job){
    (fields?'<h4>Requested fields</h4>'+fields:'')+(chat?'<h4>Conversation</h4><div class="document-chat">'+chat+'</div>':'')+'</section>';
 }
 function render(){
+ viewer?.destroy();viewer=null;
  const candidates=aiCandidates(), identify=$('analyze-ai');
  identify.hidden=$('ai').disabled||candidates.length===0;
  identify.textContent=candidates.length>1?'Identify '+candidates.length+' files with AI':'Extract all fields';
@@ -118,11 +122,8 @@ function render(){
    return;
  }
  const c=job.classification;
- area.innerHTML='<div class="document-workspace"><section class="document-preview" aria-label="Source preview"><h3>Document preview</h3><div id="document-source"></div></section><section class="document-results">'+renderDocumentTools(job)+'<div class="tabs" role="tablist" aria-label="Review views">'+(job.ai?['AI review','Fields','Raw text','JSON']:['Fields','Raw text','JSON']).map(name=>'<button role="tab" data-tab="'+name+'" aria-selected="'+(tab===name)+'">'+name+'</button>').join('')+'</div><div id="tabBody"></div></section></div>';
- const preview=document.createElement(job.pdf?'iframe':'img');
- if(job.pdf){preview.title='Original PDF';preview.src=job.url+'#page='+(job.previewPage||1);}
- else{preview.alt='Original document';preview.src=job.url;}
- $('document-source').append(preview);
+ area.innerHTML='<div class="document-workspace"><section class="document-results">'+renderDocumentTools(job)+'<div class="tabs" role="tablist" aria-label="Review views">'+(job.ai?['AI review','Fields','Raw text','JSON']:['Fields','Raw text','JSON']).map(name=>'<button role="tab" data-tab="'+name+'" aria-selected="'+(tab===name)+'">'+name+'</button>').join('')+'</div><div id="tabBody"></div></section><section class="document-preview" aria-label="Source preview"><h3>Document preview</h3><div id="document-source"></div></section></div>';
+ viewer=new DocumentViewer($('document-source'),job,loadPdfModule);
  const body=$('tabBody');
  if(tab==='AI review'){
    body.innerHTML=job.aiPages.map(page=>{
@@ -170,7 +171,13 @@ async function readWithOCR(job,image,page){
    }});
  }
  status(job,'Reading page '+page);
- try{return (await worker.recognize(image)).data.text;}
+ try{
+   const result=await worker.recognize(image,{}, {text:true,blocks:true});
+   let width=image.width,height=image.height;
+   if(!width||!height){const bitmap=await createImageBitmap(image);width=bitmap.width;height=bitmap.height;bitmap.close();}
+   job.pageWords||={};job.pageWords[page]=ocrWordBoxes(result.data,width,height);
+   return result.data.text;
+ }
  catch(error){await worker.terminate().catch(()=>{});worker=null;throw error;}
  finally{activeOCR=null;}
 }
@@ -207,11 +214,15 @@ async function extractWithAI(job,page,canvas,text){
    job.aiPages.push({page,...result});
  }catch(error){job.aiPages.push({page,error:error.message});}
 }
-async function readPdf(job){
+async function loadPdfModule(){
  if(!pdfModule){
    pdfModule=await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs');
    pdfModule.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';
  }
+ return pdfModule;
+}
+async function readPdf(job){
+ await loadPdfModule();
  const documentTask=pdfModule.getDocument({data:new Uint8Array(await job.file.arrayBuffer()),isEvalSupported:false});
  const pages=[];
  try{
@@ -221,7 +232,10 @@ async function readPdf(job){
    for(let n=1;n<=pdf.numPages;n++){
      status(job,'Checking page '+n+' of '+pdf.numPages);
      const page=await pdf.getPage(n);
-     let text=pdfLines((await page.getTextContent()).items);
+     if(!workspaceAllowed())throw new Error('Sign in to process documents.');
+     const items=(await page.getTextContent()).items;
+     let text=pdfLines(items);
+     job.pageWords||={};job.pageWords[n]=pdfWordBoxes(items,page.getViewport({scale:1}),pdfModule.Util.transform);
      const needsOcr=text.replace(/\s/g,'').length<45||classify(text).type==='other';
      if(needsOcr||job.ai){
        const base=page.getViewport({scale:1});
@@ -250,6 +264,7 @@ async function run(){
    while((job=jobs.find(item=>item.status==='Queued'))){
      job.status='Processing';job.phase='Preparing document';job.fraction=undefined;job.ocrPages=[];job.aiPages=[];render();
      try{
+       if(!workspaceAllowed())throw new Error('Sign in to process documents.');
        if(job.pdf){job.text=await readPdf(job);}
        else{
          job.pages=1;job.text=(await recognize(job,job.file,1)).trim();job.ocrPages=[1];
@@ -277,7 +292,8 @@ async function run(){
  try{await Promise.all(Array.from({length:3},()=>processNext()));}
  finally{running=false;void window.PageSignalAccount.refresh();}
 }
-function enqueue(files){
+async function enqueue(files){
+ if(!await window.PageSignalAccount.ensureSignedIn())return;
  const batch=Array.from(files);
  if(!batch.length)return;
  const notice=$('upload-notice');
@@ -305,6 +321,7 @@ function enqueue(files){
  render();void run();
 }
 async function sample(){
+ if(!await window.PageSignalAccount.ensureSignedIn())return;
  const examples=[
   ['acord-125-sample.png',['ACORD 125','COMMERCIAL INSURANCE APPLICATION','Named Insured: Harbor Ridge Fabrication LLC','Agency: Summit Risk Partners','Proposed Effective Date: 12/01/2026','Proposed Expiration Date: 12/01/2027','Mailing Address: 105 Main Street, St. Louis, MO','NAICS Code: 332312','Annual Revenue: $4,250,000','Nature of Business: Steel fabrication']],
   ['invoice-sample.png',['INVOICE','Vendor: Harbor Office Supply','Invoice Number: INV-10482','Invoice Date: 11/12/2026','Due Date: 12/12/2026','Bill To: Redwood Consulting LLC','Subtotal: $650.00','Sales Tax: $52.00','Grand Total: $702.00','Currency: USD']]
@@ -317,7 +334,7 @@ async function sample(){
  })));
  enqueue(files);
 }
-$('file').addEventListener('change',e=>{enqueue(e.target.files);e.target.value='';});
+$('file').addEventListener('change',e=>{void enqueue(Array.from(e.target.files));e.target.value='';});
 const drop=$('drop');
 const isFileDrag=event=>Array.from(event.dataTransfer?.types||[]).includes('Files');
 window.addEventListener('dragover',event=>{if(isFileDrag(event))event.preventDefault();});
@@ -331,7 +348,7 @@ drop.addEventListener('dragleave',event=>{
 });
 drop.addEventListener('drop',event=>{
  if(!isFileDrag(event))return;
- event.preventDefault();drop.classList.remove('drag');enqueue(event.dataTransfer.files);
+ event.preventDefault();drop.classList.remove('drag');void enqueue(Array.from(event.dataTransfer.files));
 });
 $('sample').addEventListener('click',sample);
 $('jobs').addEventListener('click',e=>{const b=e.target.closest('[data-job]');if(b){selected=b.dataset.job;tab=jobs.find(j=>j.id===selected)?.ai?'AI review':'Fields';render();}});
@@ -374,10 +391,7 @@ $('result').addEventListener('click',e=>{
  if(sourceButton||addButton){
    const job=jobs.find(item=>item.id===selected);
    if(sourceButton){
-     job.previewPage=Number(sourceButton.dataset.sourcePage);
-     const frame=$('document-source').querySelector('iframe');
-     if(frame)frame.src=job.url+'#page='+job.previewPage;
-     $('document-source').scrollIntoView({block:'nearest'});
+     void viewer?.locate([{text:sourceButton.dataset.sourceExcerpt,kind:'evidence'}],Number(sourceButton.dataset.sourcePage),'Source evidence');
    }else{
      const turn=job.chat[Number(addButton.dataset.addAnswer)];
      job.requestedFields||=Object.create(null);
@@ -459,11 +473,17 @@ render();
 window.pageSignalHasDocuments=()=>jobs.length>0;
 function updateAccountAvailability(){
  const state=window.PageSignalAccount.state;
+ const allowed=workspaceAllowed();
+ $('workspace-main').hidden=!allowed;$('workspace-main').inert=!allowed;
+ $('workspace-gate').hidden=allowed;
+ $('file').disabled=!allowed;$('sample').disabled=!allowed;
+ if(!allowed&&!state.statusUnavailable&&jobs.length){viewer?.destroy();viewer=null;for(const job of jobs)URL.revokeObjectURL(job.url);jobs.splice(0);selected=null;}
+
  $('ai').disabled=!state.configured;
  if(!state.user&&state.authRequired)$('ai').checked=false;
- $('ai-status').textContent=!state.configured?'AI setup required. Local OCR is available.':
-   state.authRequired&&!state.authConfigured?'Sign-in setup required. Local OCR is available.':
-   state.authRequired&&!state.user?'Sign in to use AI extraction. Local OCR is available.':
+ $('ai-status').textContent=!state.configured?'AI setup required. Sign-in is required to open the workspace.':
+   state.authRequired&&!state.authConfigured?'Sign-in setup required. Uploads are locked.':
+   state.authRequired&&!state.user?'Sign in to upload and process documents.':
    'Optional. Sends page images and OCR text to OpenAI.';
  render();
 }
@@ -472,3 +492,17 @@ window.PageSignalAccount.ready.then(updateAccountAvailability);
 $('ai').addEventListener('change',async()=>{
  if($('ai').checked&&!await window.PageSignalAccount.ensureSignedIn())$('ai').checked=false;
 });
+
+$('gate-sign-in').addEventListener('click',()=>{void window.PageSignalAccount.ensureSignedIn();});
+function locateControl(control){
+ const job=jobs.find(item=>item.id===selected);if(!job||!viewer)return;
+ let field,label,page,evidence,value;
+ if(control.dataset.aiPage||control.dataset.checkboxPage){page=Number(control.dataset.aiPage||control.dataset.checkboxPage);field=job.aiPages.find(p=>p.page===page)?.fields[Number(control.dataset.aiField??control.dataset.checkboxField)];label=field?.label;evidence=field?.evidence;value=field?.value;}
+ else if(control.dataset.requestKey){field=job.requestedFields?.[control.dataset.requestKey];label=field?.label;page=field?.source?.page;evidence=field?.source?.excerpt;value=field?.value;}
+ else if(control.dataset.field){field=job.fields[control.dataset.field];label=control.dataset.field.replaceAll('_',' ');page=field?.page;value=field?.value;}
+ else return;
+ document.querySelectorAll('.field-selected').forEach(el=>el.classList.remove('field-selected'));control.closest('label')?.classList.add('field-selected');
+ void viewer.locate([{text:evidence,kind:'evidence'},{text:value,kind:'value'},{text:label,kind:'label'}],page,label||'Selected field');
+}
+$('result').addEventListener('focusin',e=>locateControl(e.target));
+$('result').addEventListener('click',e=>{if(e.target.matches('input,select'))locateControl(e.target);});

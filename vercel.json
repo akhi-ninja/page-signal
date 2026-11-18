@@ -32,5 +32,18 @@
       "source": "/contact",
       "destination": "/contact.html"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "page-signal.vercel.app"
+        }
+      ],
+      "destination": "https://www.pagesignal.studio/:path*",
+      "permanent": true
+    }
   ]
 }

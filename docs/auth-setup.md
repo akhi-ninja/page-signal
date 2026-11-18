@@ -9,7 +9,7 @@ Create a dedicated PostgreSQL database (for example Neon) for PageSignal. Do not
 | Environment variable | Value |
 | --- | --- |
 | DATABASE_URL | PostgreSQL connection string with verified TLS from your database provider |
-| BETTER_AUTH_URL | `https://page-signal.vercel.app` (or your final custom origin) |
+| BETTER_AUTH_URL | `https://www.pagesignal.studio` (or your final custom origin) |
 | BETTER_AUTH_SECRET | A cryptographically random secret of at least 32 characters |
 | GITHUB_CLIENT_ID | GitHub OAuth application client ID |
 | GITHUB_CLIENT_SECRET | GitHub OAuth application client secret |
@@ -30,8 +30,8 @@ Generate BETTER_AUTH_SECRET locally with `node -e "console.log(require('node:cry
 GitHub → Settings → Developer settings → OAuth Apps → New OAuth App.
 
 - Name: PageSignal
-- Homepage: `https://page-signal.vercel.app`
-- Authorization callback URL: `https://page-signal.vercel.app/api/auth/callback/github`
+- Homepage: `https://www.pagesignal.studio`
+- Authorization callback URL: `https://www.pagesignal.studio/api/auth/callback/github`
 - This app requests read:user and user:email only; no repository access.
 
 Copy its client ID and generated secret into Vercel. A repository installation for ChatGPT is not the login application.
@@ -40,7 +40,7 @@ Copy its client ID and generated secret into Vercel. A repository installation f
 
 Create a LinkedIn developer app and enable the **Sign In with LinkedIn using OpenID Connect** product. Register:
 
-`https://page-signal.vercel.app/api/auth/callback/linkedin`
+`https://www.pagesignal.studio/api/auth/callback/linkedin`
 
 The integration requests openid, profile, and email only. Some LinkedIn accounts may not provide a verified email claim. AI access requires a verified email; use the email magic link for that email address if necessary. The app does not silently link different social providers by a matching email. Use the original provider or email magic link to return to an existing account.
 
