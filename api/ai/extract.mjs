@@ -1,7 +1,2 @@
-import { extract } from '../../lib/extraction.mjs';
-
-export default {
-  fetch(request) {
-    return extract(request, process.env);
-  }
-};
+import { accountExtract } from '../../lib/account-api.mjs';
+export default { fetch(request) { return accountExtract(request, process.env); } };
