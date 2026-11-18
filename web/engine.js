@@ -81,10 +81,19 @@ function extractFields(text,result){
        const match=row.match(new RegExp('^'+pattern+'(?:\\s*[:=]\\s*|\\s+-\\s+|\\s+)(.+)$','i'));
        const next=rows[i+1]?.trim();
        const value=match?.[1]?.trim()||(row.replace(/[:=]$/,'').trim().toLowerCase()===alias&&next&&!next.includes(':')&&!next.startsWith('---')?next:null);
-       if(value){fields[key]={value,page};break;}
+       if(value&&validFieldValue(key,value)){fields[key]={value,page};break;}
      }
      if(fields[key].value!==null)break;
    }
  }
  return fields;
+}
+
+// Local OCR is a conservative fallback, never a label-completion engine.
+function validFieldValue(key,value){
+ if(/email/.test(key))return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+ if(/date/.test(key))return /^(?:\d{1,4}[\/.-]\d{1,2}[\/.-]\d{1,4}|[A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4}|\d{1,2}\s+[A-Za-z]{3,9}\s+\d{4})$/.test(value);
+ if(/(?:total|subtotal|tax|amount_due|annual_revenue|paid|reserve|incurred)$/.test(key))return /^(?:[A-Z]{3}\s*)?[$€£]?\s*-?\d[\d,. ]*(?:\s*[A-Z]{3})?$/.test(value);
+ if(/phone/.test(key))return /^[+()\d .-]{7,25}$/.test(value)&&value.replace(/\D/g,'').length>=7;
+ return true;
 }
