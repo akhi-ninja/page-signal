@@ -9,6 +9,14 @@ if (!token || token.length < 24) {
 }
 const maximumBody = 4000000;
 const assets = {
+  '/favicon.ico': ['web/favicon.ico', 'image/x-icon'],
+  '/favicon-16x16.png': ['web/favicon-16x16.png', 'image/png'],
+  '/favicon-32x32.png': ['web/favicon-32x32.png', 'image/png'],
+  '/apple-touch-icon.png': ['web/apple-touch-icon.png', 'image/png'],
+  '/android-chrome-192x192.png': ['web/android-chrome-192x192.png', 'image/png'],
+  '/android-chrome-512x512.png': ['web/android-chrome-512x512.png', 'image/png'],
+  '/pagesignal-icon-128.png': ['web/pagesignal-icon-128.png', 'image/png'],
+  '/site.webmanifest': ['web/site.webmanifest', 'application/manifest+json'],
   '/': ['web/index.html', 'text/html; charset=utf-8'],
   '/docs': ['web/docs.html', 'text/html; charset=utf-8'],
   '/docs/': ['web/docs.html', 'text/html; charset=utf-8'],
