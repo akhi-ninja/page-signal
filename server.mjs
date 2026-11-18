@@ -9,6 +9,14 @@ const accounts = process.env.PAGESIGNAL_AUTH_MODE === 'accounts';
 const token = process.env.PAGESIGNAL_API_KEY;
 if (!accounts && (!token || token.length < 24)) throw new Error('Set PAGESIGNAL_API_KEY to a random secret of at least 24 characters, or select PAGESIGNAL_AUTH_MODE=accounts.');
 const assets = {
+  '/favicon.ico': ['web/favicon.ico','image/x-icon'],
+  '/favicon-16x16.png': ['web/favicon-16x16.png','image/png'],
+  '/favicon-32x32.png': ['web/favicon-32x32.png','image/png'],
+  '/apple-touch-icon.png': ['web/apple-touch-icon.png','image/png'],
+  '/android-chrome-192x192.png': ['web/android-chrome-192x192.png','image/png'],
+  '/android-chrome-512x512.png': ['web/android-chrome-512x512.png','image/png'],
+  '/pagesignal-icon-128.png': ['web/pagesignal-icon-128.png','image/png'],
+  '/site.webmanifest': ['web/site.webmanifest','application/manifest+json'],
   '/': ['web/index.html','text/html'], '/docs': ['web/docs.html','text/html'],
   '/docs/': ['web/docs.html','text/html'], '/docs.html': ['web/docs.html','text/html'],
   '/privacy': ['web/privacy.html','text/html'], '/terms': ['web/terms.html','text/html'],
@@ -53,7 +61,7 @@ createServer(async(request,response)=>{
    }finally{active--;}
   }
   const asset=assets[path];if(!asset||!['GET','HEAD'].includes(request.method))return await send(response,json({error:'Not found.'},404));
-  response.writeHead(200,{'Content-Type':asset[1]+'; charset=utf-8','X-Content-Type-Options':'nosniff'});
+  response.writeHead(200,{'Content-Type':asset[1]+(asset[1].startsWith('image/')?'':'; charset=utf-8'),'X-Content-Type-Options':'nosniff'});
   response.end(request.method==='HEAD'?undefined:await readFile(new URL(asset[0],import.meta.url)));
  }catch(error){if(!response.headersSent)await send(response,json({error:error instanceof RangeError?'Request body is too large.':'The request could not be completed.'},error instanceof RangeError?413:500));else response.end();}
 }).listen(Number(process.env.PORT||3000),process.env.HOST||'127.0.0.1');
