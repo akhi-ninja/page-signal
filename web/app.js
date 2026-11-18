@@ -334,6 +334,9 @@ async function sample(){
  })));
  enqueue(files);
 }
+$('file').addEventListener('click',event=>{
+ if(!workspaceAllowed()){event.preventDefault();void window.PageSignalAccount.ensureSignedIn();}
+});
 $('file').addEventListener('change',e=>{void enqueue(Array.from(e.target.files));e.target.value='';});
 const drop=$('drop');
 const isFileDrag=event=>Array.from(event.dataTransfer?.types||[]).includes('Files');
@@ -474,9 +477,7 @@ window.pageSignalHasDocuments=()=>jobs.length>0;
 function updateAccountAvailability(){
  const state=window.PageSignalAccount.state;
  const allowed=workspaceAllowed();
- $('workspace-main').hidden=!allowed;$('workspace-main').inert=!allowed;
- $('workspace-gate').hidden=allowed;
- $('file').disabled=!allowed;$('sample').disabled=!allowed;
+ $('workspace-main').hidden=false;$('workspace-main').inert=false;
  if(!allowed&&!state.statusUnavailable&&jobs.length){viewer?.destroy();viewer=null;for(const job of jobs)URL.revokeObjectURL(job.url);jobs.splice(0);selected=null;}
 
  $('ai').disabled=!state.configured;
@@ -493,7 +494,7 @@ $('ai').addEventListener('change',async()=>{
  if($('ai').checked&&!await window.PageSignalAccount.ensureSignedIn())$('ai').checked=false;
 });
 
-$('gate-sign-in').addEventListener('click',()=>{void window.PageSignalAccount.ensureSignedIn();});
+
 function locateControl(control){
  const job=jobs.find(item=>item.id===selected);if(!job||!viewer)return;
  let field,label,page,evidence,value;
