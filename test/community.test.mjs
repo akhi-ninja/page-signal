@@ -31,7 +31,7 @@ test('registration ownership, consent, withdrawal and admin data boundaries use 
   assert.equal((await community(request('GET',undefined,'/api/community?view=admin'),env,deps)).status,403);
   assert.equal((await community(request('PUT',input),env,deps)).status,429);
   userId='owner';const owner=await(await community(request(),env,deps)).json();assert.equal(owner.profile,null);assert.equal(owner.isAdmin,true);
-  const admin=await(await community(request('GET',undefined,'/api/community?view=admin'),env,deps)).json();assert.equal(admin.summary.accounts,2);assert.equal(admin.summary.registrations,1);assert.equal(admin.summary.requests_30d,5);assert.equal(admin.daily[0].requests,5);assert.equal(admin.users.find(u=>u.id==='visitor').requests_today,2);
+  const admin=await(await community(request('GET',undefined,'/api/community?view=admin'),env,deps)).json();assert.equal(admin.summary.accounts,2);assert.equal(admin.summary.registrations,1);assert.equal(admin.summary.requests_30d,5);assert.equal(admin.daily[0].requests,5);assert.match(admin.daily[0].day,/^\d{4}-\d{2}-\d{2}$/);assert.equal(admin.users.find(u=>u.id==='visitor').last_ai_day,admin.daily[0].day);assert.equal(admin.users.find(u=>u.id==='visitor').requests_today,2);
   assert.equal((await community(request('GET',undefined,'/api/community?view=admin'),{},deps)).status,403);
   assert.equal((await community(request('GET',undefined,'/api/community?view=admin&page=0'),env,deps)).status,400);
   userId='visitor';assert.equal((await community(request('DELETE'),env,deps)).status,200);assert.equal((await(await community(request(),env,deps)).json()).profile,null);
