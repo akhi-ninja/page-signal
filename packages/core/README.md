@@ -2,7 +2,7 @@
 
 MIT-licensed PageSignal Community integration.
 
-[Full documentation](https://page-signal.vercel.app/docs#core-package) · [API reference](https://page-signal.vercel.app/docs#api-extract-one-page) · [GitHub](https://github.com/akhi-ninja/page-signal)
+[Full documentation](https://www.pagesignal.studio/docs#core-package) · [API reference](https://www.pagesignal.studio/docs#api-extract-one-page) · [GitHub](https://github.com/akhi-ninja/page-signal)
 
 Run the extraction engine directly in your Node.js 22+ backend. It calls OpenAI using your own provider credential and does not require a running PageSignal server.
 
