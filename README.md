@@ -298,6 +298,16 @@ Keep provider and service keys server-side. The Community runner defaults to sha
 
 GitHub development → reviewed PR → main → Vercel is the web deployment flow. Package releases use a stable vX.Y.Z GitHub release from main and publish all three packages via the trusted publish.yml workflow. See [release setup](https://github.com/akhi-ninja/page-signal/blob/development/docs/npm-releases.md). Existing npm versions cannot be overwritten; documentation changes on npm require a new package release.
 
+## Community registration and maintainer usage
+
+Open https://www.pagesignal.studio/community to optionally share your organization, use case and integration. Sign in with GitHub first. Your registration is private to the maintainer, and a separate checkbox permits contact about your use case. You can update or withdraw the registration at any time. Package downloads do not require registration, and no npm install telemetry is included.
+
+The private admin view is https://www.pagesignal.studio/admin. Set PAGESIGNAL_ADMIN_GITHUB_IDS to a comma-separated list of trusted numeric GitHub account IDs in the server environment, then redeploy. Access is checked against the signed-in user's linked GitHub account on every admin request, not a browser flag or email address. With an empty allowlist, nobody has admin access. Use the same allowlist only where the corresponding deployment's database should be accessible to those maintainers.
+
+The view lists registered accounts, optional registrations and hosted AI attempts for the last 30 UTC dates, with pagination. Attempts include failures and are not document counts, unique installers or self-hosted usage. The last AI activity shown is limited to this window. There is no historical sign-in-event tracker. Raw provider tokens, sessions and document contents are not returned by this API.
+
+The account-mode Node runner and Vercel expose GET /api/community for your own registration and admin availability, PUT for saving explicit consent, and DELETE for withdrawal. GET /api/community?view=admin&page=1 requires allowlisted admin access. Mutations require the canonical Origin, a verified account session, and an 8 KiB body limit. Rapid duplicate saves are throttled. The small pagesignal_community table is created idempotently on first authorized use; the existing auth and usage migrations must already be complete, and the database role must permit table creation. Shared service-key mode does not expose this account feature.
+
 ## Development and license
 
 ```sh
