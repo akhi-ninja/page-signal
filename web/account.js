@@ -21,8 +21,8 @@
     try {
       const response = await fetch('/api/ai/status', { credentials: 'same-origin', cache: 'no-store' });
       if (!response.ok) throw new Error('Account service unavailable');
-      state = { ...state, ...(await response.json()) };
-    } catch { state = { ...state, configured: false, user: null, authConfigured: false, providers: {} }; }
+      state = { ...state, ...(await response.json()), statusUnavailable: false };
+    } catch { state = { ...state, configured: false, user: null, authConfigured: false, providers: {}, statusUnavailable: true }; }
     render();return state;
   }
   async function post(path, body) {
@@ -54,7 +54,7 @@
     finally { render(); }
   });
   document.getElementById('sign-out').addEventListener('click', async () => {
-    try { await post('sign-out', {});await refresh();message.textContent='You are signed out.'; }
+    try { await post('sign-out', {});state={...state,user:null,statusUnavailable:false};render();await refresh();message.textContent='You are signed out.'; }
     catch (error) { message.textContent=error.message; }
   });
   window.addEventListener('focus', () => { void refresh(); });
