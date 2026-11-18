@@ -1,6 +1,6 @@
 # PageSignal hosted account setup
 
-The code supports GitHub OAuth, LinkedIn OpenID Connect, and email magic links through Better Auth 1.7.25 with PostgreSQL. Authentication is separate from the GitHub integration used to commit this repository.
+Phase one uses GitHub OAuth through Better Auth 1.7.25 with PostgreSQL. LinkedIn and email sign-in are hidden in the hosted UI and are optional future providers; do not configure their credentials for phase one. Authentication is separate from the GitHub integration used to commit this repository.
 
 ## Required infrastructure
 
@@ -13,10 +13,10 @@ Create a dedicated PostgreSQL database (for example Neon) for PageSignal. Do not
 | BETTER_AUTH_SECRET | A cryptographically random secret of at least 32 characters |
 | GITHUB_CLIENT_ID | GitHub OAuth application client ID |
 | GITHUB_CLIENT_SECRET | GitHub OAuth application client secret |
-| LINKEDIN_CLIENT_ID | LinkedIn application client ID |
-| LINKEDIN_CLIENT_SECRET | LinkedIn application client secret |
-| RESEND_API_KEY | Resend email delivery key |
-| AUTH_EMAIL_FROM | A sender on your verified domain, such as `PageSignal <signin@your-domain.example>` |
+| LINKEDIN_CLIENT_ID | Optional future phase; leave unset |
+| LINKEDIN_CLIENT_SECRET | Optional future phase; leave unset |
+| RESEND_API_KEY | Optional future phase; leave unset |
+| AUTH_EMAIL_FROM | Optional future phase; leave unset |
 | OPENAI_API_KEY | Existing server-side provider key |
 
 Optional: OPENAI_DOCUMENT_MODEL, PAGESIGNAL_DAILY_AI_REQUESTS (default 20), PAGESIGNAL_AI_REQUESTS_PER_MINUTE (default 6), PAGESIGNAL_GLOBAL_DAILY_AI_REQUESTS (default 200). These count AI attempts, not documents. Every extracted page and every question consumes one request, including provider failures after a reservation. Invalid or failed requests may also consume a reservation; counters are not billing credits. Defaults reset daily at 00:00 UTC and minute limits use UTC minute boundaries. The global cap protects the shared provider budget across accounts. It is not a monetary spending limit; configure an appropriate provider budget as well.
@@ -58,7 +58,7 @@ npm run auth:migrate
 
 This uses Better Auth's version-matched programmatic migrations and creates the PageSignal usage table. It is an explicit operator command; it does not run DDL during public requests. A failed or missing database migration causes account/AI operations to fail closed.
 
-Deploy after configuration and migration. Verify GitHub login, LinkedIn login, email delivery and link redemption, sign-out, anonymous API rejection (401), usage counters, and 429 limits in a non-production environment. A status response reporting authConfigured only confirms configuration presence; it does not prove migrations, providers, or sender setup work.
+Deploy after configuration and migration. For phase one, verify GitHub login, sign-out, anonymous API rejection (401), usage counters, and 429 limits. Verify other providers only if enabling them in a later phase. A status response reporting authConfigured only confirms configuration presence; it does not prove migrations, providers, or sender setup work.
 
 ## Self-hosting modes
 
