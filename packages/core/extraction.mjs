@@ -71,6 +71,10 @@ async function queryDocument(input,env){
   const valueSupported=field=>{
    if(field.value===null||!supported(field.source))return false;
    if(/\be[- ]?mail\b/i.test(field.label)&&!/^\S+@\S+\.[^\s.]+$/.test(String(field.value)))return false;
+   if(typeof field.value==='number'){
+    const numbers=field.source.excerpt.match(/(?<![\p{L}\d])[-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?![\p{L}\d])/gu)||[];
+    return Number.isFinite(field.value)&&numbers.some(token=>Number(token.replaceAll(',',''))===field.value);
+   }
    if(typeof field.value==='boolean')return (field.value?/\b(?:yes|true|checked)\b/i:/\b(?:no|false|unchecked)\b/i).test(field.source.excerpt);
    return normalizeEvidence(field.source.excerpt).toLowerCase().includes(normalizeEvidence(String(field.value)).toLowerCase());
   };
