@@ -44,6 +44,6 @@ document.getElementById('search').addEventListener('input',event=>{const term=ev
 document.querySelectorAll('.copy').forEach(button=>button.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(button.closest('.code-block').querySelector('code').textContent);button.textContent='Copied';}catch{button.textContent='Select code to copy';}setTimeout(()=>button.textContent='Copy',2000);}));
 const menu=document.getElementById('menu'),sidebar=document.getElementById('sidebar');menu.addEventListener('click',()=>{const open=sidebar.classList.toggle('visible');menu.setAttribute('aria-expanded',String(open));});links.forEach(link=>link.addEventListener('click',()=>{document.getElementById('search').value='';document.getElementById('search').dispatchEvent(new Event('input'));sidebar.classList.remove('visible');menu.setAttribute('aria-expanded','false');}));
 const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){links.forEach(link=>link.classList.toggle('active',link.hash==='#'+entry.target.id));}},{rootMargin:'-85px 0px -65% 0px'});sections.forEach(section=>observer.observe(section));
-</script></body></html>`;
+</script></body></html>\n`;
 if(process.argv.includes('--check')){if(readFileSync('web/docs.html','utf8')!==html)throw new Error('Run npm run docs:build to update web/docs.html');console.log('Documentation matches README.md');}
 else{writeFileSync('web/docs.html',html);console.log('Generated web/docs.html');}

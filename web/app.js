@@ -101,8 +101,8 @@ function renderDocumentTools(job){
    '<div class="requested-field"><label>'+escapeHtml(field.label)+'<input data-request-key="'+escapeHtml(key)+'" value="'+escapeHtml(field.value)+'" placeholder="Not found"></label>'+sourceButtons(field.source?[field.source]:[])+'</div>').join('');
  const chat=(job.chat||[]).map((turn,index)=>
    '<div class="document-turn"><strong>'+escapeHtml(turn.question)+'</strong><p>'+escapeHtml(turn.answer)+'</p>'+sourceButtons(turn.citations)+
-   (turn.citations?.length&&!turn.added?'<button type="button" data-add-answer="'+index+'">Add to fields</button>':'')+'</div>').join('');
- return '<section class="document-tools"><h3>Ask this document</h3><form id="document-question"><label for="question-text">Question or fields to find</label><textarea id="question-text" rows="2" maxlength="2000" placeholder="For example, renewal date, notice period, and termination fee">'+escapeHtml(job.questionDraft||'')+'</textarea><div class="review-actions"><button type="submit" value="fields" '+(job.asking||$('ai').disabled?'disabled':'')+'>Find specific fields</button><button type="submit" value="chat" class="primary" '+(job.asking||$('ai').disabled?'disabled':'')+'>Ask</button></div></form>'+
+   (turn.fields?.some(field=>field.value!==null)&&!turn.added?'<button type="button" data-add-answer="'+index+'">Add to fields</button>':'')+'</div>').join('');
+ return '<section class="document-tools"><h3>Ask this document</h3>'+(!job.ai?'<p class="warn">OCR-only results can miss scanned form values. Use Extract all fields / Identify with AI above to read the page images before asking about unclear values.</p>':'')+'<form id="document-question"><label for="question-text">Question or fields to find</label><textarea id="question-text" rows="2" maxlength="2000" placeholder="For example, renewal date, notice period, and termination fee">'+escapeHtml(job.questionDraft||'')+'</textarea><div class="review-actions"><button type="submit" value="fields" '+(job.asking||$('ai').disabled?'disabled':'')+'>Find specific fields</button><button type="submit" value="chat" class="primary" '+(job.asking||$('ai').disabled?'disabled':'')+'>Ask</button></div></form>'+
    (job.asking?'<p role="status">Searching this document…</p>':'')+(job.queryError?'<p class="warn" role="alert">'+escapeHtml(job.queryError)+'</p>':'')+
    (fields?'<h4>Requested fields</h4>'+fields:'')+(chat?'<h4>Conversation</h4><div class="document-chat">'+chat+'</div>':'')+'</section>';
 }
@@ -125,7 +125,7 @@ function render(){
  area.innerHTML='<div class="document-workspace"><section class="document-results">'+renderDocumentTools(job)+'<div class="tabs" role="tablist" aria-label="Review views">'+(job.ai?['AI review','Fields','Raw text','JSON']:['Fields','Raw text','JSON']).map(name=>'<button role="tab" data-tab="'+name+'" aria-selected="'+(tab===name)+'">'+name+'</button>').join('')+'</div><div id="tabBody"></div></section><section class="document-preview" aria-label="Source preview"><h3>Document preview</h3><div id="document-source"></div></section></div>';
  viewer=new DocumentViewer($('document-source'),job,loadPdfModule);
  const body=$('tabBody');
- if(tab==='AI review'){
+ if(tab==='AI review'||(tab==='Fields'&&job.ai&&job.aiPages.some(page=>!page.error))){
    body.innerHTML=job.aiPages.map(page=>{
      const heading='<h3>Page '+page.page+' · '+escapeHtml(page.document_title||page.document_type?.replaceAll('_',' ')||'Needs review')+'</h3>';
      if(page.error)return '<details open class="ai-page"><summary>'+heading+'</summary><p class="warn">'+escapeHtml(page.error)+'</p></details>';
@@ -360,6 +360,10 @@ async function askDocument(job,mode,question){
    if(i%2===0)result.push({page:Number(value),text:parts[i+1]||''});
    return result;
  },[]):[{page:1,text:job.text}];
+ for(const page of pages){
+   const aiPage=job.aiPages?.find(p=>p.page===page.page&&!p.error);
+   if(aiPage)page.text=(aiPage.fields||[]).filter(f=>f.value!==null).map(f=>[f.section,f.label,f.value].filter(v=>v!==null).join(' | ')).join('\n')+'\n'+page.text;
+ }
  const context=(job.chat||[]).slice(-4).map(turn=>'Question: '+turn.question+'\nAnswer: '+turn.answer).join('\n').slice(-6000);
  job.asking=true;job.queryError='';render();
  try{
@@ -372,7 +376,7 @@ async function askDocument(job,mode,question){
        const key=fieldKey(field.label);
        if(!job.requestedFields[key]?.reviewed)job.requestedFields[key]=field;
      }
-   }else{job.chat||=[];job.chat.push({question,answer:data.answer,citations:data.citations});}
+   }else{job.chat||=[];job.chat.push({question,answer:data.answer,citations:data.citations,fields:data.fields});}
    job.questionDraft='';
  }catch(error){job.queryError=error.message;}
  finally{job.asking=false;if(selected===job.id)render();void window.PageSignalAccount.refresh();}
@@ -398,8 +402,11 @@ $('result').addEventListener('click',e=>{
    }else{
      const turn=job.chat[Number(addButton.dataset.addAnswer)];
      job.requestedFields||=Object.create(null);
-     const key=fieldKey(turn.question);
-     if(!job.requestedFields[key]?.reviewed)job.requestedFields[key]={label:turn.question,value:turn.answer,source:turn.citations[0]};
+     for(const field of turn.fields||[]){
+       if(field.value===null)continue;
+       const key=fieldKey(field.label);
+       if(!job.requestedFields[key]?.reviewed)job.requestedFields[key]={...field};
+     }
      turn.added=true;render();
    }
    return;
