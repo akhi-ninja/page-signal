@@ -9,12 +9,28 @@
   },
   "rewrites": [
     {
+      "source": "/api/auth/:path*",
+      "destination": "/api/auth"
+    },
+    {
       "source": "/docs",
       "destination": "/docs.html"
     },
     {
       "source": "/docs/",
       "destination": "/docs.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html"
     }
   ]
 }

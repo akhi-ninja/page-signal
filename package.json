@@ -11,6 +11,17 @@
     "test": "node --test test/*.test.mjs",
     "pack:packages": "npm pack --workspace @pagesignal/core --workspace @pagesignal/sdk --workspace @pagesignal/react",
     "docs:build": "node scripts/build-docs.mjs",
-    "docs:check": "node scripts/build-docs.mjs --check"
+    "docs:check": "node scripts/build-docs.mjs --check",
+    "auth:migrate": "node --env-file-if-exists=.env scripts/migrate-auth.mjs"
+  },
+  "dependencies": {
+    "better-auth": "1.7.25",
+    "pg": "8.16.3"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.14"
+  },
+  "engines": {
+    "node": ">=22.14.0"
   }
 }

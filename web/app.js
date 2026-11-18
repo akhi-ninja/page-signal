@@ -188,6 +188,7 @@ function pdfLines(items){
 async function extractWithAI(job,page,canvas,text){
  status(job,'Analyzing layout and fields on page '+page);
  try{
+   if(!await window.PageSignalAccount.ensureSignedIn())throw new Error('Sign in before running AI extraction.');
    let image=canvas.toDataURL('image/jpeg',.85);
    if(image.length>uploadLimits.imageDataChars)image=canvas.toDataURL('image/jpeg',.65);
    if(image.length>uploadLimits.imageDataChars)throw new Error('This page image is too large for AI extraction.');
@@ -274,7 +275,7 @@ async function run(){
    }
  }
  try{await Promise.all(Array.from({length:3},()=>processNext()));}
- finally{running=false;}
+ finally{running=false;void window.PageSignalAccount.refresh();}
 }
 function enqueue(files){
  const batch=Array.from(files);
@@ -354,15 +355,16 @@ async function askDocument(job,mode,question){
    }else{job.chat||=[];job.chat.push({question,answer:data.answer,citations:data.citations});}
    job.questionDraft='';
  }catch(error){job.queryError=error.message;}
- finally{job.asking=false;if(selected===job.id)render();}
+ finally{job.asking=false;if(selected===job.id)render();void window.PageSignalAccount.refresh();}
 }
-$('result').addEventListener('submit',e=>{
+$('result').addEventListener('submit',async e=>{
  if(e.target.id!=='document-question')return;
  e.preventDefault();
  const job=jobs.find(item=>item.id===selected);
  const question=$('question-text').value.trim();
  const mode=e.submitter?.value||'chat';
  if(!job||job.asking||!question||$('ai').disabled)return;
+ if(!await window.PageSignalAccount.ensureSignedIn())return;
  if(!job.sharedText&&!window.confirm('Send the extracted text from this document to OpenAI to answer your questions?'))return;
  job.sharedText=true;void askDocument(job,mode,question);
 });
@@ -433,9 +435,10 @@ $('result').addEventListener('change',e=>{
  for(const key of Object.keys(job.fields))if(previous[key]?.reviewed)job.fields[key]=previous[key];
  render();
 });
-$('analyze-ai').addEventListener('click',()=>{
+$('analyze-ai').addEventListener('click',async ()=>{
  const candidates=aiCandidates();
  if(!candidates.length)return;
+ if(!await window.PageSignalAccount.ensureSignedIn())return;
  const subject=candidates.length===1?'this document':candidates.length+' documents';
  if(!window.confirm('Send page images and OCR text from '+subject+' to OpenAI for identification and extraction?'))return;
  for(const job of candidates){
@@ -453,8 +456,19 @@ $('download').addEventListener('click',()=>{
 });
 render();
 
-fetch('/api/ai/status').then(response=>response.json()).then(({configured})=>{
- $('ai').disabled=!configured;
+window.pageSignalHasDocuments=()=>jobs.length>0;
+function updateAccountAvailability(){
+ const state=window.PageSignalAccount.state;
+ $('ai').disabled=!state.configured;
+ if(!state.user&&state.authRequired)$('ai').checked=false;
+ $('ai-status').textContent=!state.configured?'AI setup required. Local OCR is available.':
+   state.authRequired&&!state.authConfigured?'Sign-in setup required. Local OCR is available.':
+   state.authRequired&&!state.user?'Sign in to use AI extraction. Local OCR is available.':
+   'Optional. Sends page images and OCR text to OpenAI.';
  render();
- $('ai-status').textContent=configured?'Optional. Sends page images and OCR text to OpenAI.':'AI setup required. Local OCR is available.';
-}).catch(()=>{$('ai-status').textContent='AI availability could not be checked. Local OCR is available.';});
+}
+window.addEventListener('pagesignal:account',updateAccountAvailability);
+window.PageSignalAccount.ready.then(updateAccountAvailability);
+$('ai').addEventListener('change',async()=>{
+ if($('ai').checked&&!await window.PageSignalAccount.ensureSignedIn())$('ai').checked=false;
+});

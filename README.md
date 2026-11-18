@@ -6,6 +6,8 @@ Turn PDFs and scanned images into document identities, editable fields, tables, 
 
 ## Quick start
 
+The hosted workspace keeps local OCR and samples available without login. GitHub sign-in is required before hosted AI extraction or document questions. LinkedIn and email sign-in are reserved for a later phase. Sign in before uploading when using a social provider, because social sign-in reloads the tab.
+
 Use the web app for PDFs and scans. Choose the core package to call OpenAI from your server, the SDK to call a self-hosted PageSignal server, or the React package to embed the existing workspace.
 
 | Interface | What it does | Credential |
@@ -55,11 +57,12 @@ Split larger PDFs or batches. Reduce page image dimensions or JPEG quality when 
 
 ## Self-host with Node or Docker
 
-Use Node.js 22 or later. Clone the repository and configure secrets in the server environment. The Node runner has no runtime dependencies to install.
+Use Node.js 22 or later. Clone the repository and configure secrets in the server environment. Install the pinned dependencies before running the Node server.
 
 ```sh
 git clone https://github.com/akhi-ninja/page-signal.git
 cd page-signal
+npm ci --ignore-scripts
 export OPENAI_API_KEY='your-openai-key'
 export PAGESIGNAL_API_KEY='your-random-service-secret-at-least-24-characters'
 npm start
@@ -80,7 +83,9 @@ OPENAI_DOCUMENT_MODEL optionally selects a compatible vision model with Structur
 
 The examples below target your self-hosted Community Node server. Send Authorization: Bearer YOUR_PAGESIGNAL_API_KEY. The service credential is not your OpenAI key. The Community server authenticates all routes, including status and documentation, and also accepts the browser's Basic authentication.
 
-The Vercel web deployment has different access behavior: its extraction handler requires a same-origin Origin header and JSON content type and relies on hosting protection for access. A PageSignal bearer token does not authenticate that Vercel handler. Do not treat the public demo as a supported third-party integration API. Use the Community server or provide an authenticated server proxy for integrations. Keep Vercel deployment protection enabled wherever a paid provider key is configured.
+The Vercel web deployment uses verified account sessions for both extraction and document queries. Its extraction handler requires a matching Origin header, JSON content type, and a verified email. A PageSignal service bearer token does not authenticate the hosted handler. Hosted AI fails closed until the account database, migrations, secrets, and providers are configured. Use the Community service mode for SDK/API integrations. Keep deployment protection enabled on previews as an additional boundary.
+
+Hosted accounts default to 20 AI requests per day and 6 per minute, with a global cap of 200 per day. These are request attempts, not document counts or paid credits. Each page and question counts separately; attempts may count even if they fail. The account dialog shows remaining daily requests. Quotas use PostgreSQL and reset at 00:00 UTC; limits are configurable by the operator. See [authentication setup](https://github.com/akhi-ninja/page-signal/blob/development/docs/auth-setup.md). Set PAGESIGNAL_AUTH_MODE=accounts on the Node runner to use the same account flow instead of shared service mode.
 
 ## API: configuration status
 
@@ -264,7 +269,7 @@ export default function Documents() {
 }
 ```
 
-Host or reverse-proxy the Community workspace at /pagesignal/ on your app's origin. Map /pagesignal/app.js, /pagesignal/engine.js, and /pagesignal/style.css to the corresponding Community assets, and map /api/ai/* to the Community API. These API paths are absolute in the bundled UI. The component accepts src, title, height (CSS string), and className. src must be a same-origin path, not an external URL. In Next.js, use it from a client component.
+Host or reverse-proxy the Community workspace at /pagesignal/ on your app's origin. Map /pagesignal/app.js, /pagesignal/engine.js, and /pagesignal/style.css to the corresponding Community assets, proxy /account.js in both service and account modes, and map /api/ai/* to the Community API. Account deployments must also proxy /api/auth/* and preserve cookies and Origin. These API paths are absolute in the bundled UI. The component accepts src, title, height (CSS string), and className. src must be a same-origin path, not an external URL. In Next.js, use it from a client component.
 
 Authenticate users in your application. A server-side proxy can attach the Community service token after checking the session; do not expose it as an iframe prop. No result callbacks or document events are exported; use the workspace's Export JSON button. Programmatic extraction uses your backend and the SDK or core package. Your frame-src/frame-ancestors policies must allow the same-origin workspace.
 
@@ -289,7 +294,7 @@ A provider-side 429 is currently wrapped as a 502 by the shared engine. Status c
 
 Original uploads and results remain in the browser session in the current UI; there is no durable document library. With AI enabled, rendered page images and OCR text go through your server to OpenAI. Questions send numbered page text and conversation context. Provider requests set store: false; that flag alone does not define the provider's full retention policy. OCR/PDF dependencies and fonts are loaded from third-party CDNs. Apply your own access, retention, and compliance policies for the documents you process.
 
-Keep provider and service keys server-side. The current Community runner has a shared credential and a per-process concurrency cap, not user accounts, usage billing, persistent quotas, or a distributed rate limiter. Paid managed Cloud plans, durable submission IDs, webhooks, polling, and npm PDF-upload helpers are not implemented. There is no hosted free-document allowance enforced by these packages. MIT code can be self-hosted; model and hosting usage are separate.
+Keep provider and service keys server-side. The Community runner defaults to shared service credentials and a per-process concurrency cap. Optional account mode and the Vercel handlers use Better Auth sessions, database-backed sign-in rate limits, and atomic AI request quotas. Account database records and counters persist; they do not contain uploaded document contents. Paid managed Cloud plans, durable submission IDs, webhooks, polling, and npm PDF-upload helpers are not implemented. The standalone npm packages do not enforce hosted account allowances; hosted API guards enforce request quotas separately. Paid credits and distributed in-flight concurrency accounting are not implemented. MIT code can be self-hosted; model and hosting usage are separate.
 
 GitHub development → reviewed PR → main → Vercel is the web deployment flow. Package releases use a stable vX.Y.Z GitHub release from main and publish all three packages via the trusted publish.yml workflow. See [release setup](https://github.com/akhi-ninja/page-signal/blob/development/docs/npm-releases.md). Existing npm versions cannot be overwritten; documentation changes on npm require a new package release.
 
