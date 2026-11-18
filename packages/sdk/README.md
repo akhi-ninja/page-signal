@@ -2,7 +2,7 @@
 
 MIT-licensed PageSignal Community integration.
 
-[Full documentation](https://page-signal.vercel.app/docs#sdk-package) · [API reference](https://page-signal.vercel.app/docs#api-extract-one-page) · [GitHub](https://github.com/akhi-ninja/page-signal)
+[Full documentation](https://www.pagesignal.studio/docs#sdk-package) · [API reference](https://www.pagesignal.studio/docs#api-extract-one-page) · [GitHub](https://github.com/akhi-ninja/page-signal)
 
 Call a running Community server from a Node.js 22+ backend. Use the PageSignal service key; the provider key stays on that server.
 
