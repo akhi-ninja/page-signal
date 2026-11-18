@@ -10,20 +10,22 @@ test('document queries discard unsupported values and citations', async () => {
    answer:'Notice is 60 days',
    citations:[{page:1,excerpt:'60 days'},{page:2,excerpt:'missing'}],
    fields:[{label:'notice',value:60,source:{page:1,excerpt:'60 days'}},
-           {label:'fee',value:500,source:{page:2,excerpt:'missing'}}]
+           {label:'fee',value:500,source:{page:2,excerpt:'missing'}},
+           {label:'Revenue',value:4250000,source:{page:1,excerpt:'$4,250,000.00'}}]
   })}]}]
  });
  try{
   const response=await extract(new Request('https://example.com/api/ai/extract',{
    method:'POST',headers:{origin:'https://example.com','content-type':'application/json'},
    body:JSON.stringify({operation:'document_query',mode:'fields',question:'Find notice and fee',
-     context:'',pages:[{page:1,text:'Please provide 60 days written notice.'}]})
+     context:'',pages:[{page:1,text:'Please provide 60 days written notice. Revenue: $4,250,000.00'}]})
   }),{OPENAI_API_KEY:'test'});
   const result=await response.json();
   assert.equal(response.status,200);
   assert.equal(result.citations.length,1);
   assert.equal(result.fields[0].value,60);
   assert.equal(result.fields[1].value,null);
+  assert.equal(result.fields[2].value,4250000);
  }finally{globalThis.fetch=original;}
 });
 
