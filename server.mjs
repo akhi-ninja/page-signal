@@ -4,11 +4,14 @@ import { timingSafeEqual } from 'node:crypto';
 import { extract } from './packages/core/extraction.mjs';
 import { authConfiguration, handleAuth } from './lib/auth.mjs';
 import { accountExtract, accountStatus } from './lib/account-api.mjs';
+import { community } from './lib/community.mjs';
 
 const accounts = process.env.PAGESIGNAL_AUTH_MODE === 'accounts';
 const token = process.env.PAGESIGNAL_API_KEY;
 if (!accounts && (!token || token.length < 24)) throw new Error('Set PAGESIGNAL_API_KEY to a random secret of at least 24 characters, or select PAGESIGNAL_AUTH_MODE=accounts.');
 const assets = {
+  '/community':['web/community.html','text/html'], '/admin':['web/community.html','text/html'],
+  '/community.js':['web/community.js','text/javascript'],
   '/document-viewer.mjs': ['web/document-viewer.mjs','text/javascript'],
   '/favicon.ico': ['web/favicon.ico','image/x-icon'],
   '/favicon-16x16.png': ['web/favicon-16x16.png','image/png'],
@@ -52,6 +55,7 @@ createServer(async(request,response)=>{
   if(!accounts&&!authorized(request)){const result=json({error:'Sign in with the Community service credential.'},401);result.headers.set('WWW-Authenticate','Basic realm="PageSignal Community", charset="UTF-8"');return await send(response,result);}
   const origin=accounts?(authConfiguration(process.env)?.origin||'http://localhost:3000'):'https://pagesignal.internal';
   if(accounts&&(path==='/api/auth'||path.startsWith('/api/auth/')))return await send(response,await handleAuth(await webRequest(request,origin,64000)));
+  if(accounts&&path==='/api/community')return await send(response,await community(await webRequest(request,origin,8192)));
   if(path==='/api/ai/status'&&request.method==='GET')return await send(response,accounts?await accountStatus(await webRequest(request,origin,0)):json({configured:Boolean(process.env.OPENAI_API_KEY),provider:'OpenAI',authRequired:false}));
   if(path==='/api/ai/extract'){
    if(request.method!=='POST')return await send(response,json({error:'Use POST.'},405));
