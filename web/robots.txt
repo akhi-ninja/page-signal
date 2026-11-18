@@ -1,7 +1,5 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /admin
-Disallow: /community
 
 Sitemap: https://www.pagesignal.studio/sitemap.xml
