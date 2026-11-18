@@ -1,4 +1,7 @@
 (() => {
+  // Keep OAuth cookies and callbacks on the canonical hosted origin.
+  if (location.hostname === 'page-signal.vercel.app') location.replace('https://www.pagesignal.studio' + location.pathname + location.search + location.hash);
+  let signingIn = false;
   let state = { configured: false, authRequired: true, authConfigured: false, user: null, providers: {} };
   const dialog = document.getElementById('account-dialog');
   const button = document.getElementById('account-button');
@@ -11,7 +14,8 @@
     document.getElementById('account-name').textContent = state.user?.email || '';
     document.getElementById('account-usage').textContent = state.usage
       ? `${state.usage.used} of ${state.usage.dailyLimit} AI requests used today. Resets at ${new Date(state.usage.resetsAt).toLocaleString()}. Each page extraction or question counts as one request; attempts can count even if extraction fails.` : '';
-    for (const name of ['github','linkedin']) document.getElementById('login-'+name).disabled = !state.authConfigured || !state.providers[name];
+    document.getElementById('login-github').disabled = signingIn;
+    document.getElementById('login-linkedin').disabled = !state.authConfigured || !state.providers.linkedin;
     document.getElementById('email-submit').disabled = !state.authConfigured || !state.providers.email;
     document.getElementById('email-address').disabled = !state.authConfigured || !state.providers.email;
     document.getElementById('account-setup').hidden = state.authConfigured && Object.values(state.providers).some(Boolean);
@@ -32,17 +36,17 @@
     if (!response.ok) throw new Error('Sign-in could not complete. Please try again with GitHub.');
     return data;
   }
-  button.addEventListener('click', () => { message.textContent='';dialog.showModal(); });
+  button.addEventListener('click', () => { message.textContent='';dialog.showModal();void refresh(); });
   document.getElementById('account-close').addEventListener('click', () => dialog.close());
   for (const provider of ['github','linkedin']) document.getElementById('login-'+provider).addEventListener('click', async event => {
     if (window.pageSignalHasDocuments?.() && !confirm('Social sign-in reloads this tab. Export your results first; you will need to upload the original documents again. Continue?')) return;
-    const target=event.currentTarget;target.disabled=true;message.textContent='Opening secure sign-in…';
+    const target=event.currentTarget;signingIn=true;target.disabled=true;message.textContent='Opening secure sign-in…';
     try {
       const data = await post('sign-in/social', { provider, callbackURL: '/', errorCallbackURL: '/?signin=failed' });
       const url=new URL(data.url);
       if (url.protocol!=='https:') throw new Error('Invalid sign-in destination');
       location.assign(url.href);
-    } catch (error) { message.textContent=error.message;render(); }
+    } catch (error) { signingIn=false;message.textContent=error.message;render(); }
   });
   document.getElementById('email-sign-in').addEventListener('submit', async event => {
     event.preventDefault();const submit=document.getElementById('email-submit');submit.disabled=true;
@@ -62,8 +66,9 @@
     get state() { return state; }, refresh,
     async ensureSignedIn() {
       await ready;
+      if (state.statusUnavailable) await refresh();
       if (state.authRequired === false || state.user) return true;
-      message.textContent='Sign in to open your document workspace.';
+      message.textContent='Sign in with GitHub to upload documents. After signing in, choose or drop your files again.';
       if (!dialog.open) dialog.showModal();
       return false;
     }
