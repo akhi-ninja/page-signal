@@ -29,7 +29,7 @@
     const response = await fetch('/api/auth/'+path, { method: 'POST', credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     let data;try { data=await response.json(); } catch {}
-    if (!response.ok) throw new Error('Sign-in could not complete. Please try again or use another configured method.');
+    if (!response.ok) throw new Error('Sign-in could not complete. Please try again with GitHub.');
     return data;
   }
   button.addEventListener('click', () => { message.textContent='';dialog.showModal(); });
