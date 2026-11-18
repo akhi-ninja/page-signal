@@ -125,7 +125,7 @@ function render(){
  area.innerHTML='<div class="document-workspace"><section class="document-results">'+renderDocumentTools(job)+'<div class="tabs" role="tablist" aria-label="Review views">'+(job.ai?['AI review','Fields','Raw text','JSON']:['Fields','Raw text','JSON']).map(name=>'<button role="tab" data-tab="'+name+'" aria-selected="'+(tab===name)+'">'+name+'</button>').join('')+'</div><div id="tabBody"></div></section><section class="document-preview" aria-label="Source preview"><h3>Document preview</h3><div id="document-source"></div></section></div>';
  viewer=new DocumentViewer($('document-source'),job,loadPdfModule);
  const body=$('tabBody');
- if(tab==='AI review'||(tab==='Fields'&&job.ai)){
+ if(tab==='AI review'||(tab==='Fields'&&job.ai&&job.aiPages.some(page=>!page.error))){
    body.innerHTML=job.aiPages.map(page=>{
      const heading='<h3>Page '+page.page+' · '+escapeHtml(page.document_title||page.document_type?.replaceAll('_',' ')||'Needs review')+'</h3>';
      if(page.error)return '<details open class="ai-page"><summary>'+heading+'</summary><p class="warn">'+escapeHtml(page.error)+'</p></details>';
