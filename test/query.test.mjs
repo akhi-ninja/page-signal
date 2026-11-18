@@ -33,11 +33,12 @@ test('a real citation cannot justify a guessed email or unrelated field value',a
  globalThis.fetch=async()=>Response.json({status:'completed',output:[{content:[{type:'output_text',text:JSON.stringify({
   answer:'Email is person@example.com',citations:[{page:1,excerpt:'Email: PERSON EXAMPLE COM'}],
   fields:[{label:'Email',value:'person@example.com',source:{page:1,excerpt:'Email: PERSON EXAMPLE COM'}},
-   {label:'Date',value:'01/01/2026',source:{page:1,excerpt:'Date of most recent entry'}}]
+   {label:'Date',value:'01/01/2026',source:{page:1,excerpt:'Date of most recent entry'}},
+   {label:'Email',value:'PERSON EXAMPLE COM',source:{page:1,excerpt:'Email: PERSON EXAMPLE COM'}}]
  })}]}]});
  try{
   const r=await extract(new Request('https://example.com/api/ai/extract',{method:'POST',headers:{origin:'https://example.com','content-type':'application/json'},body:JSON.stringify({operation:'document_query',mode:'fields',question:'email and date',context:'',pages:[{page:1,text:'Email: PERSON EXAMPLE COM. Date of most recent entry'}]})}),{OPENAI_API_KEY:'test'});
-  const result=await r.json();assert.equal(result.fields[0].value,null);assert.equal(result.fields[1].value,null);assert.ok(!result.answer.includes('person@example.com'));
+  const result=await r.json();assert.equal(result.fields[0].value,null);assert.equal(result.fields[1].value,null);assert.equal(result.fields[2].value,null);assert.ok(!result.answer.includes('person@example.com'));
  }finally{globalThis.fetch=original;}
 });
 
