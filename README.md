@@ -6,7 +6,7 @@ Turn PDFs and scanned images into document identities, editable fields, tables, 
 
 ## Quick start
 
-The hosted workspace keeps local OCR and samples available without login. GitHub, LinkedIn, or an email magic link is required before hosted AI extraction or document questions. Sign in before uploading when using a social provider, because social sign-in reloads the tab.
+The hosted workspace keeps local OCR and samples available without login. GitHub sign-in is required before hosted AI extraction or document questions. LinkedIn and email sign-in are reserved for a later phase. Sign in before uploading when using a social provider, because social sign-in reloads the tab.
 
 Use the web app for PDFs and scans. Choose the core package to call OpenAI from your server, the SDK to call a self-hosted PageSignal server, or the React package to embed the existing workspace.
 
