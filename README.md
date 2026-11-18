@@ -1,4 +1,4 @@
-# PageSignal
+# PageSignal [![Sponsor PageSignal](https://img.shields.io/badge/Sponsor-PageSignal-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/akhi-ninja)
 
 Turn PDFs and scanned images into document identities, editable fields, tables, and structured JSON. Use the web workspace, run your own API, or integrate the MIT-licensed packages.
 
