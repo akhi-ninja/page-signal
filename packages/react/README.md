@@ -2,7 +2,7 @@
 
 MIT-licensed PageSignal Community integration.
 
-[Full documentation](https://page-signal.vercel.app/docs#react-package) · [API reference](https://page-signal.vercel.app/docs#api-extract-one-page) · [GitHub](https://github.com/akhi-ninja/page-signal)
+[Full documentation](https://www.pagesignal.studio/docs#react-package) · [API reference](https://www.pagesignal.studio/docs#api-extract-one-page) · [GitHub](https://github.com/akhi-ninja/page-signal)
 
 Embed the existing workspace in React 18 or 19. This package is an iframe wrapper, not a native upload component or a backend.
 
@@ -23,7 +23,7 @@ export default function Documents() {
 }
 ```
 
-Host or reverse-proxy the Community workspace at /pagesignal/ on your app's origin. Map /pagesignal/app.js, /pagesignal/engine.js, and /pagesignal/style.css to the corresponding Community assets, and map /api/ai/* to the Community API. Both service-key and account deployments must proxy /account.js. Account deployments must also proxy /api/auth/*, preserving cookies and Origin. These API paths are absolute in the bundled UI. The component accepts src, title, height (CSS string), and className. src must be a same-origin path, not an external URL. In Next.js, use it from a client component.
+Host or reverse-proxy the Community workspace at /pagesignal/ on your app's origin. Map /pagesignal/app.js, /pagesignal/engine.js, and /pagesignal/style.css to the corresponding Community assets, and map /api/ai/* to the Community API. Both service-key and account deployments must proxy /account.js and /document-viewer.mjs. Account deployments must also proxy /api/auth/*, preserving cookies and Origin. These API paths are absolute in the bundled UI. The component accepts src, title, height (CSS string), and className. src must be a same-origin path, not an external URL. In Next.js, use it from a client component.
 
 Authenticate users in your application. A server-side proxy can attach the Community service token after checking the session; do not expose it as an iframe prop. No result callbacks or document events are exported; use the workspace's Export JSON button. Programmatic extraction uses your backend and the SDK or core package. Your frame-src/frame-ancestors policies must allow the same-origin workspace.
 
