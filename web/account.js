@@ -22,7 +22,7 @@
       const response = await fetch('/api/ai/status', { credentials: 'same-origin', cache: 'no-store' });
       if (!response.ok) throw new Error('Account service unavailable');
       state = { ...state, ...(await response.json()) };
-    } catch { state = { ...state, configured: false, user: null }; }
+    } catch { state = { ...state, configured: false, user: null, authConfigured: false, providers: {} }; }
     render();return state;
   }
   async function post(path, body) {
@@ -63,7 +63,7 @@
     async ensureSignedIn() {
       await ready;
       if (state.authRequired === false || state.user) return true;
-      message.textContent='Sign in to use AI extraction, field lookup, and document chat.';
+      message.textContent='Sign in to open your document workspace.';
       if (!dialog.open) dialog.showModal();
       return false;
     }
