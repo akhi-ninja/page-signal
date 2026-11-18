@@ -1,4 +1,4 @@
-import { DocumentViewer, pdfWordBoxes, ocrWordBoxes } from './document-viewer.mjs';
+import { DocumentViewer, pdfWordBoxes, ocrWordBoxes } from '/document-viewer.mjs';
 const $=id=>document.getElementById(id);
 const jobs=[];
 const uploadLimits={files:10,fileBytes:30*1024*1024,batchBytes:100*1024*1024,pdfPages:40,imageDataChars:3800000};
@@ -477,7 +477,7 @@ function updateAccountAvailability(){
  $('workspace-main').hidden=!allowed;$('workspace-main').inert=!allowed;
  $('workspace-gate').hidden=allowed;
  $('file').disabled=!allowed;$('sample').disabled=!allowed;
- if(!allowed&&jobs.length){viewer?.destroy();viewer=null;for(const job of jobs)URL.revokeObjectURL(job.url);jobs.splice(0);selected=null;}
+ if(!allowed&&!state.statusUnavailable&&jobs.length){viewer?.destroy();viewer=null;for(const job of jobs)URL.revokeObjectURL(job.url);jobs.splice(0);selected=null;}
 
  $('ai').disabled=!state.configured;
  if(!state.user&&state.authRequired)$('ai').checked=false;
