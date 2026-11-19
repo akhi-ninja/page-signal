@@ -27,7 +27,23 @@ try {
 }
 ```
 
-extractPage({ image, text = '' }, { apiKey, model }) returns a page response. Optional model overrides the default. HTTP failures expose PageSignalError.status. PDF rendering, OCR, authentication, storage, billing, and multi-page orchestration belong to your application. This package currently exposes page extraction, not a document-query convenience method. Never put OPENAI_API_KEY in browser code.
+extractPage({ image, text = '' }, { apiKey, model }) returns a page response. Optional model overrides the default. HTTP failures expose PageSignalError.status. PDF rendering, OCR, authentication, storage, billing, and multi-page orchestration belong to your application. Use queryDocument for specific fields or document questions. Never put OPENAI_API_KEY in browser code.
+
+
+## Specific fields and document chat
+
+```js
+import { queryDocument } from '@pagesignal/core';
+
+const result = await queryDocument({
+  pages: [{page: 1, text: 'Policy number: P-1042. Renewal date: 12/01/2026.'}],
+  question: 'Find policy number and renewal date',
+  mode: 'fields'
+}, {apiKey: process.env.OPENAI_API_KEY});
+console.log(result.fields);
+```
+
+Use `mode: 'fields'` for key/value extraction or `mode: 'chat'` for a follow-up answer. Resend numbered page text for each request; there is no stored document ID. Optional `context` is a string of prior conversation (up to 6,000 characters). Questions are limited to 2,000 characters and page text to 160,000 characters across 1–40 unique pages. These queries read text, not original images. Unreadable or unsupported values may be null; run vision extraction first when scans need it. Responses include `answer`, page `citations`, and atomic `fields` with source evidence. Citations and values still need human review.
 
 ## Input, output, and limits
 
@@ -42,3 +58,7 @@ PageSignalError.status reports engine HTTP failures. 400: invalid input; 401: in
 ## License
 
 MIT. Retain the included license and copyright notices.
+
+## Version 1.1.1
+
+Includes updated any-document identification and evidence-grounded field queries. Full workspace features (multi-upload, source preview/highlighting, sign-in, optional community registration and maintainer analytics) are in the GitHub source application, not bundled into this server library.
