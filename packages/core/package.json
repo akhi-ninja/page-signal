@@ -1,6 +1,6 @@
 {
   "name": "@pagesignal/core",
-  "version": "0.1.1",
+  "version": "1.1.1",
   "type": "module",
   "license": "MIT",
   "description": "PageSignal page extraction engine with an injected model credential",
@@ -19,12 +19,16 @@
     "url": "git+https://github.com/akhi-ninja/page-signal.git",
     "directory": "packages/core"
   },
-  "homepage": "https://page-signal.vercel.app/docs#core-package",
+  "homepage": "https://www.pagesignal.studio/docs#core-package",
   "bugs": {
     "url": "https://github.com/akhi-ninja/page-signal/issues"
   },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/akhi-ninja"
   }
 }

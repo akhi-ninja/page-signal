@@ -13,6 +13,15 @@ export class PageSignalClient {
 
   /** image is a base64 JPEG data URL. Keep this client in server code. */
   async extractPage({ image, text = '' }, { signal } = {}) {
+    return this.#request({image,text},{signal});
+  }
+
+  /** Query caller-supplied numbered page text; no server-side document storage. */
+  async queryDocument({pages,question,mode='fields',context=''}, {signal} = {}) {
+    return this.#request({operation:'document_query',pages,question,mode,context},{signal});
+  }
+
+  async #request(payload,{signal}={}) {
     const timeout = AbortSignal.timeout(this.timeoutMs);
     const response = await this.fetcher(this.baseUrl + '/api/ai/extract', {
       method: 'POST',
@@ -20,7 +29,7 @@ export class PageSignalClient {
         Authorization: 'Bearer ' + this.apiKey,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ image, text }),
+      body: JSON.stringify(payload),
       signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
       redirect: 'error'
     });

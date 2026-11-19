@@ -31,7 +31,22 @@ try {
 }
 ```
 
-The constructor also accepts fetch for a custom transport. baseUrl is reduced to its origin, so path prefixes are not supported. It rejects embedded URL credentials and redirects. The default timeout is 120,000 ms. Service errors expose error.status; cancellation/network errors may not. SDK extractPage processes one JPEG page, not a PDF file. Use raw HTTP for document_query; a query convenience method is not yet exported. Keep the SDK and service key on your server.
+The constructor also accepts fetch for a custom transport. baseUrl is reduced to its origin, so path prefixes are not supported. It rejects embedded URL credentials and redirects. The default timeout is 120,000 ms. Service errors expose error.status; cancellation/network errors may not. SDK extractPage processes one JPEG page, not a PDF file. Use client.queryDocument for specific fields or document questions. Keep the SDK and service key on your server.
+
+
+## Specific fields and document chat
+
+```js
+const result = await client.queryDocument({
+  pages: [{page: 1, text: 'Policy number: P-1042. Renewal date: 12/01/2026.'}],
+  question: 'Find policy number and renewal date',
+  mode: 'fields',
+  context: ''
+}, {signal: AbortSignal.timeout(60000)});
+console.log(result.fields);
+```
+
+Use `mode: 'fields'` for key/value extraction or `mode: 'chat'` for a follow-up answer. Resend numbered page text for each request; there is no stored document ID. Optional `context` is a string of prior conversation (up to 6,000 characters). Questions are limited to 2,000 characters and page text to 160,000 characters across 1–40 unique pages. These queries read text, not original images. Unreadable or unsupported values may be null; run vision extraction first when scans need it. Responses include `answer`, page `citations`, and atomic `fields` with source evidence. Citations and values still need human review.
 
 ## Input, output, and limits
 
@@ -46,3 +61,7 @@ Service errors expose error.status; cancellation/network errors may not. 400: in
 ## License
 
 MIT. Retain the included license and copyright notices.
+
+## Version 1.1.1
+
+Includes updated any-document identification and evidence-grounded field queries. Full workspace features (multi-upload, source preview/highlighting, sign-in, optional community registration and maintainer analytics) are in the GitHub source application, not bundled into this server library.

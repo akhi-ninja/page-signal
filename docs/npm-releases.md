@@ -22,17 +22,16 @@ Official guide: https://docs.npmjs.com/trusted-publishers/
 ## Release process
 
 1. Bump all three `packages/*/package.json` versions together, for example to
-   `0.1.1`. Existing npm versions cannot be overwritten.
+   `1.1.1`. Existing npm versions cannot be overwritten.
 2. Commit to `development`, open a PR to `main`, and let Package checks pass.
 3. Merge into `main`.
 4. Create and publish a GitHub release from `main`, tagged with exactly the
-   package version prefixed by `v` (for example `v0.1.1`).
+   package version prefixed by `v` (for example `v1.1.1`).
 5. Watch Actions → Publish npm packages and check the npm package pages.
 
 The workflow uses GitHub-hosted Node 24 and npm OIDC trusted publishing with
 provenance. It tests and packs before publishing, rejects mismatched release
-tags and commits outside main, and skips prereleases. It does not install
-application dependencies: current tests and packaging use Node built-ins only.
+tags and commits outside main, and skips prereleases. It installs pinned workspace dependencies, then runs the test and documentation checks before packing and publishing.
 
 Package checks also run on pushes and PRs to development and main. Release
 publishing is serialized. If one package fails after another succeeds, fix the
