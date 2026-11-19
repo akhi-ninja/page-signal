@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0 (unreleased)
+
+- Add native Angular 21 and Vue 3.5 document workspace packages.
+- Replace the React iframe wrapper with a native DOM workspace (breaking API change).
+- Share browser-safe validation, parallel queue, cancellation, field editing, queries and JSON export through SDK workspace subpath.
+- Provide image/PDF browser previews and host-owned extraction/query adapters, without exposing service or provider secrets.
+- Add Angular partial-compilation build, framework mount tests, and five-package packaging/release support.
+- Initial native components do not bundle OCR, PDF rasterization, precise source overlays, account infrastructure or the full hosted application's controls.
+
 ## 1.1.1
 
 ### npm packages

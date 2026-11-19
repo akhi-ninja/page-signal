@@ -32,6 +32,7 @@ jobs:
           git merge-base --is-ancestor HEAD origin/main
           node scripts/publish-packages.mjs --check
       - run: npm ci --ignore-scripts
+      - run: npm run build:packages
       - run: npm test
       - run: npm run docs:check
       - run: npm run pack:packages

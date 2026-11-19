@@ -1,14 +1,20 @@
 {
   "name": "@pagesignal/react",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "type": "module",
   "license": "MIT",
-  "description": "Embed a self-hosted PageSignal Community workspace in React",
-  "exports": "./index.mjs",
+  "description": "Native PageSignal document workspace for React",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs"
+    }
+  },
   "files": [
     "index.mjs",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "index.d.ts"
   ],
   "peerDependencies": {
     "react": ">=18 <20"
@@ -29,5 +35,8 @@
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/akhi-ninja"
+  },
+  "dependencies": {
+    "@pagesignal/sdk": "2.0.0"
   }
 }

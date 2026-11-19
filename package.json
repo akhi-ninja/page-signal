@@ -1,6 +1,6 @@
 {
   "name": "pagesignal-community",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -9,17 +9,30 @@
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test test/*.test.mjs",
-    "pack:packages": "npm pack --workspace @pagesignal/core --workspace @pagesignal/sdk --workspace @pagesignal/react",
+    "pack:packages": "npm run build:packages && npm pack --workspace @pagesignal/core --workspace @pagesignal/sdk --workspace @pagesignal/react --workspace @pagesignal/vue && npm pack ./packages/angular/dist",
     "docs:build": "node scripts/build-docs.mjs",
     "docs:check": "node scripts/build-docs.mjs --check",
-    "auth:migrate": "node --env-file-if-exists=.env scripts/migrate-auth.mjs"
+    "auth:migrate": "node --env-file-if-exists=.env scripts/migrate-auth.mjs",
+    "build:packages": "npm run build --workspace @pagesignal/angular"
   },
   "dependencies": {
     "better-auth": "1.7.25",
     "pg": "8.16.3"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "0.3.14"
+    "@electric-sql/pglite": "0.3.14",
+    "@angular/core": "21.2.26",
+    "@angular/common": "21.2.26",
+    "@angular/compiler": "21.2.26",
+    "@angular/compiler-cli": "21.2.26",
+    "ng-packagr": "21.2.5",
+    "typescript": "5.9.3",
+    "rxjs": "7.8.2",
+    "vue": "3.5.45",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "jsdom": "26.1.0",
+    "@angular/platform-browser": "21.2.26"
   },
   "engines": {
     "node": ">=22.14.0"

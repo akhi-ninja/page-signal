@@ -1,14 +1,22 @@
 {
   "name": "@pagesignal/sdk",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "type": "module",
   "license": "MIT",
   "description": "Server-side Node client for a PageSignal Community endpoint",
-  "exports": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./workspace": {
+      "types": "./workspace.d.ts",
+      "import": "./workspace.mjs"
+    }
+  },
   "files": [
     "index.mjs",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "workspace.mjs",
+    "workspace.d.ts"
   ],
   "engines": {
     "node": ">=22"
