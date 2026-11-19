@@ -34,5 +34,7 @@ test('Angular compiled package mounts native upload and preview without iframe',
  const component=createComponent(PageSignalWorkspaceComponent,{environmentInjector:app.injector,hostElement:container});component.setInput('adapter',adapter);app.attachView(component.hostView);component.changeDetectorRef.detectChanges();
  upload(container);await pause();component.changeDetectorRef.detectChanges();
  assert.equal(container.querySelector('iframe'),null);assert.equal(container.querySelector('img').alt,'policy.png');assert.equal(container.querySelector('input:not([type=file])').value,'P-42');
+ const trusted=component.instance.preview;component.instance.store.updateField('1',0,'P-43');component.changeDetectorRef.detectChanges();
+ assert.equal(component.instance.preview,trusted,'field edits must preserve the trusted preview URL');
  app.detachView(component.hostView);component.destroy();app.destroy();container.remove();
 });
