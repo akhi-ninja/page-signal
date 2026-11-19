@@ -1,6 +1,6 @@
 # PageSignal [![Sponsor PageSignal](https://img.shields.io/badge/Sponsor-PageSignal-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/akhi-ninja)
 
-Native framework packages below describe the unreleased 2.0.0 candidate. Published 1.1.1 remains unchanged until the next release.
+Version 2.0.0 provides native Angular, Vue and React workspaces. React users upgrading from version 1 must migrate from iframe props to the adapter API.
 
 Identify any type of document and turn PDFs and scanned images into document identities, editable fields, tables, and structured JSON. Use the web workspace, run your own API, or integrate the MIT-licensed packages.
 

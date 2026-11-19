@@ -1,6 +1,6 @@
 # @pagesignal/angular
 
-Native document workspace. Version 2.0.0 release candidate; not yet published.
+Native document workspace. Version 2.0.0.
 
 ## Angular package
 
