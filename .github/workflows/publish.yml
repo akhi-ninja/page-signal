@@ -35,6 +35,7 @@ jobs:
       - run: npm run build:packages
       - run: npm test
       - run: npm run docs:check
+      - run: npm run releases:check
       - run: npm run pack:packages
       - name: Publish using npm trusted publishing
         env:
