@@ -4,7 +4,7 @@ Version 2.0.0 provides native Angular, Vue and React workspaces. React users upg
 
 Identify any type of document and turn PDFs and scanned images into document identities, editable fields, tables, and structured JSON. Use the web workspace, run your own API, or integrate the MIT-licensed packages.
 
-[Open the app](https://www.pagesignal.studio/) · [Documentation](https://www.pagesignal.studio/docs) · [OpenAPI JSON](https://www.pagesignal.studio/openapi.json) · [Source](https://github.com/akhi-ninja/page-signal)
+[Open the app](https://www.pagesignal.studio/) · [Documentation](https://www.pagesignal.studio/docs) · [What’s New](https://www.pagesignal.studio/releases) · [OpenAPI JSON](https://www.pagesignal.studio/openapi.json) · [Source](https://github.com/akhi-ninja/page-signal)
 
 ## Quick start
 
@@ -421,3 +421,9 @@ README.md is the source for the static documentation page. scripts/build-docs.mj
 The document-query handler was reconstructed from the earlier deployment behavior and tested with mocked provider responses. Automated tests do not prove real-world extraction accuracy. Verify your own documents and integration before production use.
 
 MIT licensed. Preserve the license and copyright notices when distributing copies. Questions and bug reports: [GitHub issues](https://github.com/akhi-ninja/page-signal/issues).
+
+## Release history
+
+Visit [What’s New](https://www.pagesignal.studio/releases) for all published product versions, package links and the React v2 migration guide. CHANGELOG.md is the source for release notes. docs/releases.json supplies verified publication dates, summaries, package names and GitHub-tag availability; add metadata there when releasing a new version. npm staging placeholders are not product releases.
+
+After updating the changelog or release metadata, run npm run releases:build and npm run releases:check. The page is static and does not make runtime GitHub or npm API calls.
