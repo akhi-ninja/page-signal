@@ -38,3 +38,9 @@ The iframe reports upload and provider errors within the workspace. There are no
 ## License
 
 MIT. Retain the included license and copyright notices.
+
+## Version 1.1.1 and workspace features
+
+This package remains an iframe wrapper; it does not bundle the web app, backend, authentication database, or admin dashboard. Deploy the v1.1.1 GitHub source application and embed it at the configured same-origin path to use multi-upload, parallel document processing, AI extraction and field lookup, document chat, full-width review, page preview and source highlighting. Account-mode deployments include GitHub login, optional community registration, and allowlisted maintainer usage analytics. Hosted website SEO and domain configuration live in the application source.
+
+[Download full source](https://github.com/akhi-ninja/page-signal/releases/tag/v1.1.1) · [Optional use-case registration](https://www.pagesignal.studio/community)
