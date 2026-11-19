@@ -31,6 +31,7 @@ export class PageSignalWorkspaceComponent implements OnInit,OnDestroy {
  @Output() resultsChange=new EventEmitter<WorkspaceDocument[]>();
  state=signal<WorkspaceState>({documents:[],selectedId:null,error:''});
  store!:WorkspaceController;question='';preview:SafeResourceUrl|null=null;
+ private previewUrl:string|null=null;
  private unsubscribe?:()=>void; private sanitizer=inject(DomSanitizer);private changeDetector=inject(ChangeDetectorRef);
  get current(){return this.state().documents.find(d=>d.id===this.state().selectedId);}
  ngOnInit(){
@@ -38,7 +39,8 @@ export class PageSignalWorkspaceComponent implements OnInit,OnDestroy {
   this.unsubscribe=this.store.subscribe(()=>{
    this.state.set(this.store.getSnapshot());
    // Only locally-created object URLs from validated uploads are trusted. No external URL input.
-   this.preview=this.current?this.sanitizer.bypassSecurityTrustResourceUrl(this.current.previewUrl):null;
+   const url=this.current?.previewUrl || null;
+   if(url!==this.previewUrl){this.previewUrl=url;this.preview=url?this.sanitizer.bypassSecurityTrustResourceUrl(url):null;}
    this.resultsChange.emit(this.state().documents);this.changeDetector.markForCheck();
   });
  }
