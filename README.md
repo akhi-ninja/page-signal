@@ -215,7 +215,7 @@ try {
 }
 ```
 
-extractPage({ image, text = '' }, { apiKey, model }) returns a page response. Optional model overrides the default. HTTP failures expose PageSignalError.status. PDF rendering, OCR, authentication, storage, billing, and multi-page orchestration belong to your application. This package currently exposes page extraction, not a document-query convenience method. Never put OPENAI_API_KEY in browser code.
+extractPage({ image, text = '' }, { apiKey, model }) returns a page response. Optional model overrides the default. HTTP failures expose PageSignalError.status. PDF rendering, OCR, authentication, storage, billing, and multi-page orchestration belong to your application. Use queryDocument for specific fields or document questions. Never put OPENAI_API_KEY in browser code.
 
 ## SDK package
 
@@ -246,7 +246,7 @@ try {
 }
 ```
 
-The constructor also accepts fetch for a custom transport. baseUrl is reduced to its origin, so path prefixes are not supported. It rejects embedded URL credentials and redirects. The default timeout is 120,000 ms. Service errors expose error.status; cancellation/network errors may not. SDK extractPage processes one JPEG page, not a PDF file. Use raw HTTP for document_query; a query convenience method is not yet exported. Keep the SDK and service key on your server.
+The constructor also accepts fetch for a custom transport. baseUrl is reduced to its origin, so path prefixes are not supported. It rejects embedded URL credentials and redirects. The default timeout is 120,000 ms. Service errors expose error.status; cancellation/network errors may not. SDK extractPage processes one JPEG page, not a PDF file. Use client.queryDocument for specific fields or document questions. Keep the SDK and service key on your server.
 
 ## React package
 
@@ -273,6 +273,24 @@ Host or reverse-proxy the Community workspace at /pagesignal/ on your app's orig
 
 Authenticate users in your application. A server-side proxy can attach the Community service token after checking the session; do not expose it as an iframe prop. No result callbacks or document events are exported; use the workspace's Export JSON button. Programmatic extraction uses your backend and the SDK or core package. Your frame-src/frame-ancestors policies must allow the same-origin workspace.
 
+## Version 1.1.1 package queries
+
+Both core and SDK now expose queryDocument for source-supported field lookup and document questions. Core uses your OpenAI credential; SDK uses your self-hosted Community service credential. Neither library uploads PDF binaries or persists documents. Render pages and provide numbered text in your application.
+
+```js
+import { queryDocument } from '@pagesignal/core';
+const result = await queryDocument({
+  pages: [{page: 1, text: 'Policy number: P-1042. Renewal date: 12/01/2026.'}],
+  question: 'Find policy number and renewal date',
+  mode: 'fields',
+  context: ''
+}, {apiKey: process.env.OPENAI_API_KEY});
+console.log(result.fields);
+// SDK: await client.queryDocument({pages, question, mode: 'chat', context: ''});
+```
+
+The GitHub v1.1.1 source release includes the complete workspace and backend. The npm core and SDK are server libraries; the React package is an iframe wrapper and needs the deployed workspace. App-only features such as login, community/admin pages, document preview, source highlighting and SEO are not bundled into standalone core/SDK calls.
+
 ## Errors and troubleshooting
 
 API errors use {"error":"message"}. The status table below describes the Community server and shared engine. Browser UI validation may stop a file before making a request.
@@ -294,7 +312,7 @@ A provider-side 429 is currently wrapped as a 502 by the shared engine. Status c
 
 Original uploads and results remain in the browser session in the current UI; there is no durable document library. With AI enabled, rendered page images and OCR text go through your server to OpenAI. Questions send numbered page text and conversation context. Provider requests set store: false; that flag alone does not define the provider's full retention policy. OCR/PDF dependencies and fonts are loaded from third-party CDNs. Apply your own access, retention, and compliance policies for the documents you process.
 
-Keep provider and service keys server-side. The Community runner defaults to shared service credentials and a per-process concurrency cap. Optional account mode and the Vercel handlers use Better Auth sessions, database-backed sign-in rate limits, and atomic AI request quotas. Account database records and counters persist; they do not contain uploaded document contents. Paid managed Cloud plans, durable submission IDs, webhooks, polling, and npm PDF-upload helpers are not implemented. The standalone npm packages do not enforce hosted account allowances; hosted API guards enforce request quotas separately. Paid credits and distributed in-flight concurrency accounting are not implemented. MIT code can be self-hosted; model and hosting usage are separate.
+Keep provider and service keys server-side. The Community runner defaults to shared service credentials and a per-process concurrency cap. Optional account mode and the Vercel handlers use Better Auth sessions, database-backed sign-in rate limits, and atomic AI request quotas. Account database records and counters persist; they do not contain uploaded document contents. Paid managed Cloud plans, durable submission IDs, webhooks, polling, and npm PDF-upload helpers are not implemented; core and SDK expose queryDocument for text-based field lookup and chat. The standalone npm packages do not enforce hosted account allowances; hosted API guards enforce request quotas separately. Paid credits and distributed in-flight concurrency accounting are not implemented. MIT code can be self-hosted; model and hosting usage are separate.
 
 GitHub development → reviewed PR → main → Vercel is the web deployment flow. Package releases use a stable vX.Y.Z GitHub release from main and publish all three packages via the trusted publish.yml workflow. See [release setup](https://github.com/akhi-ninja/page-signal/blob/development/docs/npm-releases.md). Existing npm versions cannot be overwritten; documentation changes on npm require a new package release.
 
