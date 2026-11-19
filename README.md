@@ -1,5 +1,7 @@
 # PageSignal [![Sponsor PageSignal](https://img.shields.io/badge/Sponsor-PageSignal-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/akhi-ninja)
 
+Native framework packages below describe the unreleased 2.0.0 candidate. Published 1.1.1 remains unchanged until the next release.
+
 Identify any type of document and turn PDFs and scanned images into document identities, editable fields, tables, and structured JSON. Use the web workspace, run your own API, or integrate the MIT-licensed packages.
 
 [Open the app](https://www.pagesignal.studio/) · [Documentation](https://www.pagesignal.studio/docs) · [OpenAPI JSON](https://www.pagesignal.studio/openapi.json) · [Source](https://github.com/akhi-ninja/page-signal)
@@ -8,7 +10,7 @@ Identify any type of document and turn PDFs and scanned images into document ide
 
 The hosted workspace requires GitHub sign-in before uploads, samples, local OCR, AI extraction, or document questions. LinkedIn and email sign-in are reserved for a later phase. Sign in before uploading when using a social provider, because social sign-in reloads the tab.
 
-Use the web app for PDFs and scans. Choose the core package to call OpenAI from your server, the SDK to call a self-hosted PageSignal server, or the React package to embed the existing workspace.
+Use the web app for PDFs and scans. Choose the core package to call OpenAI from your server, the SDK to call a self-hosted PageSignal server, or native React, Angular and Vue packages to add a workspace to your application.
 
 | Interface | What it does | Credential |
 | --- | --- | --- |
@@ -16,7 +18,9 @@ Use the web app for PDFs and scans. Choose the core package to call OpenAI from 
 | Community HTTP API | Extract a rendered page; ask about supplied page text | PageSignal service key |
 | @pagesignal/core | Call the extraction engine in Node.js | Your OpenAI key |
 | @pagesignal/sdk | Call your Community extraction endpoint | PageSignal service key |
-| @pagesignal/react | Embed a same-origin workspace in an iframe | Host application handles access |
+| @pagesignal/react | Native React document workspace | Host-owned extraction adapter |
+| @pagesignal/angular | Native Angular 21 document workspace | Host-owned extraction adapter |
+| @pagesignal/vue | Native Vue 3.5 document workspace | Host-owned extraction adapter |
 
 AI attempts open-vocabulary document identification, including ACORD, USCIS, invoices, receipts, and custom documents. Results depend on scan quality and visible evidence. Ambiguous forms and unreadable values need human review; complete or accurate extraction is not guaranteed.
 
@@ -248,30 +252,107 @@ try {
 
 The constructor also accepts fetch for a custom transport. baseUrl is reduced to its origin, so path prefixes are not supported. It rejects embedded URL credentials and redirects. The default timeout is 120,000 ms. Service errors expose error.status; cancellation/network errors may not. SDK extractPage processes one JPEG page, not a PDF file. Use client.queryDocument for specific fields or document questions. Keep the SDK and service key on your server.
 
+## Native workspace integration
+
+Version 2 replaces the React iframe API and adds native Angular and Vue components. There is no iframe and no dependency on the hosted PageSignal website. Each framework renders its own DOM. Upload validation, queue state, bounded parallel extraction, cancellation, editable fields, queries and JSON export are shared through the browser-safe `@pagesignal/sdk/workspace` entry point.
+
+The packages provide multiple upload/drag-and-drop, per-document status and errors, cancel/retry/remove, fields on the left, PDF/image preview on the right, field source text, query responses and JSON download. They do not bundle account login, admin pages, OCR, PDF rasterization, a provider key, or a backend. Native PDF preview uses the browser's PDF object viewer with an open-file fallback. Precise source overlays, page-level preview controls and OCR progress are features of the full web app, not these initial native components.
+
+Pass an adapter with `extract({file, signal})` and optional `query({file, result, question, mode, signal})` async functions. Extraction returns an object with optional `fields: [{label, value, source: {page, excerpt}}]`; additional classification/text/table properties are retained and exported. Query returns your application's structured result. Field edits are marked `edited: true`; edits from text inputs are strings. The query result is exported separately from extraction. Removing a document or unmounting aborts outstanding work and revokes local preview URLs. Adapters must honor AbortSignal to stop upstream work.
+
+Defaults: 10 files retained, 30 MiB per file, 100 MiB across retained files, and 2 concurrent extractions. Accepted types: PDF, PNG, JPEG, WebP and BMP. SDK controller options expose all limits; components expose maxFiles and concurrency. These are UI limits; enforce file/page/size limits and authentication again on the server. A PDF page limit requires PDF parsing in your adapter.
+
+A host-owned backend adapter can look like this:
+
+```js
+// Browser module. No OpenAI or PageSignal service keys here.
+export const adapter = {
+  async extract({file, signal}) {
+    const form = new FormData();
+    form.append('file', file);
+    const response = await fetch('/api/documents/extract', {
+      method: 'POST', body: form, signal, credentials: 'same-origin'
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Extraction failed');
+    return result;
+  },
+  async query({result, question, mode, signal}) {
+    const response = await fetch('/api/documents/query', {
+      method: 'POST', credentials: 'same-origin', signal,
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({result, question, mode})
+    });
+    const answer = await response.json();
+    if (!response.ok) throw new Error(answer.error || 'Query failed');
+    return answer;
+  }
+};
+```
+
+The two /api/documents routes above are examples you implement in your application; they are not new endpoints in the Community server. Your extraction route validates the upload, renders PDF pages or converts images to JPEG, obtains OCR text if needed, and calls server-side core.extractPage or SDK.extractPage for each page. Preserve numbered page text for core.queryDocument or SDK.queryDocument in the query route. Authenticate and authorize both routes, bound concurrent requests and costs, and do not trust client-supplied extraction results for permissions or source verification. Alternatively implement the adapter with your own existing document service.
+
+No data is sent anywhere until your adapter runs. Do not import the SDK root client into browser code with a service key. Browser applications should import only the workspace entry point, or just a framework component. AI results require review against the source.
+
 ## React package
 
-Embed the existing workspace in React 18 or 19. This package is an iframe wrapper, not a native upload component or a backend.
+React 18 and 19 native component. Version 1 src/title/height iframe props are removed in version 2. In Next.js, use a client component. Keep adapter and configuration stable; changing them recreates the React workspace and clears its documents.
 
 ```sh
-npm install @pagesignal/react react react-dom
+npm install @pagesignal/react@2 @pagesignal/sdk@2 react react-dom
 ```
 
 ```jsx
 import { PageSignalWorkspace } from '@pagesignal/react';
-
+import { adapter } from './document-adapter.js';
 export default function Documents() {
-  return <PageSignalWorkspace
-    src="/pagesignal/"
-    title="Document extraction"
-    height="850px"
-    className="document-workspace"
-  />;
+  return <PageSignalWorkspace adapter={adapter} maxFiles={10} concurrency={2}
+    onResultsChange={documents => console.log(documents)} />;
 }
 ```
 
-Host or reverse-proxy the Community workspace at /pagesignal/ on your app's origin. Map /pagesignal/app.js, /pagesignal/engine.js, and /pagesignal/style.css to the corresponding Community assets, proxy /account.js and /document-viewer.mjs in both service and account modes, and map /api/ai/* to the Community API. Account deployments must also proxy /api/auth/* and preserve cookies and Origin. These API paths are absolute in the bundled UI. The component accepts src, title, height (CSS string), and className. src must be a same-origin path, not an external URL. In Next.js, use it from a client component.
+## Angular package
 
-Authenticate users in your application. A server-side proxy can attach the Community service token after checking the session; do not expose it as an iframe prop. No result callbacks or document events are exported; use the workspace's Export JSON button. Programmatic extraction uses your backend and the SDK or core package. Your frame-src/frame-ancestors policies must allow the same-origin workspace.
+Standalone Angular 21 component, built in Angular Package Format with partial compilation. Import it in the consuming standalone component. Angular configuration inputs are read on initialization; adapter callbacks use the latest adapter input. Use maxFiles and concurrency before initialization.
+
+```sh
+npm install @pagesignal/angular@2 @pagesignal/sdk@2
+```
+
+```ts
+import { Component } from '@angular/core';
+import { PageSignalWorkspaceComponent } from '@pagesignal/angular';
+import { adapter } from './document-adapter';
+@Component({
+  selector: 'app-documents', standalone: true,
+  imports: [PageSignalWorkspaceComponent],
+  template: '<pagesignal-workspace [adapter]="adapter" [concurrency]="2" (resultsChange)="onResults($event)" />'
+})
+export class DocumentsComponent {
+  adapter = adapter;
+  onResults(documents: unknown) { console.log(documents); }
+}
+```
+
+## Vue package
+
+Native Vue 3.5 component. Configuration inputs are read on mount; adapter callbacks use the latest adapter prop. Use maxFiles and concurrency before mount.
+
+```sh
+npm install @pagesignal/vue@2 @pagesignal/sdk@2 vue
+```
+
+```vue
+<script setup>
+import { PageSignalWorkspace } from '@pagesignal/vue';
+import { adapter } from './document-adapter.js';
+const onResults = documents => console.log(documents);
+</script>
+<template>
+  <PageSignalWorkspace :adapter="adapter" :max-files="10" :concurrency="2"
+    @results-change="onResults" />
+</template>
+```
 
 ## Version 1.1.1 package queries
 
@@ -289,7 +370,7 @@ console.log(result.fields);
 // SDK: await client.queryDocument({pages, question, mode: 'chat', context: ''});
 ```
 
-The GitHub v1.1.1 source release includes the complete workspace and backend. The npm core and SDK are server libraries; the React package is an iframe wrapper and needs the deployed workspace. App-only features such as login, community/admin pages, document preview, source highlighting and SEO are not bundled into standalone core/SDK calls.
+The GitHub source includes the complete hosted workspace and backend. Core and SDK root exports remain server libraries. The new framework packages provide native UI through a host adapter; hosted login, community/admin pages and SEO are application features.
 
 ## Errors and troubleshooting
 
@@ -314,7 +395,7 @@ Original uploads and results remain in the browser session in the current UI; th
 
 Keep provider and service keys server-side. The Community runner defaults to shared service credentials and a per-process concurrency cap. Optional account mode and the Vercel handlers use Better Auth sessions, database-backed sign-in rate limits, and atomic AI request quotas. Account database records and counters persist; they do not contain uploaded document contents. Paid managed Cloud plans, durable submission IDs, webhooks, polling, and npm PDF-upload helpers are not implemented; core and SDK expose queryDocument for text-based field lookup and chat. The standalone npm packages do not enforce hosted account allowances; hosted API guards enforce request quotas separately. Paid credits and distributed in-flight concurrency accounting are not implemented. MIT code can be self-hosted; model and hosting usage are separate.
 
-GitHub development → reviewed PR → main → Vercel is the web deployment flow. Package releases use a stable vX.Y.Z GitHub release from main and publish all three packages via the trusted publish.yml workflow. See [release setup](https://github.com/akhi-ninja/page-signal/blob/development/docs/npm-releases.md). Existing npm versions cannot be overwritten; documentation changes on npm require a new package release.
+GitHub development → reviewed PR → main → Vercel is the web deployment flow. Package releases use a stable vX.Y.Z GitHub release from main and publish all five packages via the trusted publish.yml workflow. See [release setup](https://github.com/akhi-ninja/page-signal/blob/development/docs/npm-releases.md). Existing npm versions cannot be overwritten; documentation changes on npm require a new package release.
 
 ## Community registration and maintainer usage
 
