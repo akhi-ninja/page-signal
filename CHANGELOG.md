@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 (unreleased)
+## 2.0.0
 
 - Add native Angular 21 and Vue 3.5 document workspace packages.
 - Replace the React iframe wrapper with a native DOM workspace (breaking API change).
