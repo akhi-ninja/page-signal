@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { execFileSync, spawnSync } from 'node:child_process';
 
-const names = ['core', 'sdk', 'react'];
+const names = ['core', 'sdk', 'react', 'angular', 'vue'];
 const packages = names.map(name => ({
   directory: `packages/${name}`,
   ...JSON.parse(readFileSync(`packages/${name}/package.json`, 'utf8'))
@@ -10,7 +10,7 @@ const version = packages[0].version;
 if (!/^\d+\.\d+\.\d+$/.test(version)) throw new Error('A stable version is required.');
 for (const pkg of packages) {
   if (pkg.version !== version || pkg.name !== `@pagesignal/${pkg.directory.split('/')[1]}` || pkg.private) {
-    throw new Error('All three public packages must have the same release version.');
+    throw new Error('All public packages must have the same release version.');
   }
   if (pkg.repository?.url !== 'git+https://github.com/akhi-ninja/page-signal.git') {
     throw new Error(`Incorrect repository for ${pkg.name}`);
@@ -20,7 +20,7 @@ if (process.env.RELEASE_TAG && process.env.RELEASE_TAG !== `v${version}`) {
   throw new Error(`Release tag must be v${version}`);
 }
 if (process.argv.includes('--check')) {
-  console.log(`Validated three packages at version ${version}`);
+  console.log(`Validated five packages at version ${version}`);
   process.exit(0);
 }
 if (process.env.GITHUB_ACTIONS !== 'true' || !process.env.RELEASE_TAG) {
@@ -42,7 +42,7 @@ const pending = packages.filter(pkg => {
   return true;
 });
 for (const pkg of pending) {
-  execFileSync('npm', ['publish', `./${pkg.directory}`, '--access=public', '--provenance',
+  execFileSync('npm', ['publish', pkg.name === '@pagesignal/angular' ? './packages/angular/dist' : `./${pkg.directory}`, '--access=public', '--provenance',
     '--registry=https://registry.npmjs.org/'], { stdio: 'inherit' });
 }
 console.log('All release versions have been submitted to npm.');

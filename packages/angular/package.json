@@ -1,0 +1,42 @@
+{
+  "name": "@pagesignal/angular",
+  "version": "2.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "Native PageSignal document workspace for Angular",
+  "files": [
+    "fesm2022",
+    "types",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "@angular/core": ">=21 <22",
+    "@angular/common": ">=21 <22",
+    "rxjs": "^7.8.0",
+    "@angular/platform-browser": ">=21 <22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akhi-ninja/page-signal.git",
+    "directory": "packages/angular"
+  },
+  "homepage": "https://www.pagesignal.studio/docs#angular-package",
+  "bugs": {
+    "url": "https://github.com/akhi-ninja/page-signal/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/akhi-ninja"
+  },
+  "dependencies": {
+    "@pagesignal/sdk": "2.0.0"
+  },
+  "scripts": {
+    "build": "ng-packagr -p ng-package.json -c tsconfig.json"
+  }
+}
