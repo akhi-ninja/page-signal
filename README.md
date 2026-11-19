@@ -16,11 +16,11 @@ Use the web app for PDFs and scans. Choose the core package to call OpenAI from 
 | --- | --- | --- |
 | Web workspace | Upload, identify, review, ask, export | Hosting access, if enabled |
 | Community HTTP API | Extract a rendered page; ask about supplied page text | PageSignal service key |
-| @pagesignal/core | Call the extraction engine in Node.js | Your OpenAI key |
-| @pagesignal/sdk | Call your Community extraction endpoint | PageSignal service key |
-| @pagesignal/react | Native React document workspace | Host-owned extraction adapter |
-| @pagesignal/angular | Native Angular 21 document workspace | Host-owned extraction adapter |
-| @pagesignal/vue | Native Vue 3.5 document workspace | Host-owned extraction adapter |
+| [@pagesignal/core](https://www.npmjs.com/package/@pagesignal/core) | Call the extraction engine in Node.js | Your OpenAI key |
+| [@pagesignal/sdk](https://www.npmjs.com/package/@pagesignal/sdk) | Call your Community extraction endpoint | PageSignal service key |
+| [@pagesignal/react](https://www.npmjs.com/package/@pagesignal/react) | Native React document workspace | Host-owned extraction adapter |
+| [@pagesignal/angular](https://www.npmjs.com/package/@pagesignal/angular) | Native Angular 21 document workspace | Host-owned extraction adapter |
+| [@pagesignal/vue](https://www.npmjs.com/package/@pagesignal/vue) | Native Vue 3.5 document workspace | Host-owned extraction adapter |
 
 AI attempts open-vocabulary document identification, including ACORD, USCIS, invoices, receipts, and custom documents. Results depend on scan quality and visible evidence. Ambiguous forms and unreadable values need human review; complete or accurate extraction is not guaranteed.
 
