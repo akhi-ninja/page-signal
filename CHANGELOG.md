@@ -32,3 +32,14 @@
 - PageSignal branding, studio domain links, usage documentation, SEO metadata, structured data and sitemap.
 
 AI output still requires source review. Queries use supplied text, and scans may require vision extraction. The npm packages do not bundle hosted account infrastructure or the complete browser application; those are available in the GitHub source release. Existing npm installations do not update automatically.
+
+## 0.1.0
+
+### Initial npm release
+
+- Introduce `@pagesignal/core` for server-side document extraction using an OpenAI credential.
+- Introduce `@pagesignal/sdk` for calling a self-hosted PageSignal service from Node.js.
+- Introduce `@pagesignal/react` as a same-origin iframe wrapper for the deployed workspace.
+- Publish the initial three packages under the MIT license.
+
+This version was published to npm on November 17, 2026. It did not have a corresponding GitHub release. npm staging placeholders are not product releases.
