@@ -1,3 +1,4 @@
+import { loadOCR } from '/ocr-loader.mjs';
 import { DocumentViewer, pdfWordBoxes, ocrWordBoxes } from '/document-viewer.mjs';
 const $=id=>document.getElementById(id);
 const jobs=[];
@@ -164,8 +165,8 @@ function recognize(job,image,page){
 async function readWithOCR(job,image,page){
  activeOCR={job,page};
  if(!worker){
-   if(!window.Tesseract)throw new Error('The OCR library could not load. Check your internet connection and retry.');
    status(job,'Loading English OCR model');
+   const Tesseract=await loadOCR();
    worker=await Tesseract.createWorker('eng',1,{logger(message){
      if(activeOCR&&message.status==='recognizing text')status(activeOCR.job,'Reading page '+activeOCR.page,message.progress);
    }});

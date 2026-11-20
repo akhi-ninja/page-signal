@@ -391,7 +391,7 @@ A provider-side 429 is currently wrapped as a 502 by the shared engine. Status c
 
 ## Privacy and deployment
 
-Original uploads and results remain in the browser session in the current UI; there is no durable document library. With AI enabled, rendered page images and OCR text go through your server to OpenAI. Questions send numbered page text and conversation context. Provider requests set store: false; that flag alone does not define the provider's full retention policy. OCR/PDF dependencies and fonts are loaded from third-party CDNs. Apply your own access, retention, and compliance policies for the documents you process.
+Original uploads and results remain in the browser session in the current UI; there is no durable document library. With AI enabled, rendered page images and OCR text go through your server to OpenAI. Questions send numbered page text and conversation context. Provider requests set store: false; that flag alone does not define the provider's full retention policy. OCR/PDF dependencies are loaded from third-party CDNs when needed; interface fonts use the system font stack. Apply your own access, retention, and compliance policies for the documents you process.
 
 Keep provider and service keys server-side. The Community runner defaults to shared service credentials and a per-process concurrency cap. Optional account mode and the Vercel handlers use Better Auth sessions, database-backed sign-in rate limits, and atomic AI request quotas. Account database records and counters persist; they do not contain uploaded document contents. Paid managed Cloud plans, durable submission IDs, webhooks, polling, and npm PDF-upload helpers are not implemented; core and SDK expose queryDocument for text-based field lookup and chat. The standalone npm packages do not enforce hosted account allowances; hosted API guards enforce request quotas separately. Paid credits and distributed in-flight concurrency accounting are not implemented. MIT code can be self-hosted; model and hosting usage are separate.
 
@@ -413,6 +413,8 @@ The account-mode Node runner and Vercel expose GET /api/community for your own r
 npm test
 npm run docs:build
 npm run docs:check
+npm run styles:build
+npm run styles:check
 npm run pack:packages
 ```
 
@@ -427,3 +429,5 @@ MIT licensed. Preserve the license and copyright notices when distributing copie
 Visit [What’s New](https://www.pagesignal.studio/releases) for all published product versions, package links and the React v2 migration guide. CHANGELOG.md is the source for release notes. docs/releases.json supplies verified publication dates, summaries, package names and GitHub-tag availability; add metadata there when releasing a new version. npm staging placeholders are not product releases.
 
 After updating the changelog or release metadata, run npm run releases:build and npm run releases:check. The page is static and does not make runtime GitHub or npm API calls.
+
+The workspace embeds its small stylesheet for the initial render. After changing `web/style.css`, run `npm run styles:build`; CI checks that the embedded copy stays synchronized. The UI uses system fonts. OCR downloads on the first recognition request rather than during initial page load.
