@@ -1,7 +1,11 @@
 (() => {
  if(location.hostname==='page-signal.vercel.app')location.replace('https://www.pagesignal.studio'+location.pathname+location.search);
  const $=id=>document.getElementById(id), admin=location.pathname.replace(/\/$/,'')==='/admin';
- const form=$('community-form');let page=1,busy=false;
+ const form=$('community-form');let page=1,busy=false,signingIn=false;
+ async function providerAvailability(){
+  try {const response=await fetch('/api/ai/status',{credentials:'same-origin',cache:'no-store'});if(!response.ok)return;const status=await response.json();const available=!admin && status.authConfigured && status.providers?.linkedin;$('login-linkedin').hidden=!available;$('login-linkedin').disabled=signingIn||!available;}catch{}
+ }
+ void providerAvailability();
  const date=value=>value?new Date(value).toISOString().slice(0,10):'—';
  const text=(tag,value)=>{const node=document.createElement(tag);node.textContent=value??'';return node;};
  async function api(method='GET',data,view=''){
@@ -29,14 +33,15 @@
    $('notice').textContent='';
   }catch(error){errorState(error);}
  }
+ if(new URLSearchParams(location.search).get('signin')==='failed')$('notice').textContent='Sign-in failed. Use your original provider if you already have an account.';
  if(admin){$('title').textContent='PageSignal admin';$('description').textContent='Registered accounts, voluntary registrations and hosted AI usage.';}
- $('login').addEventListener('click',async()=>{
-  $('login').disabled=true;$('notice').textContent='Opening GitHub sign-in…';
-  try{const r=await fetch('/api/auth/sign-in/social',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:'github',callbackURL:admin?'/admin':'/community',errorCallbackURL:'/community?signin=failed'})});const data=await r.json();if(!r.ok)throw Error('Sign-in could not start. Try again.');const destination=new URL(data.url);if(destination.protocol!=='https:')throw Error('Invalid sign-in destination.');location.assign(destination.href);}catch(error){errorState(error);$('login').disabled=false;}
+ for(const [id,provider] of [['login','github'],['login-linkedin','linkedin']]) $(id).addEventListener('click',async()=>{
+  if(signingIn)return;signingIn=true;$('login').disabled=true;$('login-linkedin').disabled=true;$('notice').textContent='Opening '+(provider==='github'?'GitHub':'LinkedIn')+' sign-in…';
+  try{const r=await fetch('/api/auth/sign-in/social',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider,callbackURL:admin?'/admin':'/community',errorCallbackURL:(admin?'/admin':'/community')+'?signin=failed'})});const data=await r.json();if(!r.ok)throw Error('Sign-in could not start. Try again.');const destination=new URL(data.url);if(destination.protocol!=='https:')throw Error('Invalid sign-in destination.');location.assign(destination.href);}catch(error){signingIn=false;errorState(error);$('login').disabled=false;$('login-linkedin').disabled=false;}
  });
  form.addEventListener('submit',async event=>{event.preventDefault();if(busy)return;busy=true;$('save').disabled=true;
   try{await api('PUT',{organization:form.elements.organization.value,use_case:form.elements.use_case.value,integration:form.elements.integration.value,consent:form.elements.consent.checked,contact_opt_in:form.elements.contact_opt_in.checked});await load();$('notice').textContent='Registration saved. Thank you for sharing your use case.';}catch(error){errorState(error);}finally{busy=false;$('save').disabled=false;}
  });
  $('withdraw').addEventListener('click',async()=>{if(busy)return;busy=true;$('withdraw').disabled=true;try{await api('DELETE');await load();$('notice').textContent='Registration withdrawn. Your sign-in account and hosted usage records remain.';}catch(error){errorState(error);}finally{busy=false;$('withdraw').disabled=false;}});
- $('previous').addEventListener('click',()=>{if(page>1){page--;void load();}});$('next').addEventListener('click',()=>{page++;void load();});void load();
+ $('previous').addEventListener('click',()=>{if(page>1){page--;void load();}});$('next').addEventListener('click',()=>{page++;void load();});void load().then(()=>{if(new URLSearchParams(location.search).get('signin')==='failed')$('notice').textContent='Sign-in failed or was cancelled. Use your original provider if you already have an account.';});
 })();

@@ -8,7 +8,7 @@ Identify any type of document and turn PDFs and scanned images into document ide
 
 ## Quick start
 
-The hosted workspace requires GitHub sign-in before uploads, samples, local OCR, AI extraction, or document questions. LinkedIn and email sign-in are reserved for a later phase. Sign in before uploading when using a social provider, because social sign-in reloads the tab.
+The hosted workspace requires GitHub or configured LinkedIn sign-in before uploads, samples, local OCR, AI extraction, or document questions. LinkedIn uses OpenID Connect and appears when its credentials are configured. Email sign-in remains reserved for a later phase. Accounts are not automatically linked across providers; use your original provider for an existing account. Sign in before uploading when using a social provider, because social sign-in reloads the tab.
 
 Use the web app for PDFs and scans. Choose the core package to call OpenAI from your server, the SDK to call a self-hosted PageSignal server, or native React, Angular and Vue packages to add a workspace to your application.
 
@@ -399,7 +399,7 @@ GitHub development → reviewed PR → main → Vercel is the web deployment flo
 
 ## Community registration and maintainer usage
 
-Open https://www.pagesignal.studio/community to optionally share your organization, use case and integration. Sign in with GitHub first. Your registration is private to the maintainer, and a separate checkbox permits contact about your use case. You can update or withdraw the registration at any time. Package downloads do not require registration, and no npm install telemetry is included.
+Open https://www.pagesignal.studio/community to optionally share your organization, use case and integration. Sign in with GitHub or configured LinkedIn first. Your registration is private to the maintainer, and a separate checkbox permits contact about your use case. You can update or withdraw the registration at any time. Package downloads do not require registration, and no npm install telemetry is included.
 
 The private admin view is https://www.pagesignal.studio/admin. Set PAGESIGNAL_ADMIN_GITHUB_IDS to a comma-separated list of trusted numeric GitHub account IDs in the server environment, then redeploy. Access is checked against the signed-in user's linked GitHub account on every admin request, not a browser flag or email address. With an empty allowlist, nobody has admin access. Use the same allowlist only where the corresponding deployment's database should be accessible to those maintainers.
 
