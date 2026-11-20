@@ -15,7 +15,8 @@
     document.getElementById('account-usage').textContent = state.usage
       ? `${state.usage.used} of ${state.usage.dailyLimit} AI requests used today. Resets at ${new Date(state.usage.resetsAt).toLocaleString()}. Each page extraction or question counts as one request; attempts can count even if extraction fails.` : '';
     document.getElementById('login-github').disabled = signingIn;
-    document.getElementById('login-linkedin').disabled = !state.authConfigured || !state.providers.linkedin;
+    document.getElementById('login-linkedin').hidden = !state.authConfigured || !state.providers.linkedin;
+    document.getElementById('login-linkedin').disabled = signingIn || !state.authConfigured || !state.providers.linkedin;
     document.getElementById('email-submit').disabled = !state.authConfigured || !state.providers.email;
     document.getElementById('email-address').disabled = !state.authConfigured || !state.providers.email;
     document.getElementById('account-setup').hidden = state.authConfigured && Object.values(state.providers).some(Boolean);
@@ -33,14 +34,14 @@
     const response = await fetch('/api/auth/'+path, { method: 'POST', credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     let data;try { data=await response.json(); } catch {}
-    if (!response.ok) throw new Error('Sign-in could not complete. Please try again with GitHub.');
+    if (!response.ok) throw new Error('Sign-in could not complete. If you already have an account, use your original sign-in provider. Otherwise please try again.');
     return data;
   }
   button.addEventListener('click', () => { message.textContent='';dialog.showModal();void refresh(); });
   document.getElementById('account-close').addEventListener('click', () => dialog.close());
   for (const provider of ['github','linkedin']) document.getElementById('login-'+provider).addEventListener('click', async event => {
     if (window.pageSignalHasDocuments?.() && !confirm('Social sign-in reloads this tab. Export your results first; you will need to upload the original documents again. Continue?')) return;
-    const target=event.currentTarget;signingIn=true;target.disabled=true;message.textContent='Opening secure sign-in…';
+    const target=event.currentTarget;signingIn=true;render();target.disabled=true;message.textContent='Opening secure sign-in…';
     try {
       const data = await post('sign-in/social', { provider, callbackURL: '/', errorCallbackURL: '/?signin=failed' });
       const url=new URL(data.url);
@@ -68,7 +69,7 @@
       await ready;
       if (state.statusUnavailable) await refresh();
       if (state.authRequired === false || state.user) return true;
-      message.textContent='Sign in with GitHub to upload documents. After signing in, choose or drop your files again.';
+      message.textContent='Sign in with an available provider to upload documents. After signing in, choose or drop your files again.';
       if (!dialog.open) dialog.showModal();
       return false;
     }

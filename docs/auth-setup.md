@@ -1,6 +1,6 @@
 # PageSignal hosted account setup
 
-Phase one uses GitHub OAuth through Better Auth 1.7.25 with PostgreSQL. LinkedIn and email sign-in are hidden in the hosted UI and are optional future providers; do not configure their credentials for phase one. Authentication is separate from the GitHub integration used to commit this repository.
+Hosted sign-in uses GitHub OAuth and optionally LinkedIn OpenID Connect through Better Auth 1.7.25 with PostgreSQL. The workspace and community page show LinkedIn when credentials are configured. Admin sign-in remains GitHub because administrator authorization uses linked GitHub numeric IDs. Email sign-in remains hidden. Authentication is separate from the GitHub integration used to commit this repository.
 
 ## Required infrastructure
 
@@ -13,8 +13,8 @@ Create a dedicated PostgreSQL database (for example Neon) for PageSignal. Do not
 | BETTER_AUTH_SECRET | A cryptographically random secret of at least 32 characters |
 | GITHUB_CLIENT_ID | GitHub OAuth application client ID |
 | GITHUB_CLIENT_SECRET | GitHub OAuth application client secret |
-| LINKEDIN_CLIENT_ID | Optional future phase; leave unset |
-| LINKEDIN_CLIENT_SECRET | Optional future phase; leave unset |
+| LINKEDIN_CLIENT_ID | LinkedIn app client ID; optional alternative to GitHub |
+| LINKEDIN_CLIENT_SECRET | LinkedIn app client secret; required to enable LinkedIn |
 | RESEND_API_KEY | Optional future phase; leave unset |
 | AUTH_EMAIL_FROM | Optional future phase; leave unset |
 | OPENAI_API_KEY | Existing server-side provider key |
@@ -42,7 +42,7 @@ Create a LinkedIn developer app and enable the **Sign In with LinkedIn using Ope
 
 `https://www.pagesignal.studio/api/auth/callback/linkedin`
 
-The integration requests openid, profile, and email only. Some LinkedIn accounts may not provide a verified email claim. AI access requires a verified email; use the email magic link for that email address if necessary. The app does not silently link different social providers by a matching email. Use the original provider or email magic link to return to an existing account.
+Save both credentials for Production and redeploy. `LINKED_CLIENT_ID` is accepted as a legacy fallback; `LINKEDIN_CLIENT_ID` takes precedence. No client secret is exposed in status responses or browser code. The integration requests openid, profile, and email only. Some LinkedIn accounts may not provide a verified email claim. AI access requires a verified email; verify the email with LinkedIn and sign in again, or use GitHub with a verified email. Do not bypass this requirement or manually mark accounts verified. The app does not silently link different social providers by a matching email. Use the original provider to return to an existing account. Explicit cross-provider account linking is not offered in this release; a matching existing email may be rejected rather than merged. LinkedIn login does not grant admin access. OAuth redirects reload the tab; after login choose or drop your documents again.
 
 ### Email
 
@@ -58,7 +58,7 @@ npm run auth:migrate
 
 This uses Better Auth's version-matched programmatic migrations and creates the PageSignal usage table. It is an explicit operator command; it does not run DDL during public requests. A failed or missing database migration causes account/AI operations to fail closed.
 
-Deploy after configuration and migration. For phase one, verify GitHub login, sign-out, anonymous API rejection (401), usage counters, and 429 limits. Verify other providers only if enabling them in a later phase. A status response reporting authConfigured only confirms configuration presence; it does not prove migrations, providers, or sender setup work.
+Deploy after configuration and migration. Verify GitHub and configured LinkedIn login, new and returning users, denied consent, collisions with existing accounts, verified-email enforcement, sign-out, anonymous API rejection (401), usage counters, and 429 limits. Test LinkedIn with the real app before claiming successful end-to-end production login. A status response reporting authConfigured only confirms configuration presence; it does not prove migrations, providers, or sender setup work.
 
 ## Self-hosting modes
 
