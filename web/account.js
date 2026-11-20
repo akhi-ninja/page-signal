@@ -14,6 +14,8 @@
     document.getElementById('account-name').textContent = state.user?.email || '';
     document.getElementById('account-usage').textContent = state.usage
       ? `${state.usage.used} of ${state.usage.dailyLimit} AI requests used today. Resets at ${new Date(state.usage.resetsAt).toLocaleString()}. Each page extraction or question counts as one request; attempts can count even if extraction fails.` : '';
+    document.getElementById('account-connections').hidden = !state.user || !state.providers.linkedin;
+    document.getElementById('connect-linkedin').disabled = signingIn;
     document.getElementById('login-github').disabled = signingIn;
     document.getElementById('login-linkedin').hidden = !state.authConfigured || !state.providers.linkedin;
     document.getElementById('login-linkedin').disabled = signingIn || !state.authConfigured || !state.providers.linkedin;
@@ -23,12 +25,15 @@
     window.dispatchEvent(new CustomEvent('pagesignal:account', { detail: state }));
   }
   async function refresh() {
+    const wasSignedIn = Boolean(state.user);
     try {
       const response = await fetch('/api/ai/status', { credentials: 'same-origin', cache: 'no-store' });
       if (!response.ok) throw new Error('Account service unavailable');
       state = { ...state, ...(await response.json()), statusUnavailable: false };
     } catch { state = { ...state, configured: false, user: null, authConfigured: false, providers: {}, statusUnavailable: true }; }
-    render();return state;
+    render();
+    if (!wasSignedIn && state.user && dialog.open) { message.textContent='';dialog.close(); }
+    return state;
   }
   async function post(path, body) {
     const response = await fetch('/api/auth/'+path, { method: 'POST', credentials: 'same-origin',
@@ -48,6 +53,16 @@
       if (url.protocol!=='https:') throw new Error('Invalid sign-in destination');
       location.assign(url.href);
     } catch (error) { signingIn=false;message.textContent=error.message;render(); }
+  });
+  document.getElementById('connect-linkedin').addEventListener('click', async () => {
+    if (!state.user || signingIn) return;
+    if (window.pageSignalHasDocuments?.() && !confirm('Connecting LinkedIn reloads this tab. Export your results first; choose your files again afterwards. Continue?')) return;
+    signingIn=true;render();message.textContent='Opening LinkedIn to connect this account…';
+    try {
+      const data=await post('link-social',{provider:'linkedin',callbackURL:'/',errorCallbackURL:'/?signin=failed'});
+      const url=new URL(data.url);if(url.protocol!=='https:' || url.hostname!=='www.linkedin.com')throw new Error('Invalid LinkedIn destination');
+      location.assign(url.href);
+    } catch { signingIn=false;render();message.textContent='LinkedIn could not be connected. Sign out and sign in with your original provider again, then retry. Your LinkedIn email must match this account and be verified.'; }
   });
   document.getElementById('email-sign-in').addEventListener('submit', async event => {
     event.preventDefault();const submit=document.getElementById('email-submit');submit.disabled=true;
@@ -76,6 +91,16 @@
   };
   const ready=refresh();window.PageSignalAccount.ready=ready;
   if (new URLSearchParams(location.search).get('signin')==='failed') {
-    message.textContent='Sign-in failed or the link expired. Please try again.';dialog.showModal();
+    const code=new URLSearchParams(location.search).get('error');
+    const errors={
+      account_not_linked:'This email already has a PageSignal account. Sign in with GitHub (or your original provider), open Account, then choose Connect LinkedIn. After connecting, either provider can sign in to the same account.',
+      email_does_not_match:'LinkedIn could not be connected because its email differs from your PageSignal account email. Use the same verified email for both.',
+      unable_to_link_account:'LinkedIn could not be connected. Sign in again with your original provider and retry. LinkedIn must supply the same verified email.',
+      account_already_linked_to_different_user:'This LinkedIn identity is already connected to a different PageSignal account. Use the original provider for that account.'
+    };
+    message.textContent=errors[code] || 'Sign-in did not complete or was cancelled. Use your original provider for an existing account, or try again.';
+    dialog.showModal();
+    ready.then(()=>{if(state.user && !dialog.open && code) {message.textContent=errors[code] || 'LinkedIn could not be connected. Please try again from Account.';dialog.showModal();}});
+    const clean=new URL(location.href);clean.searchParams.delete('signin');clean.searchParams.delete('error');history.replaceState(null,'',clean.pathname+clean.search+clean.hash);
   }
 })();
