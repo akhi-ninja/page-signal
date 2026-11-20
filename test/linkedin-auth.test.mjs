@@ -1,0 +1,80 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {randomBytes} from 'node:crypto';
+import {readFileSync} from 'node:fs';
+import {DatabaseSync} from 'node:sqlite';
+import {JSDOM} from 'jsdom';
+import {betterAuth} from 'better-auth';
+import {getMigrations} from 'better-auth/db/migration';
+import {authConfiguration,getAuthRuntime} from '../lib/auth.mjs';
+
+const config=()=>({BETTER_AUTH_URL:'http://localhost:3000',DATABASE_URL:'postgres://localhost/not-used',BETTER_AUTH_SECRET:randomBytes(32).toString('base64url'),GITHUB_CLIENT_ID:'github-client',GITHUB_CLIENT_SECRET:'github-secret',LINKED_CLIENT_ID:'legacy-client',LINKEDIN_CLIENT_SECRET:'linkedin-secret'});
+
+test('LinkedIn supports canonical and legacy IDs, requires a secret, and never enables automatic account linking',async()=>{
+ const env=config();
+ assert.equal(authConfiguration(env).providers.linkedin,true);
+ assert.equal(authConfiguration({...env,LINKEDIN_CLIENT_SECRET:''}).providers.linkedin,false);
+ assert.equal(authConfiguration({...env,LINKED_CLIENT_ID:''}).providers.linkedin,false);
+ const runtime=getAuthRuntime({...env,LINKEDIN_CLIENT_ID:'canonical-client'});
+ try{
+  assert.equal(runtime.auth.options.socialProviders.linkedin.clientId,'canonical-client');
+  assert.equal(runtime.auth.options.account.accountLinking.enabled,false);
+  assert.deepEqual(runtime.auth.options.trustedOrigins,['http://localhost:3000']);
+  assert.deepEqual(runtime.auth.options.socialProviders.linkedin.scope,['openid','profile','email']);
+ }finally{await runtime.pool.end();}
+});
+
+test('real auth handler starts both OAuth providers with state and the correct callback; rejects foreign return URL',async()=>{
+ const runtime=getAuthRuntime(config()),database=new DatabaseSync(':memory:');
+ const auth=betterAuth({...runtime.auth.options,database});
+ try{
+  const {runMigrations}=await getMigrations(auth.options);await runMigrations();
+  const start=(provider,callbackURL='/')=>auth.handler(new Request('http://localhost:3000/api/auth/sign-in/social',{method:'POST',headers:{Origin:'http://localhost:3000','Content-Type':'application/json'},body:JSON.stringify({provider,callbackURL,errorCallbackURL:'/?signin=failed'})}));
+  for(const provider of ['github','linkedin']){
+   const response=await start(provider);assert.equal(response.status,200);
+   const data=await response.json(),url=new URL(data.url);
+   assert.equal(url.hostname,provider==='linkedin'?'www.linkedin.com':'github.com');
+   assert.equal(url.searchParams.get('redirect_uri'),'http://localhost:3000/api/auth/callback/'+provider);
+   assert(url.searchParams.get('state'));
+   if(provider==='linkedin'){
+    assert.equal(url.searchParams.get('client_id'),'legacy-client');
+    for(const scope of ['openid','profile','email'])assert(url.searchParams.get('scope').split(' ').includes(scope));
+   }
+   assert(!data.url.includes('linkedin-secret'));
+  }
+  assert.equal((await start('linkedin','https://attacker.example/')).status,403);
+  const invalid=await auth.handler(new Request('http://localhost:3000/api/auth/callback/linkedin?code=forged&state=forged'));
+  assert.notEqual(invalid.status,200);assert(!invalid.headers.getSetCookie().some(cookie=>/session_token=/.test(cookie)));
+ }finally{database.close();await runtime.pool.end();}
+});
+
+function accountUI(providers){
+ const html=readFileSync('web/index.html','utf8'),script=readFileSync('web/account.js','utf8');
+ const dom=new JSDOM(html,{url:'https://www.pagesignal.studio/',runScripts:'outside-only'});
+ const {window}=dom;let calls=[];
+ window.HTMLDialogElement.prototype.showModal=function(){this.open=true;};
+ window.HTMLDialogElement.prototype.close=function(){this.open=false;};
+ window.fetch=async(path,options)=>{calls.push({path,options});if(path==='/api/ai/status')return {ok:true,json:async()=>({authRequired:true,authConfigured:true,user:null,providers})};return {ok:false,json:async()=>({error:'mock failure'})};};
+ window.eval(script);return {dom,window,calls};
+}
+test('workspace reveals configured LinkedIn, preserves GitHub, prompts before upload and sends LinkedIn provider',async()=>{
+ const {dom,window,calls}=accountUI({github:true,linkedin:true});
+ try{
+  await window.PageSignalAccount.ready;
+  assert.equal(window.document.getElementById('login-linkedin').hidden,false);
+  assert.equal(window.document.getElementById('login-linkedin').disabled,false);
+  assert.equal(await window.PageSignalAccount.ensureSignedIn(),false);
+  assert.equal(window.document.getElementById('account-dialog').open,true);
+  window.document.getElementById('login-linkedin').click();
+  assert.equal(window.document.getElementById('login-github').disabled,true);
+  await new Promise(r=>setTimeout(r,0));
+  const request=calls.find(c=>c.path==='/api/auth/sign-in/social');assert.equal(JSON.parse(request.options.body).provider,'linkedin');
+  assert.equal(JSON.parse(request.options.body).callbackURL,'/');
+  assert.match(window.document.getElementById('account-message').textContent,/original sign-in provider/);
+  assert.equal(window.document.getElementById('login-github').disabled,false);
+ }finally{dom.window.close();}
+});
+test('unconfigured LinkedIn remains hidden and unavailable while GitHub works',async()=>{
+ const {dom,window}=accountUI({github:true,linkedin:false});
+ try{await window.PageSignalAccount.ready;assert.equal(window.document.getElementById('login-linkedin').hidden,true);assert.equal(window.document.getElementById('login-linkedin').disabled,true);assert.equal(window.document.getElementById('login-github').disabled,false);}finally{dom.window.close();}
+});
