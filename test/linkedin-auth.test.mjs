@@ -10,7 +10,7 @@ import {authConfiguration,getAuthRuntime} from '../lib/auth.mjs';
 
 const config=()=>({BETTER_AUTH_URL:'http://localhost:3000',DATABASE_URL:'postgres://localhost/not-used',BETTER_AUTH_SECRET:randomBytes(32).toString('base64url'),GITHUB_CLIENT_ID:'github-client',GITHUB_CLIENT_SECRET:'github-secret',LINKED_CLIENT_ID:'legacy-client',LINKEDIN_CLIENT_SECRET:'linkedin-secret'});
 
-test('LinkedIn supports canonical and legacy IDs, requires a secret, and never enables automatic account linking',async()=>{
+test('LinkedIn supports canonical and legacy IDs, requires a secret, and requires explicit authenticated account linking',async()=>{
  const env=config();
  assert.equal(authConfiguration(env).providers.linkedin,true);
  assert.equal(authConfiguration({...env,LINKEDIN_CLIENT_SECRET:''}).providers.linkedin,false);
@@ -18,7 +18,9 @@ test('LinkedIn supports canonical and legacy IDs, requires a secret, and never e
  const runtime=getAuthRuntime({...env,LINKEDIN_CLIENT_ID:'canonical-client'});
  try{
   assert.equal(runtime.auth.options.socialProviders.linkedin.clientId,'canonical-client');
-  assert.equal(runtime.auth.options.account.accountLinking.enabled,false);
+  assert.equal(runtime.auth.options.account.accountLinking.enabled,true);
+  assert.equal(runtime.auth.options.account.accountLinking.disableImplicitLinking,true);
+  assert.equal(runtime.auth.options.account.accountLinking.allowDifferentEmails,false);
   assert.deepEqual(runtime.auth.options.trustedOrigins,['http://localhost:3000']);
   assert.deepEqual(runtime.auth.options.socialProviders.linkedin.scope,['openid','profile','email']);
  }finally{await runtime.pool.end();}
@@ -77,4 +79,52 @@ test('workspace reveals configured LinkedIn, preserves GitHub, prompts before up
 test('unconfigured LinkedIn remains hidden and unavailable while GitHub works',async()=>{
  const {dom,window}=accountUI({github:true,linkedin:false});
  try{await window.PageSignalAccount.ready;assert.equal(window.document.getElementById('login-linkedin').hidden,true);assert.equal(window.document.getElementById('login-linkedin').disabled,true);assert.equal(window.document.getElementById('login-github').disabled,false);}finally{dom.window.close();}
+});
+
+test('account_not_linked explains how to connect providers instead of suggesting an expired link',async()=>{
+ const html=readFileSync('web/index.html','utf8'),script=readFileSync('web/account.js','utf8');
+ const dom=new JSDOM(html,{url:'https://www.pagesignal.studio/?signin=failed&error=account_not_linked',runScripts:'outside-only'}),{window}=dom;
+ window.HTMLDialogElement.prototype.showModal=function(){this.open=true;};window.HTMLDialogElement.prototype.close=function(){this.open=false;};
+ window.fetch=async()=>({ok:true,json:async()=>({authRequired:true,authConfigured:true,user:null,providers:{github:true,linkedin:true}})});
+ try{window.eval(script);await window.PageSignalAccount.ready;assert.match(window.document.getElementById('account-message').textContent,/open Account, then choose Connect LinkedIn/);assert.equal(window.document.getElementById('account-dialog').open,true);assert.equal(window.location.search,'');}finally{window.close();}
+});
+
+test('successful authentication closes the sign-in dialog and exposes explicit connection controls',async()=>{
+ const {dom,window}=accountUI({github:true,linkedin:true});
+ try{
+  await window.PageSignalAccount.ready;await window.PageSignalAccount.ensureSignedIn();
+  const calls=[];window.fetch=async(path,options)=>{calls.push({path,options});return {ok:true,json:async()=>({authRequired:true,authConfigured:true,user:{email:'person@example.com'},providers:{github:true,linkedin:true}})};};
+  await window.PageSignalAccount.refresh();assert.equal(window.document.getElementById('account-dialog').open,false);assert.equal(window.document.getElementById('account-connections').hidden,false);
+  window.document.getElementById('connect-linkedin').click();await new Promise(r=>setTimeout(r,0));
+  const call=calls.find(c=>c.path==='/api/auth/link-social');assert.equal(JSON.parse(call.options.body).provider,'linkedin');assert.equal(call.options.credentials,'same-origin');
+ }finally{window.close();}
+});
+
+test('explicit OAuth linking preserves the user, rejects implicit linking and requires verified matching email',async()=>{
+ const {magicLink}=await import('better-auth/plugins/magic-link');
+ const runtime=getAuthRuntime(config()),database=new DatabaseSync(':memory:');let sent;
+ const auth=betterAuth({...runtime.auth.options,database,plugins:[magicLink({sendMagicLink:async value=>{sent=value;}})]});
+ const base='http://localhost:3000',headers={Origin:base,'Content-Type':'application/json','x-pagesignal-client-ip':'127.0.0.1'};
+ const cookieJar=new Map();const cookies=()=>[...cookieJar].map(([k,v])=>k+'='+v).join('; ');
+ const save=response=>{for(const raw of response.headers.getSetCookie()){const first=raw.split(';')[0],at=first.indexOf('=');cookieJar.set(first.slice(0,at),first.slice(at+1));}};
+ const post=(path,body,cookie=cookies())=>auth.handler(new Request(base+'/api/auth/'+path,{method:'POST',headers:{...headers,Cookie:cookie},body:JSON.stringify(body)}));
+ try{
+  const {runMigrations}=await getMigrations(auth.options);await runMigrations();
+  await post('sign-in/magic-link',{email:'owner@example.com',callbackURL:'/'});save(await auth.handler(new Request(sent.url)));
+  const session=await auth.api.getSession({headers:new Headers({Cookie:cookies()})});assert(session);
+  const context=await auth.$context,provider=context.socialProviders.find(p=>p.id==='linkedin');let email='owner@example.com',verified=true;
+  provider.validateAuthorizationCode=async()=>({accessToken:'synthetic-token',scopes:['openid','email','profile']});
+  provider.getUserInfo=async()=>({user:{name:'Owner',email,emailVerified:verified},data:{sub:'linkedin-synthetic-owner'}});
+  const callback=async response=>{save(response);const data=await response.json(),state=new URL(data.url).searchParams.get('state');return auth.handler(new Request(base+'/api/auth/callback/linkedin?code=synthetic&state='+encodeURIComponent(state),{headers:{Cookie:cookies()}}));};
+  const anonymous=await post('link-social',{provider:'linkedin',callbackURL:'/'},'');assert.equal(anonymous.status,401);
+  const implicit=await callback(await post('sign-in/social',{provider:'linkedin',callbackURL:'/',errorCallbackURL:'/?signin=failed'},''));assert.match(implicit.headers.get('location'),/account_not_linked/);
+  email='different@example.com';let result=await callback(await post('link-social',{provider:'linkedin',callbackURL:'/',errorCallbackURL:'/?signin=failed'}));assert.match(result.headers.get('location'),/email_does_not_match/);
+  email='owner@example.com';verified=false;result=await callback(await post('link-social',{provider:'linkedin',callbackURL:'/',errorCallbackURL:'/?signin=failed'}));assert.match(result.headers.get('location'),/unable_to_link_account/);
+  verified=true;result=await callback(await post('link-social',{provider:'linkedin',callbackURL:'/',errorCallbackURL:'/?signin=failed'}));assert.equal(new URL(result.headers.get('location'),base).pathname,'/');assert(!result.headers.get('location').includes('error='));
+  const accounts=await auth.api.listUserAccounts({headers:new Headers({Cookie:cookies()})});assert.equal(accounts.filter(a=>a.providerId==='linkedin').length,1);assert.equal(accounts.find(a=>a.providerId==='linkedin').userId,session.user.id);
+  assert.equal((await auth.api.getSession({headers:new Headers({Cookie:cookies()})})).user.id,session.user.id);
+  // Once explicitly linked, ordinary LinkedIn login resolves to the existing user.
+  const returning=await callback(await post('sign-in/social',{provider:'linkedin',callbackURL:'/',errorCallbackURL:'/?signin=failed'},''));save(returning);
+  assert(!returning.headers.get('location').includes('error='));assert.equal((await auth.api.getSession({headers:new Headers({Cookie:cookies()})})).user.id,session.user.id);
+ }finally{database.close();await runtime.pool.end();}
 });
