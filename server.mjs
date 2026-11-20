@@ -28,6 +28,8 @@ const assets = {
   '/docs/': ['web/docs.html','text/html'], '/docs.html': ['web/docs.html','text/html'],
   '/privacy': ['web/privacy.html','text/html'], '/terms': ['web/terms.html','text/html'],
   '/contact': ['web/contact.html','text/html'], '/openapi.json': ['web/openapi.json','application/json'],
+  '/ocr-loader.mjs': ['web/ocr-loader.mjs','text/javascript'],
+  '/pagesignal-icon-84.webp': ['web/pagesignal-icon-84.webp','image/webp'],
   '/app.js': ['web/app.js','text/javascript'], '/account.js': ['web/account.js','text/javascript'],
   '/engine.js': ['web/engine.js','text/javascript'], '/style.css': ['web/style.css','text/css']
 };
