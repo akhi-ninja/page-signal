@@ -8,7 +8,7 @@ Identify any type of document and turn PDFs and scanned images into document ide
 
 ## Quick start
 
-The hosted workspace requires GitHub or configured LinkedIn sign-in before uploads, samples, local OCR, AI extraction, or document questions. LinkedIn uses OpenID Connect and appears when its credentials are configured. Email sign-in remains reserved for a later phase. Accounts are not automatically linked across providers. For an existing GitHub account, sign in with GitHub, open Account, and choose Connect LinkedIn. The provider email must match and be verified. After explicitly connecting, either provider uses the same account and allowance. Sign in before uploading when using a social provider, because social sign-in reloads the tab.
+The hosted workspace requires GitHub or configured LinkedIn sign-in before uploads, samples, local OCR, AI extraction, or document questions. LinkedIn uses OpenID Connect and appears when its credentials are configured. Email sign-in remains reserved for a later phase. GitHub and LinkedIn automatically use the same existing account when the incoming provider confirms the same verified email and the existing PageSignal email is also verified. Account ID, existing data and allowance are preserved. Missing or unverified email claims cannot link accounts; use your original provider or verify the email first. Account also offers an explicit Connect LinkedIn option. Sign in before uploading when using a social provider, because social sign-in reloads the tab.
 
 Use the web app for PDFs and scans. Choose the core package to call OpenAI from your server, the SDK to call a self-hosted PageSignal server, or native React, Angular and Vue packages to add a workspace to your application.
 

@@ -93,14 +93,14 @@
   if (new URLSearchParams(location.search).get('signin')==='failed') {
     const code=new URLSearchParams(location.search).get('error');
     const errors={
-      account_not_linked:'This email already has a PageSignal account. Sign in with GitHub (or your original provider), open Account, then choose Connect LinkedIn. After connecting, either provider can sign in to the same account.',
+      account_not_linked:'Automatic sign-in could not verify ownership of this existing account. Both PageSignal and LinkedIn must have the same verified email. Verify the email with your provider, or use your original sign-in provider.',
       email_does_not_match:'LinkedIn could not be connected because its email differs from your PageSignal account email. Use the same verified email for both.',
       unable_to_link_account:'LinkedIn could not be connected. Sign in again with your original provider and retry. LinkedIn must supply the same verified email.',
       account_already_linked_to_different_user:'This LinkedIn identity is already connected to a different PageSignal account. Use the original provider for that account.'
     };
     message.textContent=errors[code] || 'Sign-in did not complete or was cancelled. Use your original provider for an existing account, or try again.';
     dialog.showModal();
-    ready.then(()=>{if(state.user && !dialog.open && code) {message.textContent=errors[code] || 'LinkedIn could not be connected. Please try again from Account.';dialog.showModal();}});
+    ready.then(()=>{if(state.user){message.textContent='';if(dialog.open)dialog.close();}});
     const clean=new URL(location.href);clean.searchParams.delete('signin');clean.searchParams.delete('error');history.replaceState(null,'',clean.pathname+clean.search+clean.hash);
   }
 })();
