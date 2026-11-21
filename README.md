@@ -6,6 +6,8 @@ Identify any type of document and turn PDFs and scanned images into document ide
 
 [Open the app](https://www.pagesignal.studio/) · [Documentation](https://www.pagesignal.studio/docs) · [What’s New](https://www.pagesignal.studio/releases) · [OpenAPI JSON](https://www.pagesignal.studio/openapi.json) · [Source](https://github.com/akhi-ninja/page-signal)
 
+[Document extraction guides](https://www.pagesignal.studio/guides) · [Convert PDFs and scans to JSON](https://www.pagesignal.studio/guides/pdf-to-json) · [React, Angular and Vue integrations](https://www.pagesignal.studio/integrations)
+
 ## Quick start
 
 The hosted workspace requires GitHub or configured LinkedIn sign-in before uploads, samples, local OCR, AI extraction, or document questions. LinkedIn uses OpenID Connect and appears when its credentials are configured. Email sign-in remains reserved for a later phase. GitHub and LinkedIn automatically use the same existing account when the incoming provider confirms the same verified email and the existing PageSignal email is also verified. Account ID, existing data and allowance are preserved. Missing or unverified email claims cannot link accounts; use your original provider or verify the email first. Account also offers an explicit Connect LinkedIn option. Sign in before uploading when using a social provider, because social sign-in reloads the tab.
@@ -431,3 +433,5 @@ Visit [What’s New](https://www.pagesignal.studio/releases) for all published p
 After updating the changelog or release metadata, run npm run releases:build and npm run releases:check. The page is static and does not make runtime GitHub or npm API calls.
 
 The workspace embeds its small stylesheet for the initial render. After changing `web/style.css`, run `npm run styles:build`; CI checks that the embedded copy stays synchronized. The UI uses system fonts. OCR downloads on the first recognition request rather than during initial page load.
+
+Public guide content lives in `docs/seo-pages.json`. Run `npm run seo:build` after changing content or shared styles; `npm run seo:check` validates generated pages. Public guides are in `web/sitemap.xml`; private account and admin pages remain noindex. See `docs/seo-launch.md` for Search Console verification and editorial backlink submissions.

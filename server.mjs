@@ -10,6 +10,10 @@ const accounts = process.env.PAGESIGNAL_AUTH_MODE === 'accounts';
 const token = process.env.PAGESIGNAL_API_KEY;
 if (!accounts && (!token || token.length < 24)) throw new Error('Set PAGESIGNAL_API_KEY to a random secret of at least 24 characters, or select PAGESIGNAL_AUTH_MODE=accounts.');
 const assets = {
+  '/guides':['web/guides.html','text/html'], '/guides/':['web/guides.html','text/html'],
+  '/guides/pdf-to-json':['web/guide-pdf-to-json.html','text/html'], '/guides/pdf-to-json/':['web/guide-pdf-to-json.html','text/html'],
+  '/integrations':['web/integrations.html','text/html'], '/integrations/':['web/integrations.html','text/html'],
+
   '/releases':['web/releases.html','text/html'], '/releases/':['web/releases.html','text/html'],
   '/releases.html':['web/releases.html','text/html'], '/releases.css':['web/releases.css','text/css'], '/releases.js':['web/releases.js','text/javascript'],
   '/robots.txt':['web/robots.txt','text/plain'], '/sitemap.xml':['web/sitemap.xml','application/xml'],

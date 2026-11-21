@@ -62,3 +62,7 @@ MIT. Retain the included license and copyright notices.
 ## Version 1.1.1
 
 Includes updated any-document identification and evidence-grounded field queries. Full workspace features (multi-upload, source preview/highlighting, sign-in, optional community registration and maintainer analytics) are in the GitHub source application, not bundled into this server library.
+
+## Guides
+
+[PDF and scanned document to JSON workflow](https://www.pagesignal.studio/guides/pdf-to-json) · [Package and backend integration guide](https://www.pagesignal.studio/integrations)

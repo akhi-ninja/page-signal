@@ -61,3 +61,7 @@ The two /api/documents routes above are examples you implement in your applicati
 No data is sent anywhere until your adapter runs. Do not import the SDK root client into browser code with a service key. Browser applications should import only the workspace entry point, or just a framework component. AI results require review against the source.
 
 See repository docs for other frameworks and backend setup.
+
+## Guides
+
+[PDF and scanned document to JSON workflow](https://www.pagesignal.studio/guides/pdf-to-json) · [Package and backend integration guide](https://www.pagesignal.studio/integrations)

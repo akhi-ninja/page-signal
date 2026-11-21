@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "start": "node server.mjs",
-    "test": "node scripts/build-workspace-style.mjs --check && node --test test/*.test.mjs",
+    "test": "node scripts/build-workspace-style.mjs --check && node scripts/build-seo-pages.mjs --check && node --test test/*.test.mjs",
     "pack:packages": "npm run build:packages && npm pack --workspace @pagesignal/core --workspace @pagesignal/sdk --workspace @pagesignal/react --workspace @pagesignal/vue && npm pack ./packages/angular/dist",
     "docs:build": "node scripts/build-docs.mjs",
     "docs:check": "node scripts/build-docs.mjs --check",
@@ -17,7 +17,9 @@
     "releases:build": "node scripts/build-releases.mjs",
     "releases:check": "node scripts/build-releases.mjs --check",
     "styles:build": "node scripts/build-workspace-style.mjs",
-    "styles:check": "node scripts/build-workspace-style.mjs --check"
+    "styles:check": "node scripts/build-workspace-style.mjs --check",
+    "seo:build": "node scripts/build-seo-pages.mjs",
+    "seo:check": "node scripts/build-seo-pages.mjs --check"
   },
   "dependencies": {
     "better-auth": "1.7.25",
