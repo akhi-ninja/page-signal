@@ -63,7 +63,7 @@ Split larger PDFs or batches. Reduce page image dimensions or JPEG quality when 
 
 ## Self-host with Node or Docker
 
-Use Node.js 22 or later. Clone the repository and configure secrets in the server environment. Install the pinned dependencies before running the Node server.
+Use Node.js 24 for the application (matching the hosted runtime and CI). Clone the repository and configure secrets in the server environment. Install the pinned dependencies before running the Node server.
 
 ```sh
 git clone https://github.com/akhi-ninja/page-signal.git

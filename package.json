@@ -41,6 +41,6 @@
     "@angular/platform-browser": "21.2.26"
   },
   "engines": {
-    "node": ">=22.14.0"
+    "node": "24.x"
   }
 }
