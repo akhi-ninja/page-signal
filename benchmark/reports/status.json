@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "status": "not_measured",
+  "corpusVersion": 1,
+  "syntheticPageCount": 6,
+  "liveModelRuns": 0,
+  "accuracy": null,
+  "costUsd": null,
+  "note": "Offline scorer tests validate scoring logic only. A budgeted live model baseline and additional fixture coverage are required before setting release thresholds or evaluating LangGraph."
+}

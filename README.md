@@ -431,3 +431,7 @@ Visit [What’s New](https://www.pagesignal.studio/releases) for all published p
 After updating the changelog or release metadata, run npm run releases:build and npm run releases:check. The page is static and does not make runtime GitHub or npm API calls.
 
 The workspace embeds its small stylesheet for the initial render. After changing `web/style.css`, run `npm run styles:build`; CI checks that the embedded copy stays synchronized. The UI uses system fonts. OCR downloads on the first recognition request rather than during initial page load.
+
+## Extraction quality benchmark
+
+See [the benchmark guide](https://github.com/akhi-ninja/page-signal/blob/development/benchmark/README.md) for synthetic fixtures, offline accuracy scoring, and explicit opt-in model runs. No production accuracy claim is established yet. LangGraph remains an optional future server-side evaluation under [issue #26](https://github.com/akhi-ninja/page-signal/issues/26).

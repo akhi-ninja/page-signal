@@ -17,7 +17,8 @@
     "releases:build": "node scripts/build-releases.mjs",
     "releases:check": "node scripts/build-releases.mjs --check",
     "styles:build": "node scripts/build-workspace-style.mjs",
-    "styles:check": "node scripts/build-workspace-style.mjs --check"
+    "styles:check": "node scripts/build-workspace-style.mjs --check",
+    "benchmark": "node scripts/evaluate-extraction.mjs"
   },
   "dependencies": {
     "better-auth": "1.7.25",
