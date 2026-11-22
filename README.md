@@ -434,4 +434,4 @@ The workspace embeds its small stylesheet for the initial render. After changing
 
 ## Extraction quality benchmark
 
-See [the benchmark guide](https://github.com/akhi-ninja/page-signal/blob/development/benchmark/README.md) for synthetic fixtures, offline accuracy scoring, and explicit opt-in model runs. No production accuracy claim is established yet. LangGraph remains an optional future server-side evaluation under [issue #26](https://github.com/akhi-ninja/page-signal/issues/26).
+See [the benchmark guide](https://github.com/akhi-ninja/page-signal/blob/development/benchmark/README.md) for synthetic fixtures, offline accuracy scoring, and explicit opt-in model runs. No production accuracy claim is established yet. An optional server-side LangGraph workflow is implemented; see [setup and limitations](https://github.com/akhi-ninja/page-signal/blob/development/docs/langgraph.md). It remains disabled by default while [issue #26](https://github.com/akhi-ninja/page-signal/issues/26) tracks the measured adoption decision.

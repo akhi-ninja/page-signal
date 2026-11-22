@@ -19,26 +19,29 @@
     "styles:build": "node scripts/build-workspace-style.mjs",
     "styles:check": "node scripts/build-workspace-style.mjs --check",
     "benchmark": "node scripts/evaluate-extraction.mjs",
-    "benchmark:compare": "node scripts/compare-extraction.mjs"
+    "benchmark:compare": "node scripts/compare-extraction.mjs",
+    "workflow:migrate": "node --env-file-if-exists=.env scripts/migrate-workflows.mjs"
   },
   "dependencies": {
+    "@langchain/langgraph": "1.7.5",
+    "@langchain/langgraph-checkpoint-postgres": "1.1.4",
     "better-auth": "1.7.25",
     "pg": "8.16.3"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "0.3.14",
-    "@angular/core": "21.2.26",
     "@angular/common": "21.2.26",
     "@angular/compiler": "21.2.26",
     "@angular/compiler-cli": "21.2.26",
+    "@angular/core": "21.2.26",
+    "@angular/platform-browser": "21.2.26",
+    "@electric-sql/pglite": "0.3.14",
+    "jsdom": "26.1.0",
     "ng-packagr": "21.2.5",
-    "typescript": "5.9.3",
-    "rxjs": "7.8.2",
-    "vue": "3.5.45",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "jsdom": "26.1.0",
-    "@angular/platform-browser": "21.2.26"
+    "rxjs": "7.8.2",
+    "typescript": "5.9.3",
+    "vue": "3.5.45"
   },
   "engines": {
     "node": ">=22.14.0"
