@@ -5,3 +5,8 @@ node_modules/
 *.tgz
 
 packages/angular/dist/
+
+# Benchmark predictions and reports can contain confidential data.
+benchmark/reports/*.json
+!benchmark/reports/status.json
+benchmark/predictions*.json
