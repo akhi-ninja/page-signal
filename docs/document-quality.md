@@ -1,0 +1,16 @@
+# Document quality tools — first increment
+
+This increment adds deterministic reading-quality and evidence checks; it does not add another autonomous agent or enable extra AI charges.
+
+- Browser-local scan hints: low resolution, low contrast and possibly blank pages. A 128×128 RGBA sample avoids scanning the full-resolution pixel buffer. These are heuristics, not probabilities, and never block an upload. Rotation/skew/blur detection is not yet implemented; `orientation_checked:false` is explicit.
+- Field review metadata: `transcript_match` requires the literal value inside its evidence excerpt and that excerpt inside the supplied OCR/PDF text. This is a transcript consistency check, not image-level verification. Missing evidence, invalid emails and invalid ISO calendar dates require review; values are preserved without guessing a correction. Blank, unreadable, user-edited and checkbox fields have distinct review states. Checkbox marks still require visual verification.
+- LangGraph validation now routes unsupported transcript evidence to review. The hosted result adds per-field `verification` metadata; the original label/value/state remain unchanged. The existing optional full-page recheck can be triggered by these findings if an operator later enables it. No automatic extra call is enabled by this change.
+- Multi-page conflict detection groups fields by document type, form number, section and label. Different values on different pages are shown together for review, never automatically merged or overwritten. Repeated same-label occurrences on one page are excluded from comparison because association is ambiguous. Different values can be intentional; the tool does not claim one is wrong.
+- JSON exports include fresh field review metadata, per-page scan hints, and `document_review` conflicts. Human edits are labelled `user_reviewed`, not AI verified.
+- A user-triggered "Recheck source with AI" action renders a crop around one unique value/evidence match from PDF/OCR word coordinates. It refuses ambiguous or label-only locations, clips padding and sends the crop with no full-document OCR transcript through the existing authenticated extraction API. This consumes one additional AI request against existing limits. The proposal is displayed separately; only "Use this value" applies it and labels it user-reviewed. No new public endpoint or autonomous verification agent is added. Existing preview evidence highlighting remains available.
+
+## Validation and remaining work
+
+Tests cover literal evidence grounding, contradictory excerpts, email preservation, invalid dates, blank/checkbox/edit distinctions, scan samples, cross-page conflicts and crop boundaries. They measure software behavior, not real-world extraction accuracy. A paid model comparison has not been run.
+
+Next work: improve context selection for difficult crop layouts, rotation/blur preprocessing, broader handwritten/multilingual/PDF fixtures, cost/latency measurement and a budgeted model baseline. Until measured, automatic additional calls remain off. No training dataset or accuracy percentage is claimed.

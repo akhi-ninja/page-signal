@@ -1,3 +1,4 @@
+import { cropRegion } from './document-quality.mjs';
 // Coordinates are derived from the PDF text layer or local OCR, never guessed by AI.
 const tokens = value => String(value ?? '').toLowerCase().normalize('NFKC').match(/[\p{L}\p{N}]+/gu) || [];
 export function locateEvidence(pageWords, candidates, preferredPage) {
@@ -28,6 +29,13 @@ export function pdfWordBoxes(items, viewport, transform) {
 export function ocrWordBoxes(data,width,height) {
   const words=data.words||data.blocks?.flatMap(b=>b.paragraphs?.flatMap(p=>p.lines?.flatMap(l=>l.words||[])||[])||[])||[];
   return words.filter(w=>w.text?.trim()&&w.bbox).map(w=>({text:w.text,x:w.bbox.x0/width,y:w.bbox.y0/height,width:(w.bbox.x1-w.bbox.x0)/width,height:(w.bbox.y1-w.bbox.y0)/height}));
+}
+export function uniqueSourceRegion(pageWords,candidates,page){
+ const match=locateEvidence({[page]:pageWords?.[page]||[]},candidates,page);
+ if(!match||match.matches.length!==1||match.kind==='label')throw new Error('A unique value or evidence location is required. Review the original page manually.');
+ const words=match.matches[0];const x=Math.min(...words.map(w=>w.x)),y=Math.min(...words.map(w=>w.y));
+ const right=Math.min(1,Math.max(...words.map(w=>w.x+w.width))),bottom=Math.min(1,Math.max(...words.map(w=>w.y+w.height)));
+ const box={x,y,width:right-x,height:bottom-y};cropRegion(box,1000,1000);return box;
 }
 export class DocumentViewer {
   constructor(host,job,loadPdf){this.host=host;this.job=job;this.loadPdf=loadPdf;this.version=0;this.zoom=1;this.page=job.previewPage||1;this.cancelled=false;this.mount();}
@@ -76,6 +84,16 @@ export class DocumentViewer {
     const match=this.selection;
     this.message(label+': '+(match.kind==='label'?'field label located; verify its value':match.matches.length>1?'multiple text matches highlighted; verify the correct occurrence':'source text highlighted')+' · page '+match.page+'.');
     const mark=this.host.querySelector('.source-highlight');mark?.scrollIntoView({block:'center',inline:'nearest',behavior:'smooth'});
+  }
+  async cropSource(candidates,page){
+    const box=uniqueSourceRegion(this.job.pageWords,candidates,page);
+    this.page=page;await this.draw();
+    if(this.cancelled||this.page!==page)throw new Error('Document preview changed. Please try again.');
+    const source=this.host.querySelector('canvas');
+    const region=cropRegion(box,source.width,source.height,.06);
+    const crop=document.createElement('canvas');crop.width=region.width;crop.height=region.height;
+    crop.getContext('2d').drawImage(source,region.x,region.y,region.width,region.height,0,0,region.width,region.height);
+    return {image:crop.toDataURL('image/jpeg',.9),source:{page,region:box,padding:.06}};
   }
   paint(){
     const layer=this.host.querySelector('.source-highlights');layer.replaceChildren();if(!this.selection||this.selection.page!==this.page)return;

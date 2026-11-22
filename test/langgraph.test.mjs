@@ -38,7 +38,7 @@ test('human rejection produces no export result; invalid approval fails',async()
 });
 test('feature flag returns compatible JSON and headers, malformed model output becomes an error',async()=>{
  const env={OPENAI_API_KEY:'test',PAGESIGNAL_ORCHESTRATOR:'langgraph'};
- const r=await orchestratedExtract(request(),env,{extractPage:async()=>result()});assert.equal(r.status,200);assert.deepEqual(await r.json(),result());assert.equal(r.headers.get('x-pagesignal-orchestrator'),'langgraph-v1');
+ const r=await orchestratedExtract(request(),env,{extractPage:async()=>result()});assert.equal(r.status,200);const data=await r.json();assert.equal(data.fields[0].verification.status,'transcript_match');delete data.fields[0].verification;assert.deepEqual(data,result());assert.equal(r.headers.get('x-pagesignal-orchestrator'),'langgraph-v1');
  const bad=await orchestratedExtract(request(),env,{extractPage:async()=>null});assert.equal(bad.status,502);
  const tracing=await orchestratedExtract(request(),{...env,LANGSMITH_TRACING:'true'},{extractPage:()=>{throw new Error('must not call');}});assert.equal(tracing.status,503);
 });
