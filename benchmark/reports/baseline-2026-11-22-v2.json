@@ -1,0 +1,849 @@
+{
+  "schemaVersion": 1,
+  "sampleCount": 9,
+  "groups": {
+    "all": {
+      "counts": {
+        "pages": 9,
+        "classified": 7,
+        "expectedFields": 48,
+        "predictedValues": 42,
+        "expectedValues": 41,
+        "correctValues": 40,
+        "unsupportedValues": 2,
+        "correctStates": 44,
+        "matchedFields": 44,
+        "evidenceEligible": 41,
+        "correctEvidence": 38,
+        "expectedCells": 36,
+        "correctCells": 36,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0.7777777777777778,
+        "fieldPrecision": 0.9523809523809523,
+        "fieldRecall": 0.975609756097561,
+        "unsupportedValueRate": 0.047619047619047616,
+        "fieldCoverage": 0.9166666666666666,
+        "stateAccuracy": 0.9166666666666666,
+        "evidenceRecall": 0.926829268292683,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "category:invoice": {
+      "counts": {
+        "pages": 4,
+        "classified": 4,
+        "expectedFields": 24,
+        "predictedValues": 20,
+        "expectedValues": 20,
+        "correctValues": 20,
+        "unsupportedValues": 0,
+        "correctStates": 22,
+        "matchedFields": 22,
+        "evidenceEligible": 20,
+        "correctEvidence": 18,
+        "expectedCells": 36,
+        "correctCells": 36,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.9166666666666666,
+        "stateAccuracy": 0.9166666666666666,
+        "evidenceRecall": 0.9,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "quality:clean": {
+      "counts": {
+        "pages": 3,
+        "classified": 2,
+        "expectedFields": 16,
+        "predictedValues": 14,
+        "expectedValues": 13,
+        "correctValues": 12,
+        "unsupportedValues": 2,
+        "correctStates": 14,
+        "matchedFields": 14,
+        "evidenceEligible": 13,
+        "correctEvidence": 12,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0.6666666666666666,
+        "fieldPrecision": 0.8571428571428571,
+        "fieldRecall": 0.9230769230769231,
+        "unsupportedValueRate": 0.14285714285714285,
+        "fieldCoverage": 0.875,
+        "stateAccuracy": 0.875,
+        "evidenceRecall": 0.9230769230769231,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "category:receipt": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 5,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "quality:rotated": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 5,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "category:custom_application_form": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 4,
+        "correctValues": 3,
+        "unsupportedValues": 2,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 4,
+        "correctEvidence": 3,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 0.6,
+        "fieldRecall": 0.75,
+        "unsupportedValueRate": 0.4,
+        "fieldCoverage": 0.6666666666666666,
+        "stateAccuracy": 0.6666666666666666,
+        "evidenceRecall": 0.75,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "category:letter": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 5,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "quality:low_resolution": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 5,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "category:contract": {
+      "counts": {
+        "pages": 2,
+        "classified": 0,
+        "expectedFields": 8,
+        "predictedValues": 7,
+        "expectedValues": 7,
+        "correctValues": 7,
+        "unsupportedValues": 0,
+        "correctStates": 8,
+        "matchedFields": 8,
+        "evidenceEligible": 7,
+        "correctEvidence": 7,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "quality:continuation": {
+      "counts": {
+        "pages": 1,
+        "classified": 0,
+        "expectedFields": 4,
+        "predictedValues": 3,
+        "expectedValues": 3,
+        "correctValues": 3,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 3,
+        "correctEvidence": 3,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "quality:upside_down": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 6,
+        "matchedFields": 6,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "quality:low_contrast": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.8333333333333334,
+        "stateAccuracy": 0.8333333333333334,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "quality:corrupted_ocr": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 3,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.8333333333333334,
+        "stateAccuracy": 0.8333333333333334,
+        "evidenceRecall": 0.6,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "invoice-clean",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 6,
+        "matchedFields": 6,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "receipt-rotated",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 5,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "form-repeated",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 4,
+        "correctValues": 3,
+        "unsupportedValues": 2,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 4,
+        "correctEvidence": 3,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 0.6,
+        "fieldRecall": 0.75,
+        "unsupportedValueRate": 0.4,
+        "fieldCoverage": 0.6666666666666666,
+        "stateAccuracy": 0.6666666666666666,
+        "evidenceRecall": 0.75,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "letter-low-resolution",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 5,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "agreement-page1",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 0,
+        "expectedFields": 4,
+        "predictedValues": 4,
+        "expectedValues": 4,
+        "correctValues": 4,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 4,
+        "correctEvidence": 4,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "agreement-page2",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 0,
+        "expectedFields": 4,
+        "predictedValues": 3,
+        "expectedValues": 3,
+        "correctValues": 3,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 3,
+        "correctEvidence": 3,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "invoice-rotated180",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 6,
+        "matchedFields": 6,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "invoice-lowcontrast",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.8333333333333334,
+        "stateAccuracy": 0.8333333333333334,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "invoice-ocr-corrupt",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 3,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.8333333333333334,
+        "stateAccuracy": 0.8333333333333334,
+        "evidenceRecall": 0.6,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    }
+  ],
+  "unknownPredictionIds": [],
+  "run": {
+    "kind": "live-model",
+    "engine": "langgraph",
+    "model": "gpt-4.1-mini",
+    "manifestVersion": 2,
+    "manifestSha256": "832a557fe8e9854aad702b7b793a539b6adc526f4b885519f26a017bf1727b16",
+    "fixtureInputsSha256": "2d129ecd73927a9c83d68161c80be1d8800ce35ab339768a94818c0413123d01",
+    "createdAt": "2026-11-22T22:40:58.214Z",
+    "promptAndSchemaSource": "packages/core/extraction.mjs",
+    "sourceRevision": "63d726dadcaf75227aeccd42f4165a937be7745b",
+    "promptSchemaSha256": "3f3fd03262ad86e10238a6c1ed88df7876cffc3c78061ca3b3a6a76ec1ce0b57",
+    "providerMetrics": {
+      "requests": 9,
+      "usageMeasuredRequests": 9,
+      "tokenUsage": {
+        "inputTokens": 16996,
+        "cachedInputTokens": 0,
+        "outputTokens": 2170
+      },
+      "estimatedCostUsd": 0.0102704,
+      "knownEstimatedCostUsd": 0.0102704,
+      "costNote": "Estimate from measured tokens at standard GPT-4.1 mini rates: input $0.40, cached input $0.10, output $1.60 per million. Excludes Vercel, tax and discounts. Unknown usage/tier is not treated as free.",
+      "pricingSource": "https://developers.openai.com/api/docs/models/gpt-4.1-mini",
+      "pricingCheckedOn": "2026-11-22",
+      "calls": [
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 2022,
+            "cachedInputTokens": 0,
+            "outputTokens": 286
+          },
+          "estimatedCostUsd": 0.0012664,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1992,
+            "cachedInputTokens": 0,
+            "outputTokens": 219
+          },
+          "estimatedCostUsd": 0.0011472000000000001,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1995,
+            "cachedInputTokens": 0,
+            "outputTokens": 235
+          },
+          "estimatedCostUsd": 0.001174,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 930,
+            "cachedInputTokens": 0,
+            "outputTokens": 217
+          },
+          "estimatedCostUsd": 0.0007192,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1993,
+            "cachedInputTokens": 0,
+            "outputTokens": 192
+          },
+          "estimatedCostUsd": 0.0011044000000000002,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1997,
+            "cachedInputTokens": 0,
+            "outputTokens": 204
+          },
+          "estimatedCostUsd": 0.0011252,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 2022,
+            "cachedInputTokens": 0,
+            "outputTokens": 297
+          },
+          "estimatedCostUsd": 0.001284,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 2022,
+            "cachedInputTokens": 0,
+            "outputTokens": 257
+          },
+          "estimatedCostUsd": 0.00122,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 2023,
+            "cachedInputTokens": 0,
+            "outputTokens": 263
+          },
+          "estimatedCostUsd": 0.00123,
+          "serviceTier": "default"
+        }
+      ]
+    },
+    "tokenUsage": {
+      "inputTokens": 16996,
+      "cachedInputTokens": 0,
+      "outputTokens": 2170
+    },
+    "costUsd": 0.0102704,
+    "costNote": "Estimate from measured tokens at standard GPT-4.1 mini rates: input $0.40, cached input $0.10, output $1.60 per million. Excludes Vercel, tax and discounts. Unknown usage/tier is not treated as free.",
+    "executionEnvironment": "vercel-build",
+    "p50LatencyMs": 2563,
+    "p95LatencyMs": 4152,
+    "executions": [
+      {
+        "id": "invoice-clean",
+        "status": "completed",
+        "latencyMs": 4152
+      },
+      {
+        "id": "receipt-rotated",
+        "status": "completed",
+        "latencyMs": 2563
+      },
+      {
+        "id": "form-repeated",
+        "status": "completed",
+        "latencyMs": 2810
+      },
+      {
+        "id": "letter-low-resolution",
+        "status": "completed",
+        "latencyMs": 1859
+      },
+      {
+        "id": "agreement-page1",
+        "status": "completed",
+        "latencyMs": 2626
+      },
+      {
+        "id": "agreement-page2",
+        "status": "completed",
+        "latencyMs": 2159
+      },
+      {
+        "id": "invoice-rotated180",
+        "status": "completed",
+        "latencyMs": 2508
+      },
+      {
+        "id": "invoice-lowcontrast",
+        "status": "completed",
+        "latencyMs": 2449
+      },
+      {
+        "id": "invoice-ocr-corrupt",
+        "status": "completed",
+        "latencyMs": 2957
+      }
+    ]
+  }
+}
