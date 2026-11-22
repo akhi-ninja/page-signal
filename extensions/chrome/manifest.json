@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "PageSignal — Document Workspace Pilot",
+  "version": "0.1.0",
+  "minimum_chrome_version": "116",
+  "description": "Stage documents and selected text in a native PageSignal side panel. Development pilot; AI connection is not enabled yet.",
+  "permissions": ["sidePanel", "contextMenus", "storage"],
+  "action": { "default_title": "Open PageSignal" },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "side_panel": { "default_path": "panel.html" },
+  "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'none'; connect-src 'none'" }
+}
