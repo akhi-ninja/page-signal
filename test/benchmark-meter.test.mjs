@@ -16,3 +16,10 @@ test('unsupported model budget, wrong endpoint and insufficient budget fail befo
  let calls=0;const meter=providerMeter(()=>{calls++;},{model:'gpt-4.1-mini',maxCostUsd:.1});
  await assert.rejects(meter.fetch('https://wrong.test'),/endpoint/);await assert.rejects(meter.fetch(url),/budget reached/);assert.equal(calls,0);
 });
+test('optional build never runs a paid benchmark in production or on a feature branch',async()=>{
+ const {spawnSync}=await import('node:child_process');
+ for(const [environment,branch] of [['production','development'],['preview','feature/test'],['preview','development']]){
+  const env={PATH:process.env.PATH,VERCEL_ENV:environment,VERCEL_GIT_COMMIT_REF:branch};if(branch!=='development'||environment==='production')env.PAGESIGNAL_RUN_BENCHMARK='nine-page-v2';
+  const r=spawnSync(process.execPath,['scripts/optional-benchmark-build.mjs'],{env,encoding:'utf8'});assert.equal(r.status,0);assert.match(r.stdout,/benchmark is disabled/);
+ }
+});

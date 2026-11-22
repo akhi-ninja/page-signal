@@ -61,5 +61,6 @@
       "destination": "https://www.pagesignal.studio/:path*",
       "permanent": true
     }
-  ]
+  ],
+  "buildCommand": "node scripts/optional-benchmark-build.mjs"
 }
