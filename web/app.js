@@ -1,3 +1,4 @@
+import { assessScan, verifyFields, reconcilePages } from '/document-quality.mjs';
 import { loadOCR } from '/ocr-loader.mjs';
 import { DocumentViewer, pdfWordBoxes, ocrWordBoxes } from '/document-viewer.mjs';
 const $=id=>document.getElementById(id);
@@ -31,9 +32,10 @@ function reviewedValues(job){
  };
  if(job.ai&&job.aiPages.some(page=>!page.error)){
    for(const page of job.aiPages)for(const field of page.fields||[]){
+     const verification=verifyFields({fields:[field]},job.pageTexts?.[page.page]||'',page.page)[0].verification;
      const value=field.state==='checked'?true:field.state==='unchecked'?false:field.value;
      add([field.section,field.label].filter(Boolean).join(' '),value,
-       {page:page.page,excerpt:field.evidence||null,reviewed:Boolean(field.reviewed),status:field.state});
+       {page:page.page,excerpt:field.evidence||null,reviewed:Boolean(field.reviewed),status:field.state,verification});
    }
  }else for(const [key,field] of Object.entries(job.fields)){
    add(key,field.value,field.page?{page:field.page,excerpt:null}:field.reviewed?{reviewed:true}:null);
@@ -50,8 +52,10 @@ function output(job){
    schema_version:'3.0',
    ...reviewedValues(job),
    source:{file_name:job.name,page_count:job.pages,ocr_pages:job.ocrPages},
-   processing_status:job.aiPages.some(page=>page.error||page.classification_status!=='identified')?'needs_review':'processed',
-   pages:job.aiPages,
+   processing_status:job.aiPages.some(page=>page.error||page.classification_status!=='identified'||verifyFields(page,job.pageTexts?.[page.page]||'',page.page).some(f=>['needs_review','illegible'].includes(f.verification.status)))||reconcilePages(job.aiPages).conflicts.length?'needs_review':'processed',
+   pages:job.aiPages.map(p=>p.error?p:{...p,fields:verifyFields(p,job.pageTexts?.[p.page]||'',p.page)}),
+   document_review:reconcilePages(job.aiPages),
+   scan_quality:job.scanQuality||{},
    ...documentIdentity(job),
    local_classification:job.classification,
    local_fields:job.fields,
@@ -127,17 +131,17 @@ function render(){
  viewer=new DocumentViewer($('document-source'),job,loadPdfModule);
  const body=$('tabBody');
  if(tab==='AI review'||(tab==='Fields'&&job.ai&&job.aiPages.some(page=>!page.error))){
-   body.innerHTML=job.aiPages.map(page=>{
+   body.innerHTML=reconcilePages(job.aiPages).conflicts.map(c=>'<p class="warn">Different values for '+escapeHtml([c.section,c.label].filter(Boolean).join(' / '))+' across pages '+c.sources.map(s=>s.page).join(', ')+'. Review before export.</p>').join('')+job.aiPages.map(page=>{
      const heading='<h3>Page '+page.page+' · '+escapeHtml(page.document_title||page.document_type?.replaceAll('_',' ')||'Needs review')+'</h3>';
      if(page.error)return '<details open class="ai-page"><summary>'+heading+'</summary><p class="warn">'+escapeHtml(page.error)+'</p></details>';
      const metadata=[page.issuer,page.classification_status==='identified'?'Identified':'Needs review',page.form_number&&'Form '+page.form_number,page.form_revision&&'Edition '+page.form_revision,page.page_role].filter(Boolean).map(escapeHtml).join(' · ');
      const fields=page.fields.map((field,i)=>{
        const checkbox=['checked','unchecked'].includes(field.state)||field.checkbox;
        const control=checkbox?'<select aria-label="'+escapeHtml(field.label)+'" data-checkbox-page="'+page.page+'" data-checkbox-field="'+i+'">'+['checked','unchecked','blank'].map(state=>'<option value="'+state+'" '+(field.state===state?'selected':'')+'>'+state+'</option>').join('')+'</select>':'<input data-ai-page="'+page.page+'" data-ai-field="'+i+'" value="'+escapeHtml(field.value)+'" placeholder="'+escapeHtml(field.state)+'">';
-       return '<label>'+escapeHtml([field.section,field.label].filter(Boolean).join(' / '))+control+'<small>'+escapeHtml(field.state)+'</small></label>'+sourceButtons(field.evidence?[{page:page.page,excerpt:field.evidence}]:[]);
+       return '<div class="quality-field"><label>'+escapeHtml([field.section,field.label].filter(Boolean).join(' / '))+control+'<small>'+escapeHtml(field.state)+' · '+escapeHtml(verifyFields({fields:[field]},job.pageTexts?.[page.page]||'',page.page)[0].verification.status.replaceAll('_',' '))+'</small></label>'+(field.state!=='blank'?'<button type="button" data-recheck-page="'+page.page+'" data-recheck-field="'+i+'" '+(job.rechecking?'disabled':'')+'>Recheck source with AI</button><small>One additional AI request; result needs your review.</small>':'')+(field.recheck?'<p class="meta">'+escapeHtml(field.recheck.message||'AI crop result — review before applying')+'</p>'+(field.recheck.proposals||[]).map((proposal,p)=>'<p>'+escapeHtml(proposal.label)+': '+escapeHtml(proposal.value??proposal.state)+' <button type="button" data-apply-recheck-page="'+page.page+'" data-apply-recheck-field="'+i+'" data-proposal="'+p+'">Use this value</button></p>').join(''):'')+sourceButtons(field.evidence?[{page:page.page,excerpt:field.evidence}]:[])+'</div>';
      }).join('');
      const tables=page.tables.map(table=>'<h4>'+escapeHtml(table.title||'Table')+'</h4><div class="table-scroll"><table><thead><tr>'+table.columns.map(column=>'<th>'+escapeHtml(column)+'</th>').join('')+'</tr></thead><tbody>'+table.rows.map(row=>'<tr>'+row.map(cell=>'<td>'+escapeHtml(cell??'—')+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>').join('');
-     return '<details open class="ai-page"><summary>'+heading+'</summary><p class="meta">'+metadata+'</p>'+((page.classification_evidence||[]).length?'<p class="meta">Evidence · '+page.classification_evidence.map(escapeHtml).join(' · ')+'</p>':'')+'<div class="fields">'+fields+'</div>'+tables+page.review_notes.map(note=>'<p class="warn">'+escapeHtml(note)+'</p>').join('')+'</details>';
+     return '<details open class="ai-page"><summary>'+heading+'</summary><p class="meta">'+metadata+'</p>'+((page.classification_evidence||[]).length?'<p class="meta">Evidence · '+page.classification_evidence.map(escapeHtml).join(' · ')+'</p>':'')+(job.scanQuality?.[page.page]?.warnings||[]).map(w=>'<p class="warn">Scan quality: '+escapeHtml(w.replaceAll('_',' '))+'. Check the original page.</p>').join('')+'<div class="fields">'+fields+'</div>'+tables+page.review_notes.map(note=>'<p class="warn">'+escapeHtml(note)+'</p>').join('')+'</details>';
    }).join('');
    return;
  }
@@ -195,6 +199,10 @@ function pdfLines(items){
 }
 async function extractWithAI(job,page,canvas,text){
  status(job,'Analyzing layout and fields on page '+page);
+ job.pageTexts||={};job.pageTexts[page]=text;
+ const sample=document.createElement('canvas');sample.width=128;sample.height=128;
+ const sampleContext=sample.getContext('2d',{willReadFrequently:true});sampleContext.drawImage(canvas,0,0,128,128);
+ job.scanQuality||={};job.scanQuality[page]=assessScan({width:canvas.width,height:canvas.height,pixels:sampleContext.getImageData(0,0,128,128).data});
  try{
    if(!await window.PageSignalAccount.ensureSignedIn())throw new Error('Sign in before running AI extraction.');
    let image=canvas.toDataURL('image/jpeg',.85);
@@ -263,7 +271,7 @@ async function run(){
  async function processNext(){
    let job;
    while((job=jobs.find(item=>item.status==='Queued'))){
-     job.status='Processing';job.phase='Preparing document';job.fraction=undefined;job.ocrPages=[];job.aiPages=[];render();
+     job.status='Processing';job.phase='Preparing document';job.fraction=undefined;job.ocrPages=[];job.aiPages=[];job.scanQuality={};job.pageTexts={};render();
      try{
        if(!workspaceAllowed())throw new Error('Sign in to process documents.');
        if(job.pdf){job.text=await readPdf(job);}
@@ -382,6 +390,23 @@ async function askDocument(job,mode,question){
  }catch(error){job.queryError=error.message;}
  finally{job.asking=false;if(selected===job.id)render();void window.PageSignalAccount.refresh();}
 }
+async function recheckSource(job,page,index){
+ if(job.rechecking||!viewer||viewer.job!==job)return;
+ const field=job.aiPages.find(p=>p.page===page)?.fields[index];if(!field)return;
+ const activeViewer=viewer;
+ if(!await window.PageSignalAccount.ensureSignedIn())return;
+ if(viewer!==activeViewer||selected!==job.id)return;
+ job.rechecking=true;
+ try{
+  const crop=await activeViewer.cropSource([{text:field.evidence,kind:'evidence'},{text:field.value,kind:'value'}],page);
+  if(crop.image.length>uploadLimits.imageDataChars)throw new Error('Source crop is too large. Review the original manually.');
+  const response=await fetch('/api/ai/extract',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:crop.image,text:''})});
+  const result=await response.json();if(!response.ok)throw new Error(result.error||'Source recheck failed.');
+  field.recheck={source:crop.source,proposals:(result.fields||[]).filter(f=>f&&typeof f.label==='string').slice(0,12),message:'AI crop result — review against the original before applying'};
+  if(!field.recheck.proposals.length)field.recheck.message='No field could be read from this crop. Review the original manually.';
+ }catch(error){field.recheck={message:error.message,proposals:[]};}
+ finally{job.rechecking=false;if(selected===job.id)render();void window.PageSignalAccount.refresh();}
+}
 $('result').addEventListener('submit',async e=>{
  if(e.target.id!=='document-question')return;
  e.preventDefault();
@@ -394,6 +419,13 @@ $('result').addEventListener('submit',async e=>{
  job.sharedText=true;void askDocument(job,mode,question);
 });
 $('result').addEventListener('click',e=>{
+ const recheck=e.target.closest('[data-recheck-page]'),apply=e.target.closest('[data-apply-recheck-page]');
+ if(recheck||apply){
+  const job=jobs.find(j=>j.id===selected);if(!job)return;
+  if(recheck){void recheckSource(job,Number(recheck.dataset.recheckPage),Number(recheck.dataset.recheckField));}
+  else{const field=job.aiPages.find(p=>p.page===Number(apply.dataset.applyRecheckPage))?.fields[Number(apply.dataset.applyRecheckField)];const proposal=field?.recheck?.proposals[Number(apply.dataset.proposal)];if(proposal){field.value=proposal.value;field.state=proposal.state;field.evidence=proposal.evidence;field.reviewed=true;field.recheck.message='Applied after user review';render();}}
+  return;
+ }
  const sourceButton=e.target.closest('[data-source-page]');
  const addButton=e.target.closest('[data-add-answer]');
  if(sourceButton||addButton){

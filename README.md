@@ -435,3 +435,7 @@ The workspace embeds its small stylesheet for the initial render. After changing
 ## Extraction quality benchmark
 
 See [the benchmark guide](https://github.com/akhi-ninja/page-signal/blob/development/benchmark/README.md) for synthetic fixtures, offline accuracy scoring, and explicit opt-in model runs. No production accuracy claim is established yet. An optional server-side LangGraph workflow is implemented; see [setup and limitations](https://github.com/akhi-ninja/page-signal/blob/development/docs/langgraph.md). It remains disabled by default while [issue #26](https://github.com/akhi-ninja/page-signal/issues/26) tracks the measured adoption decision.
+
+## Review document quality
+
+AI review shows scan-quality hints and field evidence status. A transcript match checks text consistency; it does not prove visual accuracy. Different values across pages are flagged for review without overwriting either value. For an uncertain field, choose **Recheck source with AI** to send a unique source crop for one additional AI request, then review the proposal and choose **Use this value** only if correct. Ambiguous locations require manual review. Automatic extra AI calls remain disabled by default. See [quality tools and limitations](https://github.com/akhi-ninja/page-signal/blob/development/docs/document-quality.md).
