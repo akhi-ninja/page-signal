@@ -1,10 +1,11 @@
 {
   "schemaVersion": 1,
-  "status": "not_measured",
-  "corpusVersion": 1,
-  "syntheticPageCount": 6,
-  "liveModelRuns": 0,
+  "status": "measured_starter_corpus",
+  "corpusVersion": 2,
+  "syntheticPageCount": 9,
+  "liveModelRuns": 1,
   "accuracy": null,
   "costUsd": null,
-  "note": "Offline scorer tests validate scoring logic only. A budgeted live model baseline and additional fixture coverage are required before setting release thresholds or evaluating LangGraph."
+  "note": "A nine-page synthetic OCR-assisted extractor baseline is measured. General production accuracy, browser OCR/PDF ingestion, handwriting and multilingual performance remain unmeasured. See the report and analysis for strict field/label scoring limitations.",
+  "report": "baseline-2026-11-22-v2.json"
 }

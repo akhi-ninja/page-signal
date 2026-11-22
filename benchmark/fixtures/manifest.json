@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "license": "CC0-1.0",
   "fixtures": [
     {
@@ -303,6 +303,228 @@
           }
         ],
         "tables": []
+      }
+    },
+    {
+      "id": "invoice-rotated180",
+      "documentId": "invoice-rotated180",
+      "page": 1,
+      "category": "invoice",
+      "quality": "upside_down",
+      "image": "invoice-rotated180.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A REAL INVOICE\nINVOICE\nInvoice number: DEMO-104\nBill to: Example Workshop\nEmail: billing@example.test\nDue date: 2026-12-01\nTotal: 45.00\nNotes:\nDescription | Quantity | Amount\nPaper packs | 2 | 30.00\nFolders | 1 | 15.00",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "invoice",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Invoice number",
+            "value": "DEMO-104",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Bill to",
+            "value": "Example Workshop",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Email",
+            "value": "billing@example.test",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Due date",
+            "value": "2026-12-01",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Total",
+            "value": "45.00",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Notes",
+            "value": null,
+            "state": "blank"
+          }
+        ],
+        "tables": [
+          {
+            "title": null,
+            "columns": [
+              "Description",
+              "Quantity",
+              "Amount"
+            ],
+            "rows": [
+              [
+                "Paper packs",
+                "2",
+                "30.00"
+              ],
+              [
+                "Folders",
+                "1",
+                "15.00"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "invoice-lowcontrast",
+      "documentId": "invoice-lowcontrast",
+      "page": 1,
+      "category": "invoice",
+      "quality": "low_contrast",
+      "image": "invoice-lowcontrast.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A REAL INVOICE\nINVOICE\nInvoice number: DEMO-104\nBill to: Example Workshop\nEmail: billing@example.test\nDue date: 2026-12-01\nTotal: 45.00\nNotes:\nDescription | Quantity | Amount\nPaper packs | 2 | 30.00\nFolders | 1 | 15.00",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "invoice",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Invoice number",
+            "value": "DEMO-104",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Bill to",
+            "value": "Example Workshop",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Email",
+            "value": "billing@example.test",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Due date",
+            "value": "2026-12-01",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Total",
+            "value": "45.00",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Notes",
+            "value": null,
+            "state": "blank"
+          }
+        ],
+        "tables": [
+          {
+            "title": null,
+            "columns": [
+              "Description",
+              "Quantity",
+              "Amount"
+            ],
+            "rows": [
+              [
+                "Paper packs",
+                "2",
+                "30.00"
+              ],
+              [
+                "Folders",
+                "1",
+                "15.00"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "invoice-ocr-corrupt",
+      "documentId": "invoice-ocr-corrupt",
+      "page": 1,
+      "category": "invoice",
+      "quality": "corrupted_ocr",
+      "image": "invoice-ocr-corrupt.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A REAL INVOICE\nINVOICE\nInvoice number: DEMO-104\nBill to: Example Workshop\nEmail: billing example test\nDue date: 2026-12-01\nTotal: 4S.OO\nNotes:\nDescription | Quantity | Amount\nPaper packs | 2 | 30.00\nFolders | 1 | 15.00",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "invoice",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Invoice number",
+            "value": "DEMO-104",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Bill to",
+            "value": "Example Workshop",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Email",
+            "value": "billing@example.test",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Due date",
+            "value": "2026-12-01",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Total",
+            "value": "45.00",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Notes",
+            "value": null,
+            "state": "blank"
+          }
+        ],
+        "tables": [
+          {
+            "title": null,
+            "columns": [
+              "Description",
+              "Quantity",
+              "Amount"
+            ],
+            "rows": [
+              [
+                "Paper packs",
+                "2",
+                "30.00"
+              ],
+              [
+                "Folders",
+                "1",
+                "15.00"
+              ]
+            ]
+          }
+        ]
       }
     }
   ]

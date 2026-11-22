@@ -10,3 +10,5 @@ packages/angular/dist/
 benchmark/reports/*.json
 !benchmark/reports/status.json
 benchmark/predictions*.json
+
+!benchmark/reports/baseline-2026-11-22-v2.json
