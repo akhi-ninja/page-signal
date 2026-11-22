@@ -36,3 +36,5 @@ button:focus-visible,.button:focus-visible,a:focus-visible,input:focus-visible,t
 
 /* Reserve startup space for account/status updates without waiting on web fonts. */
 #ai-status{min-height:3.5em;line-height:1.5}.account-button{inline-size:220px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis}#account-usage{min-height:3em}@media(max-width:760px){.account-button{inline-size:160px}}
+
+.quality-field{min-width:0}.quality-field>label{display:flex;flex-direction:column;gap:.35rem}.quality-field>small{display:block;margin:.35rem 0}.quality-field>button{margin-top:.5rem}
