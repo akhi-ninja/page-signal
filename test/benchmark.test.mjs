@@ -22,7 +22,7 @@ test('repeated labels are separated by section and matched in occurrence order',
  assert.equal(scorePage(repeated,{...perfect(),fields:[perfect().fields[0]]},source).correctValues,1);
 });
 test('invented values, blank-field fills and extra fields penalize precision',()=>{
- const actual=perfect();actual.fields.push({label:'Phone',value:'555-0100'});actual.fields[2].value='invented@example.test';
+ const actual=perfect();actual.fields.push({section:null,label:'Phone',value:'555-0100',state:'filled'});actual.fields[2].value='invented@example.test';
  const m=summarize(scorePage(expected,actual,source)).metrics;
  assert.equal(m.fieldPrecision,.5);assert.equal(m.unsupportedValueRate,.5);
 });
@@ -43,4 +43,7 @@ test('fixture corpus has only synthetic provenance, real JPEGs and category/qual
   const bytes=await readFile(new URL('../benchmark/fixtures/'+fixture.image,import.meta.url));assert.equal(bytes.readUInt16BE(0),0xffd8);
  }
  const result=scoreSuite(manifest,{});assert.equal(result.sampleCount,6);assert.equal(result.groups.all.metrics.fieldRecall,0);assert.ok(result.groups['quality:rotated']);
+});
+test('malformed offline predictions are rejected with a useful error',()=>{
+ for (const actual of [{...perfect(),fields:[null]},{...perfect(),tables:[{columns:['A'],rows:[null]}]},{...perfect(),fields:[{label:'A',value:42,state:'filled',section:null}]}]) assert.throws(()=>scorePage(expected,actual,source),/Invalid page prediction/);
 });
