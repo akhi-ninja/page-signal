@@ -42,7 +42,7 @@ test('fixture corpus has only synthetic provenance, real JPEGs and category/qual
   assert.match(fixture.provenance,/synthetic/);
   const bytes=await readFile(new URL('../benchmark/fixtures/'+fixture.image,import.meta.url));assert.equal(bytes.readUInt16BE(0),0xffd8);
  }
- const result=scoreSuite(manifest,{});assert.equal(result.sampleCount,6);assert.equal(result.groups.all.metrics.fieldRecall,0);assert.ok(result.groups['quality:rotated']);
+ const result=scoreSuite(manifest,{});assert.equal(result.sampleCount,9);assert.equal(result.groups.all.metrics.fieldRecall,0);assert.ok(result.groups['quality:rotated']);
 });
 test('malformed offline predictions are rejected with a useful error',()=>{
  for (const actual of [{...perfect(),fields:[null]},{...perfect(),tables:[{columns:['A'],rows:[null]}]},{...perfect(),fields:[{label:'A',value:42,state:'filled',section:null}]}]) assert.throws(()=>scorePage(expected,actual,source),/Invalid page prediction/);

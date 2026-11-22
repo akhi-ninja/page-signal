@@ -1,7 +1,8 @@
 """Regenerate synthetic JPEG fixtures with Pillow 13; no real user documents."""
 import json
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+import copy
 root=Path(__file__).parent/'fixtures'
 font=ImageFont.truetype('DejaVuSans.ttf',20)
 def field(section,label,value,state='filled'):
@@ -22,4 +23,11 @@ for c in cases:
  if c['quality']=='rotated': im=im.rotate(90,expand=True,fillcolor='white')
  if c['quality']=='low_resolution': im=im.resize((420,300))
  im.save(root/c['image'],quality=80)
-(root/'manifest.json').write_text(json.dumps(dict(version=1,license='CC0-1.0',fixtures=cases),indent=2)+'\n')
+for suffix,quality in [('rotated180','upside_down'),('lowcontrast','low_contrast'),('ocr-corrupt','corrupted_ocr')]:
+ c=copy.deepcopy(cases[0]);c['id']='invoice-'+suffix;c['documentId']=c['id'];c['quality']=quality;c['image']=c['id']+'.jpg'
+ im=Image.open(root/'invoice-clean.jpg').convert('RGB')
+ if suffix=='rotated180':im=im.rotate(180,expand=True)
+ if suffix=='lowcontrast':im=ImageEnhance.Contrast(im).enhance(.12)
+ if suffix=='ocr-corrupt':c['text']=c['text'].replace('billing@example.test','billing example test').replace('45.00','4S.OO')
+ im.save(root/c['image'],quality=80);cases.append(c)
+(root/'manifest.json').write_text(json.dumps(dict(version=2,license='CC0-1.0',fixtures=cases),indent=2)+'\n')
