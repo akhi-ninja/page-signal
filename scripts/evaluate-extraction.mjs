@@ -8,12 +8,25 @@ import { extractPage } from '../packages/core/index.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const args = process.argv.slice(2);
 const option = name => { const index=args.indexOf(name); return index<0 ? undefined : args[index+1]; };
+const flags=new Set(['--live','--help']);
+const valued=new Set(['--predictions','--out','--max-pages','--max-cost-usd']);
+for(let i=0;i<args.length;i++){
+ if(flags.has(args[i])) continue;
+ if(!valued.has(args[i])||!args[i+1]||args[i+1].startsWith('--')) throw new Error('Unknown option or missing option value: '+args[i]);
+ i++;
+}
 const live=args.includes('--live');
+if(live&&option('--predictions')) throw new Error('Choose either live execution or offline predictions, not both.');
 if (args.includes('--help')) {
  console.log('Offline: npm run benchmark -- --predictions PATH --out PATH\nLive (paid): npm run benchmark -- --live --max-pages 6 --out PATH');
  process.exit(0);
 }
-const manifest=JSON.parse(await readFile(resolve(root,'benchmark/fixtures/manifest.json'),'utf8'));
+const manifestBytes=await readFile(resolve(root,'benchmark/fixtures/manifest.json'));
+const manifestSha256=createHash('sha256').update(manifestBytes).digest('hex');
+const manifest=JSON.parse(manifestBytes);
+const inputHash=createHash('sha256').update(manifestBytes);
+for(const fixture of manifest.fixtures) inputHash.update(await readFile(resolve(root,'benchmark/fixtures',fixture.image)));
+const fixtureInputsSha256=inputHash.digest('hex');
 const predictions={}; const executions=[];
 const model=process.env.OPENAI_DOCUMENT_MODEL || 'gpt-4.1-mini';
 if (live) {
@@ -42,7 +55,7 @@ const promptSchemaSha256=createHash('sha256').update(await readFile(resolve(root
 const selected=live?{...manifest,fixtures:manifest.fixtures.slice(0,Number(option('--max-pages')))}:manifest;
 const latency=executions.filter(r=>r.status==='completed').map(r=>r.latencyMs).sort((a,b)=>a-b);
 const percentile=p=>latency.length?latency[Math.max(0,Math.ceil(latency.length*p)-1)]:null;
-const report={...scoreSuite(selected,predictions), run:{kind:live?'live-model':'offline-predictions',model:live?model:null,manifestVersion:manifest.version,createdAt:new Date().toISOString(),promptAndSchemaSource:'packages/core/extraction.mjs',sourceRevision,promptSchemaSha256,tokenUsage:null,costUsd:null,costNote:'Core does not yet expose provider usage; cost is unmeasured.',p50LatencyMs:percentile(.5),p95LatencyMs:percentile(.95),executions}};
+const report={...scoreSuite(selected,predictions), run:{kind:live?'live-model':'offline-predictions',model:live?model:null,manifestVersion:manifest.version,manifestSha256,fixtureInputsSha256,createdAt:new Date().toISOString(),promptAndSchemaSource:'packages/core/extraction.mjs',sourceRevision,promptSchemaSha256,tokenUsage:null,costUsd:null,costNote:'Core does not yet expose provider usage; cost is unmeasured.',p50LatencyMs:percentile(.5),p95LatencyMs:percentile(.95),executions}};
 const out=resolve(option('--out') || 'benchmark/reports/local-report.json');
 await mkdir(dirname(out),{recursive:true}); await writeFile(out,JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify({report:out,kind:report.run.kind,samples:report.sampleCount,metrics:report.groups.all.metrics},null,2));

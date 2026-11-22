@@ -7,7 +7,20 @@ function grouped(fields = []) {
  for (const field of fields) { const k = key(field); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(field); }
  return groups;
 }
+// Reject malformed saved output instead of crashing or scoring a fabricated shape.
+export function validatePrediction(actual) {
+ if (actual == null) return;
+ const scalar = value => value === null || typeof value === 'string';
+ const states = ['filled','blank','illegible','checked','unchecked'];
+ if (typeof actual !== 'object' || Array.isArray(actual) || typeof actual.document_type !== 'string' ||
+     !scalar(actual.form_number) || !Array.isArray(actual.fields) || !Array.isArray(actual.tables) ||
+     actual.fields.some(f => !f || typeof f.label !== 'string' || !scalar(f.section) || !scalar(f.value) || !states.includes(f.state) || (f.evidence !== undefined && !scalar(f.evidence))) ||
+     actual.tables.some(t => !t || !Array.isArray(t.columns) || t.columns.some(c=>typeof c !== 'string') || !Array.isArray(t.rows) || t.rows.some(r=>!Array.isArray(r)||r.some(c=>!scalar(c))))) {
+  throw new TypeError('Invalid page prediction: expected the core page response with string/null fields and table cells.');
+ }
+}
 export function scorePage(expected, actual, sourceText) {
+ validatePrediction(actual);
  const counts = { pages:1, classified:0, expectedFields:0, predictedValues:0, expectedValues:0, correctValues:0, unsupportedValues:0, correctStates:0, matchedFields:0, evidenceEligible:0, correctEvidence:0, expectedCells:0, correctCells:0, extraCells:0 };
  counts.classified = Number(actual?.document_type === expected.document_type && normalize(actual?.form_number ?? null) === normalize(expected.form_number ?? null));
  const predictions = grouped(Array.isArray(actual?.fields) ? actual.fields : []);
