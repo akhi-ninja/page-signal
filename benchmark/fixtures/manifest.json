@@ -1,0 +1,309 @@
+{
+  "version": 1,
+  "license": "CC0-1.0",
+  "fixtures": [
+    {
+      "id": "invoice-clean",
+      "documentId": "invoice-clean",
+      "page": 1,
+      "category": "invoice",
+      "quality": "clean",
+      "image": "invoice-clean.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A REAL INVOICE\nINVOICE\nInvoice number: DEMO-104\nBill to: Example Workshop\nEmail: billing@example.test\nDue date: 2026-12-01\nTotal: 45.00\nNotes:\nDescription | Quantity | Amount\nPaper packs | 2 | 30.00\nFolders | 1 | 15.00",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "invoice",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Invoice number",
+            "value": "DEMO-104",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Bill to",
+            "value": "Example Workshop",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Email",
+            "value": "billing@example.test",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Due date",
+            "value": "2026-12-01",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Total",
+            "value": "45.00",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Notes",
+            "value": null,
+            "state": "blank"
+          }
+        ],
+        "tables": [
+          {
+            "title": null,
+            "columns": [
+              "Description",
+              "Quantity",
+              "Amount"
+            ],
+            "rows": [
+              [
+                "Paper packs",
+                "2",
+                "30.00"
+              ],
+              [
+                "Folders",
+                "1",
+                "15.00"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "receipt-rotated",
+      "documentId": "receipt-rotated",
+      "page": 1,
+      "category": "receipt",
+      "quality": "rotated",
+      "image": "receipt-rotated.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A REAL RECEIPT\nRECEIPT\nMerchant: Example Shop\nReceipt number: DEMO-R7\nDate: 2026-11-01\nTotal: 12.50\nPayment: Cash",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "receipt",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Merchant",
+            "value": "Example Shop",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Receipt number",
+            "value": "DEMO-R7",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Date",
+            "value": "2026-11-01",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Total",
+            "value": "12.50",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Payment",
+            "value": "Cash",
+            "state": "filled"
+          }
+        ],
+        "tables": []
+      }
+    },
+    {
+      "id": "form-repeated",
+      "documentId": "form-repeated",
+      "page": 1,
+      "category": "custom_application_form",
+      "quality": "clean",
+      "image": "form-repeated.jpg",
+      "text": "SYNTHETIC BENCHMARK - DEMONSTRATION ONLY\nCUSTOM APPLICATION FORM\nForm: DEMO-A1\nApplicant\nName: Example Applicant\nEmail: applicant@example.test\nContact\nName: Example Contact\nEmail:\nConsent: [X] Yes [ ] No",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "custom_application_form",
+        "form_number": "DEMO-A1",
+        "fields": [
+          {
+            "section": "Applicant",
+            "label": "Name",
+            "value": "Example Applicant",
+            "state": "filled"
+          },
+          {
+            "section": "Applicant",
+            "label": "Email",
+            "value": "applicant@example.test",
+            "state": "filled"
+          },
+          {
+            "section": "Contact",
+            "label": "Name",
+            "value": "Example Contact",
+            "state": "filled"
+          },
+          {
+            "section": "Contact",
+            "label": "Email",
+            "value": null,
+            "state": "blank"
+          },
+          {
+            "section": null,
+            "label": "Yes",
+            "value": "Yes",
+            "state": "checked"
+          },
+          {
+            "section": null,
+            "label": "No",
+            "value": null,
+            "state": "unchecked"
+          }
+        ],
+        "tables": []
+      }
+    },
+    {
+      "id": "letter-low-resolution",
+      "documentId": "letter-low-resolution",
+      "page": 1,
+      "category": "letter",
+      "quality": "low_resolution",
+      "image": "letter-low-resolution.jpg",
+      "text": "SYNTHETIC BENCHMARK - DEMONSTRATION ONLY\nLETTER\nDate: 2026-11-03\nTo: Example Team\nSubject: Office hours\nOpening time: 09:30\nRegards: Example Sender",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "letter",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Date",
+            "value": "2026-11-03",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "To",
+            "value": "Example Team",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Subject",
+            "value": "Office hours",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Opening time",
+            "value": "09:30",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Regards",
+            "value": "Example Sender",
+            "state": "filled"
+          }
+        ],
+        "tables": []
+      }
+    },
+    {
+      "id": "agreement-page1",
+      "documentId": "agreement",
+      "page": 1,
+      "category": "contract",
+      "quality": "clean",
+      "image": "agreement-page1.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A LEGAL AGREEMENT\nSERVICE AGREEMENT\nAgreement number: DEMO-C9\nProvider: Example Provider\nCustomer: Example Customer\nStart date: 2026-12-01\nPage 1 of 2",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "contract",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Agreement number",
+            "value": "DEMO-C9",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Provider",
+            "value": "Example Provider",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Customer",
+            "value": "Example Customer",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Start date",
+            "value": "2026-12-01",
+            "state": "filled"
+          }
+        ],
+        "tables": []
+      }
+    },
+    {
+      "id": "agreement-page2",
+      "documentId": "agreement",
+      "page": 2,
+      "category": "contract",
+      "quality": "continuation",
+      "image": "agreement-page2.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A LEGAL AGREEMENT\nSERVICE AGREEMENT - CONTINUED\nAgreement number: DEMO-C9\nNotice period: 30 days\nRenewal date: 2027-12-01\nSignature:\nPage 2 of 2",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "contract",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Agreement number",
+            "value": "DEMO-C9",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Notice period",
+            "value": "30 days",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Renewal date",
+            "value": "2027-12-01",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Signature",
+            "value": null,
+            "state": "blank"
+          }
+        ],
+        "tables": []
+      }
+    }
+  ]
+}
