@@ -51,7 +51,7 @@ export class DocumentViewer {
     void this.draw();
   }
   async draw(){
-    const version=++this.version;this.renderTask?.cancel();
+    const version=++this.version;this.renderedPage=null;this.renderTask?.cancel();
     const canvas=this.host.querySelector('canvas'),sheet=this.host.querySelector('.preview-sheet'),scroll=this.host.querySelector('.preview-scroll');
     this.host.querySelector('[data-page]').value=this.page;this.job.previewPage=this.page;
     this.host.querySelector('[data-view="previous"]').disabled=this.page===1;this.host.querySelector('[data-view="next"]').disabled=this.page===this.job.pages;
@@ -72,7 +72,7 @@ export class DocumentViewer {
       }
       if(this.cancelled||version!==this.version)return;
       canvas.width=buffer.width;canvas.height=buffer.height;canvas.getContext('2d').drawImage(buffer,0,0);canvas.style.width=width+'px';canvas.style.height=height+'px';sheet.style.width=width+'px';sheet.style.height=height+'px';
-      this.paint();
+      this.renderedPage=this.page;this.renderedVersion=version;this.paint();
     }catch(error){if(error.name!=='RenderingCancelledException'&&!this.cancelled)this.message('Preview could not render. Use Open original to verify this document.');}
   }
   message(text){this.host.querySelector('.preview-message').textContent=text;}
@@ -87,8 +87,8 @@ export class DocumentViewer {
   }
   async cropSource(candidates,page){
     const box=uniqueSourceRegion(this.job.pageWords,candidates,page);
-    this.page=page;await this.draw();
-    if(this.cancelled||this.page!==page)throw new Error('Document preview changed. Please try again.');
+    this.page=page;const expectedVersion=this.version+1;await this.draw();
+    if(this.cancelled||this.page!==page||this.renderedPage!==page||this.renderedVersion!==expectedVersion)throw new Error('Document preview changed. Please try again.');
     const source=this.host.querySelector('canvas');
     const region=cropRegion(box,source.width,source.height,.06);
     const crop=document.createElement('canvas');crop.width=region.width;crop.height=region.height;

@@ -46,3 +46,8 @@ test('source crop requires a unique non-label match on the requested page',async
  assert.throws(()=>uniqueSourceRegion(words,[{text:'DEMO',kind:'label'}],1),/unique/);
  words[1].push({...words[1][0],y:.2});assert.throws(()=>uniqueSourceRegion(words,[{text:'DEMO',kind:'value'}],1),/unique/);
 });
+test('failed or superseded preview rendering cannot send a crop from a stale canvas',async()=>{
+ const {DocumentViewer}=await import('../web/document-viewer.mjs');
+ const target={job:{pageWords:{1:[{text:'DEMO',x:.1,y:.1,width:.2,height:.02}]}},version:1,renderedPage:2,renderedVersion:1,draw:async()=>{},host:{querySelector(){throw new Error('stale canvas must not be accessed');}}};
+ await assert.rejects(DocumentViewer.prototype.cropSource.call(target,[{text:'DEMO',kind:'value'}],1),/preview changed/);
+});
