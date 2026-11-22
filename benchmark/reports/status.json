@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "status": "not_measured",
-  "corpusVersion": 1,
-  "syntheticPageCount": 6,
+  "corpusVersion": 2,
+  "syntheticPageCount": 9,
   "liveModelRuns": 0,
   "accuracy": null,
   "costUsd": null,
