@@ -1,7 +1,7 @@
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { timingSafeEqual } from 'node:crypto';
-import { extract } from './packages/core/extraction.mjs';
+import { orchestratedExtract as extract } from './lib/orchestrated-extraction.mjs';
 import { authConfiguration, handleAuth } from './lib/auth.mjs';
 import { accountExtract, accountStatus } from './lib/account-api.mjs';
 import { community } from './lib/community.mjs';
