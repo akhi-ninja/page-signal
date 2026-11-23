@@ -1,13 +1,17 @@
 {
   "schemaVersion": 1,
-  "status": "expanded_corpus_unmeasured",
+  "status": "paired_v4_measured",
   "corpusVersion": 4,
   "syntheticPageCount": 19,
-  "liveModelRuns": 1,
-  "accuracy": null,
-  "costUsd": null,
-  "note": "Corpus v4 has 19 synthetic pages including actual PDF ingestion and artificial drawn strokes. Historical v2 baseline remains measured; paired v4 live comparison is not yet recorded. Real human handwriting/general accuracy and human review minutes remain unmeasured.",
-  "report": "baseline-2026-11-22-v2.json",
-  "measuredCorpusVersion": 2,
-  "measuredSyntheticPageCount": 9
+  "liveModelRuns": 3,
+  "pairedLiveModelRuns": 2,
+  "measuredCalls": 38,
+  "pairedEstimatedCostUsd": 0.0461536,
+  "reports": {
+    "pipeline": "paired-2026-11-23-v4-pipeline.json",
+    "langgraph": "paired-2026-11-23-v4-langgraph.json",
+    "comparison": "paired-2026-11-23-v4-comparison.json"
+  },
+  "historicalReport": "baseline-2026-11-22-v2.json",
+  "note": "One sequential paired synthetic run; not statistical significance or real handwriting/general accuracy. Human review minutes are null. Do not infer an orchestration accuracy benefit. Scanned PDF uses declared transcript fallback."
 }

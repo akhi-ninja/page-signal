@@ -75,3 +75,12 @@ test('quota denial preserves paid-attempt budget for an explicit later retry',as
   await store.action(id,'alice','retry');assert.equal((await store.claim(id)).page.attempts,1);
  }finally{await db.close();}
 });
+
+test('manual approval keeps original values separately from reviewed corrections',async()=>{
+ const {db,store}=await database();try{
+  const {id}=await store.create('alice',pages,'manual-review-key');await store.finish(await store.claim(id),{status:'complete',result:result()});
+  const corrected=result();corrected.fields[0].value='DEMO-2';corrected.fields.push({section:null,label:'Added during review',value:'manual',state:'filled',evidence:null});
+  const approved=await store.action(id,'alice','approve',[{page:1,result:corrected}]);
+  assert.equal(approved.result.pages[0].result.fields[0].value,'DEMO-1');const fields=approved.approved_result.documents[0].fields;assert.equal(fields[0].value,'DEMO-2');assert.equal(fields[0].original_value,'DEMO-1');assert.equal(fields[0].review_state,'manually_reviewed');assert.equal(fields[1].original_value,null);
+ }finally{await db.close();}
+});

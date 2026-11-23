@@ -66,6 +66,7 @@ async function queryDocument(input,env,signal){
   const content=result.output?.flatMap(message=>message.content||[]).find(item=>item.type==='output_text');
   if(result.status!=='completed'||!content)return providerIncomplete();
   const data=JSON.parse(content.text);
+  if(!data||typeof data.answer!=='string'||!Array.isArray(data.citations)||!Array.isArray(data.fields))return providerIncomplete();
   const pageText=new Map(pages.map(p=>[p.page,normalizeEvidence(p.text)]));
   const supported=source=>Boolean(source?.excerpt?.trim()&&pageText.get(source.page)?.includes(normalizeEvidence(source.excerpt)));
   const citations=data.citations.filter(supported);
@@ -88,7 +89,7 @@ async function queryDocument(input,env,signal){
    citations,
    fields
   });
- }catch{return json({error:'The question timed out or returned an invalid result.'},502);}
+ }catch(error){return providerException(error,signal);}
 }
 export async function extract(request,env){
  if(request.method!=='POST')return json({error:'Method not allowed.'},405);

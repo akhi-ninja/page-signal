@@ -3,7 +3,7 @@ const text=x=>String(x??'').replace(/\s+/gu,' ').trim();
 export function validatePageResult(r){
  if(!r||typeof r.document_type!=='string'||!['identified','needs_review','unidentified'].includes(r.classification_status)||!Array.isArray(r.fields)||!Array.isArray(r.tables)||!Array.isArray(r.review_notes)||r.review_notes.some(n=>typeof n!=='string'))throw Error('Invalid page result');
  if((r.form_number!==undefined&&!scalar(r.form_number))||(r.issuer!==undefined&&!scalar(r.issuer))||(r.page_role!==undefined&&!['first','continuation','standalone','unknown'].includes(r.page_role)))throw Error('Invalid page identity');
- for(const f of r.fields)if(!f||typeof f.label!=='string'||!scalar(f.section)||!scalar(f.value)||!scalar(f.evidence)||!['filled','blank','illegible','checked','unchecked'].includes(f.state))throw Error('Invalid field');
+ for(const f of r.fields)if(!f||typeof f.label!=='string'||!scalar(f.section)||!scalar(f.value)||!scalar(f.evidence)||(f.original_value!==undefined&&!scalar(f.original_value))||!['filled','blank','illegible','checked','unchecked'].includes(f.state))throw Error('Invalid field');
  for(const f of r.fields)if((['blank','illegible','unchecked'].includes(f.state)&&f.value!==null)||(f.state==='filled'&&(f.value===null||!f.value.trim())))throw Error('Inconsistent field state');
  for(const t of r.tables)if(!t||!Array.isArray(t.columns)||t.columns.some(c=>typeof c!=='string')||!Array.isArray(t.rows)||t.rows.some(row=>!Array.isArray(row)||row.length!==t.columns.length||row.some(c=>!scalar(c))))throw Error('Invalid table');
  return r;
@@ -20,7 +20,7 @@ export function reconcileDocument(input){
   const continuation=r.page_role==='continuation'&&current&&current.identity===identity(r)&&current.pages.at(-1)===page.page-1;
   if(!continuation){current={id:`document-p${page.page}`,identity:identity(r),pages:[],status:'needs_review',fields:[],conflicts:[],table_continuations:[],errors:[]};documents.push(current);}
   current.pages.push(page.page);const occurrences=new Map();
-  for(const f of r.fields){const key=fieldKey(f),n=occurrences.get(key)||0;occurrences.set(key,n+1);current.fields.push({...f,id:`${current.id}:p${page.page}:${encodeURIComponent(key)}:${n}`,original_value:f.original_value??f.value,normalized_value:f.value===null?null:text(f.value),source:{page:page.page,excerpt:f.evidence}});}
+  for(const f of r.fields){const key=fieldKey(f),n=occurrences.get(key)||0;occurrences.set(key,n+1);current.fields.push({...f,id:`${current.id}:p${page.page}:${encodeURIComponent(key)}:${n}`,original_value:f.original_value!==undefined?f.original_value:f.value,normalized_value:f.value===null?null:text(f.value),source:{page:page.page,excerpt:f.evidence}});}
   if(continuation){const previous=pages.find(p=>p.page===page.page-1)?.result;
    for(let index=0;index<r.tables.length;index++){
     const table=r.tables[index];const matches=(previous?.tables||[]).map((t,i)=>({t,i})).filter(({t})=>JSON.stringify(t.columns)===JSON.stringify(table.columns)&&t.title===table.title);

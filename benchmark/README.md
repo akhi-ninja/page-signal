@@ -1,6 +1,8 @@
 # Extraction quality baseline (issue #20, phase 1)
 
-This repository now has a deterministic offline scorer and thirteen **synthetic rendered page fixtures**. No user documents are included. Fixture images and annotations are dedicated to the public domain under CC0-1.0; the generator is project code under the repository license. All names, identifiers and example.test addresses are invented.
+This repository has a deterministic offline scorer and nineteen **synthetic page fixtures**, including actual PDF ingestion. No user documents are included. Fixture images and annotations are dedicated to the public domain under CC0-1.0; the generator is project code under the repository license. All names, identifiers and example.test addresses are invented.
+
+The [paired v4 evaluation](reports/paired-2026-11-23-v4.md) records 38 live calls on the same inputs. It does not establish a general quality benefit from LangGraph. Human review time and real handwriting remain unmeasured.
 
 The starter corpus covers a clean invoice/table, rotated receipt, repeated labels and blank/checkbox fields, low-resolution letter, and a two-page demonstration agreement. Manifest entries link document ID and page number. This is a small development corpus, not evidence of industry-wide accuracy. Printed demonstration forms are not official ACORD or government forms.
 

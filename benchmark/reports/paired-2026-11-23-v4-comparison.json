@@ -1,0 +1,1362 @@
+{
+  "schemaVersion": 1,
+  "status": "regressed",
+  "maxDrop": 0,
+  "changes": [
+    {
+      "group": "all",
+      "metric": "classificationAccuracy",
+      "before": 0.6842105263157895,
+      "after": 0.7368421052631579,
+      "delta": 0.05263157894736836,
+      "regression": false
+    },
+    {
+      "group": "all",
+      "metric": "fieldPrecision",
+      "before": 0.9868421052631579,
+      "after": 0.9868421052631579,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "all",
+      "metric": "fieldRecall",
+      "before": 0.9868421052631579,
+      "after": 0.9868421052631579,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "all",
+      "metric": "unsupportedValueRate",
+      "before": 0.013157894736842105,
+      "after": 0.013157894736842105,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "all",
+      "metric": "fieldCoverage",
+      "before": 0.9438202247191011,
+      "after": 0.9213483146067416,
+      "delta": -0.022471910112359494,
+      "regression": true
+    },
+    {
+      "group": "all",
+      "metric": "stateAccuracy",
+      "before": 0.9325842696629213,
+      "after": 0.9101123595505618,
+      "delta": -0.022471910112359494,
+      "regression": true
+    },
+    {
+      "group": "all",
+      "metric": "evidenceRecall",
+      "before": 0.9342105263157895,
+      "after": 0.8421052631578947,
+      "delta": -0.0921052631578948,
+      "regression": true
+    },
+    {
+      "group": "all",
+      "metric": "tableCellAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:invoice",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:invoice",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:invoice",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:invoice",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:invoice",
+      "metric": "fieldCoverage",
+      "before": 0.9347826086956522,
+      "after": 0.8913043478260869,
+      "delta": -0.0434782608695653,
+      "regression": true
+    },
+    {
+      "group": "category:invoice",
+      "metric": "stateAccuracy",
+      "before": 0.9347826086956522,
+      "after": 0.8913043478260869,
+      "delta": -0.0434782608695653,
+      "regression": true
+    },
+    {
+      "group": "category:invoice",
+      "metric": "evidenceRecall",
+      "before": 0.9230769230769231,
+      "after": 0.9230769230769231,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:invoice",
+      "metric": "tableCellAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:clean",
+      "metric": "classificationAccuracy",
+      "before": 0.6666666666666666,
+      "after": 0.6666666666666666,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:clean",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:clean",
+      "metric": "fieldRecall",
+      "before": 0.9230769230769231,
+      "after": 0.9230769230769231,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:clean",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:clean",
+      "metric": "fieldCoverage",
+      "before": 0.8125,
+      "after": 0.8125,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:clean",
+      "metric": "stateAccuracy",
+      "before": 0.8125,
+      "after": 0.8125,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:clean",
+      "metric": "evidenceRecall",
+      "before": 0.9230769230769231,
+      "after": 0.6923076923076923,
+      "delta": -0.23076923076923084,
+      "regression": true
+    },
+    {
+      "group": "quality:clean",
+      "metric": "tableCellAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:receipt",
+      "metric": "classificationAccuracy",
+      "before": 0.6666666666666666,
+      "after": 1,
+      "delta": 0.33333333333333337,
+      "regression": false
+    },
+    {
+      "group": "category:receipt",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:receipt",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:receipt",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:receipt",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:receipt",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:receipt",
+      "metric": "evidenceRecall",
+      "before": 0.9,
+      "after": 0.5,
+      "delta": -0.4,
+      "regression": true
+    },
+    {
+      "group": "quality:rotated",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:rotated",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:rotated",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:rotated",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:rotated",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:rotated",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:rotated",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:custom_application_form",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:custom_application_form",
+      "metric": "fieldPrecision",
+      "before": 0.8,
+      "after": 0.8,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:custom_application_form",
+      "metric": "fieldRecall",
+      "before": 0.8,
+      "after": 0.8,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:custom_application_form",
+      "metric": "unsupportedValueRate",
+      "before": 0.2,
+      "after": 0.2,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:custom_application_form",
+      "metric": "fieldCoverage",
+      "before": 0.7777777777777778,
+      "after": 0.7777777777777778,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:custom_application_form",
+      "metric": "stateAccuracy",
+      "before": 0.6666666666666666,
+      "after": 0.6666666666666666,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:custom_application_form",
+      "metric": "evidenceRecall",
+      "before": 0.8,
+      "after": 0.2,
+      "delta": -0.6000000000000001,
+      "regression": true
+    },
+    {
+      "group": "category:letter",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:letter",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:letter",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:letter",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:letter",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:letter",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:letter",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_resolution",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_resolution",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_resolution",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_resolution",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_resolution",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_resolution",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_resolution",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:contract",
+      "metric": "classificationAccuracy",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:contract",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:contract",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:contract",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:contract",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:contract",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "category:contract",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:continuation",
+      "metric": "classificationAccuracy",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:continuation",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:continuation",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:continuation",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:continuation",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:continuation",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:continuation",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:upside_down",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:upside_down",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:upside_down",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:upside_down",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:upside_down",
+      "metric": "fieldCoverage",
+      "before": 0.8333333333333334,
+      "after": 0.8333333333333334,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:upside_down",
+      "metric": "stateAccuracy",
+      "before": 0.8333333333333334,
+      "after": 0.8333333333333334,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:upside_down",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:upside_down",
+      "metric": "tableCellAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_contrast",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_contrast",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_contrast",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_contrast",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_contrast",
+      "metric": "fieldCoverage",
+      "before": 0.8333333333333334,
+      "after": 0.8333333333333334,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_contrast",
+      "metric": "stateAccuracy",
+      "before": 0.8333333333333334,
+      "after": 0.8333333333333334,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_contrast",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:low_contrast",
+      "metric": "tableCellAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:corrupted_ocr",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:corrupted_ocr",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:corrupted_ocr",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:corrupted_ocr",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:corrupted_ocr",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 0.8333333333333334,
+      "delta": -0.16666666666666663,
+      "regression": true
+    },
+    {
+      "group": "quality:corrupted_ocr",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 0.8333333333333334,
+      "delta": -0.16666666666666663,
+      "regression": true
+    },
+    {
+      "group": "quality:corrupted_ocr",
+      "metric": "evidenceRecall",
+      "before": 0.6,
+      "after": 0.6,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:corrupted_ocr",
+      "metric": "tableCellAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_spanish",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_spanish",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_spanish",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_spanish",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_spanish",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_spanish",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_spanish",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_french",
+      "metric": "classificationAccuracy",
+      "before": 0,
+      "after": 1,
+      "delta": 1,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_french",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_french",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_french",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_french",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_french",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:multilingual_french",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 0,
+      "delta": -1,
+      "regression": true
+    },
+    {
+      "group": "quality:illegible",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:illegible",
+      "metric": "fieldPrecision",
+      "before": 0.5,
+      "after": 0.5,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:illegible",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:illegible",
+      "metric": "unsupportedValueRate",
+      "before": 0.5,
+      "after": 0.5,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:illegible",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:illegible",
+      "metric": "stateAccuracy",
+      "before": 0.6666666666666666,
+      "after": 0.6666666666666666,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:illegible",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:conflicting_continuation",
+      "metric": "classificationAccuracy",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:conflicting_continuation",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:conflicting_continuation",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:conflicting_continuation",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:conflicting_continuation",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:conflicting_continuation",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:conflicting_continuation",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:text_pdf",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:text_pdf",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:text_pdf",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:text_pdf",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:text_pdf",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:text_pdf",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:text_pdf",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:text_pdf",
+      "metric": "tableCellAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:scanned_pdf_transcript_assisted",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:scanned_pdf_transcript_assisted",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:scanned_pdf_transcript_assisted",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:scanned_pdf_transcript_assisted",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:scanned_pdf_transcript_assisted",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 0.8333333333333334,
+      "delta": -0.16666666666666663,
+      "regression": true
+    },
+    {
+      "group": "quality:scanned_pdf_transcript_assisted",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 0.8333333333333334,
+      "delta": -0.16666666666666663,
+      "regression": true
+    },
+    {
+      "group": "quality:scanned_pdf_transcript_assisted",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:scanned_pdf_transcript_assisted",
+      "metric": "tableCellAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:mixed_pdf",
+      "metric": "classificationAccuracy",
+      "before": 0.3333333333333333,
+      "after": 0.3333333333333333,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:mixed_pdf",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:mixed_pdf",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:mixed_pdf",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:mixed_pdf",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:mixed_pdf",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:mixed_pdf",
+      "metric": "evidenceRecall",
+      "before": 0.9166666666666666,
+      "after": 0.9166666666666666,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:mixed_pdf",
+      "metric": "tableCellAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:synthetic_handwriting_like",
+      "metric": "classificationAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:synthetic_handwriting_like",
+      "metric": "fieldPrecision",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:synthetic_handwriting_like",
+      "metric": "fieldRecall",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:synthetic_handwriting_like",
+      "metric": "unsupportedValueRate",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:synthetic_handwriting_like",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:synthetic_handwriting_like",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 1,
+      "delta": 0,
+      "regression": false
+    },
+    {
+      "group": "quality:synthetic_handwriting_like",
+      "metric": "evidenceRecall",
+      "before": 0,
+      "after": 0,
+      "delta": 0,
+      "regression": false
+    }
+  ],
+  "regressions": [
+    {
+      "group": "all",
+      "metric": "fieldCoverage",
+      "before": 0.9438202247191011,
+      "after": 0.9213483146067416,
+      "delta": -0.022471910112359494,
+      "regression": true
+    },
+    {
+      "group": "all",
+      "metric": "stateAccuracy",
+      "before": 0.9325842696629213,
+      "after": 0.9101123595505618,
+      "delta": -0.022471910112359494,
+      "regression": true
+    },
+    {
+      "group": "all",
+      "metric": "evidenceRecall",
+      "before": 0.9342105263157895,
+      "after": 0.8421052631578947,
+      "delta": -0.0921052631578948,
+      "regression": true
+    },
+    {
+      "group": "category:invoice",
+      "metric": "fieldCoverage",
+      "before": 0.9347826086956522,
+      "after": 0.8913043478260869,
+      "delta": -0.0434782608695653,
+      "regression": true
+    },
+    {
+      "group": "category:invoice",
+      "metric": "stateAccuracy",
+      "before": 0.9347826086956522,
+      "after": 0.8913043478260869,
+      "delta": -0.0434782608695653,
+      "regression": true
+    },
+    {
+      "group": "quality:clean",
+      "metric": "evidenceRecall",
+      "before": 0.9230769230769231,
+      "after": 0.6923076923076923,
+      "delta": -0.23076923076923084,
+      "regression": true
+    },
+    {
+      "group": "category:receipt",
+      "metric": "evidenceRecall",
+      "before": 0.9,
+      "after": 0.5,
+      "delta": -0.4,
+      "regression": true
+    },
+    {
+      "group": "category:custom_application_form",
+      "metric": "evidenceRecall",
+      "before": 0.8,
+      "after": 0.2,
+      "delta": -0.6000000000000001,
+      "regression": true
+    },
+    {
+      "group": "quality:corrupted_ocr",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 0.8333333333333334,
+      "delta": -0.16666666666666663,
+      "regression": true
+    },
+    {
+      "group": "quality:corrupted_ocr",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 0.8333333333333334,
+      "delta": -0.16666666666666663,
+      "regression": true
+    },
+    {
+      "group": "quality:multilingual_french",
+      "metric": "evidenceRecall",
+      "before": 1,
+      "after": 0,
+      "delta": -1,
+      "regression": true
+    },
+    {
+      "group": "quality:scanned_pdf_transcript_assisted",
+      "metric": "fieldCoverage",
+      "before": 1,
+      "after": 0.8333333333333334,
+      "delta": -0.16666666666666663,
+      "regression": true
+    },
+    {
+      "group": "quality:scanned_pdf_transcript_assisted",
+      "metric": "stateAccuracy",
+      "before": 1,
+      "after": 0.8333333333333334,
+      "delta": -0.16666666666666663,
+      "regression": true
+    }
+  ],
+  "note": "Observed fixture differences only; not statistical significance or a production accuracy guarantee."
+}
