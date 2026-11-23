@@ -9,6 +9,10 @@
     "./workspace": {
       "types": "./workspace.d.ts",
       "import": "./workspace.mjs"
+    },
+    "./preview": {
+      "types": "./preview.d.ts",
+      "import": "./preview.mjs"
     }
   },
   "files": [
@@ -16,7 +20,9 @@
     "README.md",
     "LICENSE",
     "workspace.mjs",
-    "workspace.d.ts"
+    "workspace.d.ts",
+    "preview.mjs",
+    "preview.d.ts"
   ],
   "engines": {
     "node": ">=22"
