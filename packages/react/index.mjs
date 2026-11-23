@@ -33,6 +33,7 @@ export function PageSignalWorkspace({adapter,maxFiles=10,concurrency=2,className
     h('label',null,'Question or fields to find',h('textarea',{value:question,onChange:e=>setQuestion(e.target.value)})),
     button('Find fields',()=>store.query(d.id,question,'fields'),!d.result||d.queryPending||!question.trim()),
     button('Ask',()=>store.query(d.id,question,'chat'),!d.result||d.queryPending||!question.trim()),
+    d.queryPending?button('Cancel question',()=>store.cancelQuery(d.id)):null,
     d.queryPending?h('p',{role:'status'},'Finding information…'):null,
     d.queryResult?h('pre',{'aria-live':'polite',style:{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}},JSON.stringify(d.queryResult,null,2)):null),
    h('section',{style:{flex:'2 1 400px',minWidth:0}},h('h2',null,'Document preview'),

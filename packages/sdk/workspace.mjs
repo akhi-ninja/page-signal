@@ -51,9 +51,10 @@ export function createWorkspace({adapter, concurrency = 2, maxFiles = 10, maxFil
     retry(id) { const d=documents.find(d=>d.id===id); if(d && ['error','cancelled'].includes(d.status) && !jobs.has(id)) {patch(id,{status:'queued',error:''});run();} },
     updateField(id,index,value) {
       const doc=documents.find(d=>d.id===id); if(!Array.isArray(doc?.result?.fields))return;
-      const fields=doc.result.fields.map((field,i)=>i===index?{...field,value,edited:true}:field);
+      const fields=doc.result.fields.map((field,i)=>{if(i!==index)return field;const pageField=['filled','blank','illegible'].includes(field.state),next=pageField&&value===''?null:value;return {...field,original_value:Object.hasOwn(field,'original_value')?field.original_value:field.value,value:next,...(pageField?{state:next===null?'blank':'filled'}:{}),edited:true,reviewed:true};});
       patch(id,{result:{...doc.result,fields}});
     },
+    cancelQuery(id) {queries.get(id)?.abort();queries.delete(id);if(documents.some(d=>d.id===id))patch(id,{queryPending:false});},
     async query(id,question,mode='fields') {
       const doc=documents.find(d=>d.id===id);
       if(!doc || doc.status!=='complete' || !question.trim() || disposed)return;

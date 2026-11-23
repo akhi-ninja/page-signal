@@ -34,7 +34,8 @@ export const PageSignalWorkspace=defineComponent({
       h('label',['Question or fields to find',h('textarea',{value:question.value,onInput:e=>question.value=e.target.value})]),
       button('Find fields',()=>store.query(d.id,question.value,'fields'),!d.result||d.queryPending||!question.value.trim()),
       button('Ask',()=>store.query(d.id,question.value,'chat'),!d.result||d.queryPending||!question.value.trim()),
-      d.queryPending?h('p',{role:'status'},'Finding information…'):null,
+      d.queryPending?button('Cancel question',()=>store.cancelQuery(d.id)):null,
+    d.queryPending?h('p',{role:'status'},'Finding information…'):null,
       d.queryResult?h('pre',{'aria-live':'polite',style:{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}},JSON.stringify(d.queryResult,null,2)):null]),
      h('section',{style:{flex:'2 1 400px',minWidth:0}},[h('h2','Document preview'),
       props.enhancedPreview?h('div',{ref:previewHost}):d.file.type==='application/pdf'?h('object',{data:d.previewUrl,type:'application/pdf',style:{width:'100%',height:'700px'}},[h('a',{href:d.previewUrl,target:'_blank',rel:'noopener'},'Open PDF')]):h('img',{src:d.previewUrl,alt:d.name,style:{maxWidth:'100%'}})])
