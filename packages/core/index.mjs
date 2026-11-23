@@ -8,10 +8,12 @@ export class PageSignalError extends Error {
   }
 }
 
-async function invoke(payload, { apiKey, model } = {}) {
+async function invoke(payload, { apiKey, model, signal } = {}) {
+  signal?.throwIfAborted();
   if (!apiKey) throw new PageSignalError('An OpenAI API key is required.', 503);
   const request = new Request('https://pagesignal.internal/api/ai/extract', {
     method: 'POST',
+    signal,
     headers: {
       Origin: 'https://pagesignal.internal',
       'Content-Type': 'application/json'

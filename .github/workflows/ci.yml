@@ -24,3 +24,32 @@ jobs:
       - run: npm run releases:check
       - run: node scripts/publish-packages.mjs --check
       - run: npm run pack:packages
+      - run: npx vite build --config examples/native/vite.config.mjs --outDir /tmp/pagesignal-react
+        env:
+          FRAMEWORK: react
+      - run: npx vite build --config examples/native/vite.config.mjs --outDir /tmp/pagesignal-vue
+        env:
+          FRAMEWORK: vue
+      - run: npx vite build --config examples/native/vite.config.mjs --outDir /tmp/pagesignal-angular
+        env:
+          FRAMEWORK: angular
+
+  native-consumers:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        react: ['18.3.1', '19.2.4']
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+      - run: npm run build:packages
+      - run: node scripts/verify-packed-native.mjs
+        env:
+          TEST_REACT_VERSION: ${{ matrix.react }}
+      - run: node scripts/native-bundle-report.mjs

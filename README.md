@@ -439,3 +439,9 @@ See [the benchmark guide](https://github.com/akhi-ninja/page-signal/blob/develop
 ## Review document quality
 
 AI review shows scan-quality hints and field evidence status. A transcript match checks text consistency; it does not prove visual accuracy. Different values across pages are flagged for review without overwriting either value. For an uncertain field, choose **Recheck source with AI** to send a unique source crop for one additional AI request, then review the proposal and choose **Use this value** only if correct. Ambiguous locations require manual review. Automatic extra AI calls remain disabled by default. See [quality tools and limitations](https://github.com/akhi-ninja/page-signal/blob/development/docs/document-quality.md).
+
+## Native package quality and opt-in preview
+
+React, Angular and Vue source integrations share an optional native preview controller for zoom, fit width, page navigation and source evidence overlays. PDF navigation/overlays require a host page renderer; the browser-native PDF fallback remains available. Heavy PDF/OCR dependencies stay outside the UI packages. See [runnable examples and contracts](https://github.com/akhi-ninja/page-signal/tree/development/examples/native) for the server adapter, lazy PDF.js example, custom fields, themes, lifecycle rules, supported framework versions and migration guidance. This source improvement is not an npm release.
+
+CI checks packed consumer installs, strict TypeScript exports, DOM-free imports, framework mounts, cancellation, accessibility semantics and keyboard focus. Bundle reports exclude framework peers and optional PDF/OCR runtimes. Automated checks do not establish formal WCAG conformance or replace assistive-technology/device testing.

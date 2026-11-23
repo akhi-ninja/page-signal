@@ -1,4 +1,5 @@
-export interface ExtractedField { label: string; value: unknown; edited?: boolean; source?: {page?:number; excerpt?:string}; [key:string]:unknown }
+import type {SourceEvidence} from '@pagesignal/sdk/preview';
+export interface ExtractedField { label: string; value: unknown; edited?: boolean; source?: Partial<SourceEvidence>; [key:string]:unknown }
 export interface ExtractionResult { fields?: ExtractedField[]; [key:string]:unknown }
 export interface WorkspaceAdapter {
   extract(input:{file:File;signal:AbortSignal}): Promise<ExtractionResult>;

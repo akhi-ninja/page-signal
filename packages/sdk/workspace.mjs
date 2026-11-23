@@ -35,7 +35,7 @@ export function createWorkspace({adapter, concurrency = 2, maxFiles = 10, maxFil
       else if (documents.reduce((n,d)=>n+d.file.size,0)+batch.reduce((n,f)=>n+f.size,0)>maxBatchBytes) error = 'The batch exceeds the configured size limit.';
       else for (const file of batch) {
         if (!['application/pdf','image/png','image/jpeg','image/webp','image/bmp'].includes(file.type)) { error = `Unsupported file: ${file.name}. Use PDF, PNG, JPEG, WebP or BMP.`; break; }
-        if (file.size > maxFileBytes) { error = `File exceeds the configured size limit: ${file.name}.`; break; }
+        if (!file.size || file.size > maxFileBytes) { error = `File exceeds the configured size limit: ${file.name}.`; break; }
       }
       if (error) { notify(); return; }
       const added = batch.map(file => ({id:String(++sequence),file,name:file.name,previewUrl:URL.createObjectURL(file),status:'queued',result:null,error:'',queryResult:null,queryPending:false}));

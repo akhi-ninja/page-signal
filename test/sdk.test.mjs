@@ -48,3 +48,11 @@ test('core query API runs source grounding and rejects unsupported values',async
  finally{globalThis.fetch=original;}
  await assert.rejects(queryDocument({pages:[],question:'Policy?'}),{status:503});
 });
+test('core cancellation prevents pre-aborted calls and reaches the provider signal',async()=>{
+ const original=globalThis.fetch;let entered;const started=new Promise(r=>entered=r);const controller=new AbortController();
+ globalThis.fetch=async(url,init)=>{entered();return new Promise((resolve,reject)=>{if(init.signal.aborted)return reject(init.signal.reason);init.signal.addEventListener('abort',()=>reject(init.signal.reason),{once:true});});};
+ try{
+  const cancelled=new AbortController();cancelled.abort();await assert.rejects(extractPage({image:'data:image/jpeg;base64,AA==',text:''},{apiKey:'test',signal:cancelled.signal}),{name:'AbortError'});
+  const work=extractPage({image:'data:image/jpeg;base64,AA==',text:''},{apiKey:'test',signal:controller.signal});await started;controller.abort();await assert.rejects(work);
+ }finally{globalThis.fetch=original;}
+});
