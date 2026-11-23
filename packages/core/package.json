@@ -20,7 +20,8 @@
     "contracts.mjs",
     "contracts.d.ts",
     "document.mjs",
-    "document.d.ts"
+    "document.d.ts",
+    "retry-policy.mjs"
   ],
   "engines": {
     "node": ">=22"

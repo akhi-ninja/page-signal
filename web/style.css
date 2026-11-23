@@ -38,3 +38,4 @@ button:focus-visible,.button:focus-visible,a:focus-visible,input:focus-visible,t
 #ai-status{min-height:3.5em;line-height:1.5}.account-button{inline-size:220px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis}#account-usage{min-height:3em}@media(max-width:760px){.account-button{inline-size:160px}}
 
 .quality-field{min-width:0}.quality-field>label{display:flex;flex-direction:column;gap:.35rem}.quality-field>small{display:block;margin:.35rem 0}.quality-field>button{margin-top:.5rem}
+.reading-options{margin:14px 0;text-align:left;padding:12px;border:1px solid var(--line,#dedcf0);border-radius:10px;background:#faf9ff}.reading-options summary{cursor:pointer;font-weight:600}.reading-options label{display:block;margin:12px 0 5px}.reading-options select{width:100%;max-width:100%;padding:8px;border:1px solid #d9d6ed;border-radius:7px;background:white;color:#201a43}.reading-options small{display:block;margin-top:10px;line-height:1.5}

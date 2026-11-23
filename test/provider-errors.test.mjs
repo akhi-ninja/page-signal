@@ -22,3 +22,7 @@ test('core and SDK retain safe provider categories and retry hints for callers',
  const client=new PageSignalClient({baseUrl:'https://example.test',apiKey:'test',fetch:async()=>Response.json({error:'Try later',code:'provider_rate_limit',retryable:true,retry_after_seconds:3},{status:502})});
  await assert.rejects(client.queryDocument({pages:[{page:1,text:'ID A-1'}],question:'ID?'}),{status:502,code:'provider_rate_limit',retryable:true,retryAfterSeconds:3});
 });
+test('HTTP-date Retry-After and exponential fallback stay bounded without retrying paid work',async()=>{
+ const {retryAfterSeconds,boundedRetryDelay}=await import('../packages/core/retry-policy.mjs');const now=Date.parse('2026-11-23T00:00:00Z');assert.equal(retryAfterSeconds('Mon, 23 Nov 2026 00:00:30 GMT',now),30);assert.equal(retryAfterSeconds('bad',now),60);assert.equal(retryAfterSeconds('99999',now),300);
+ assert.equal(boundedRetryDelay({attempt:1,random:()=>0}),15);assert.equal(boundedRetryDelay({attempt:2,random:()=>0}),30);assert.equal(boundedRetryDelay({attempt:1,retryAfter:300,random:()=>1}),300);assert.throws(()=>boundedRetryDelay({attempt:3}));
+});

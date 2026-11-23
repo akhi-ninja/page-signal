@@ -184,6 +184,7 @@ async function readWithOCR(job,image,page){
  }
  status(job,'Reading page '+page);
  try{
+   if(image.getContext)recordScanHints(job,page,image);
    const result=await worker.recognize(image,{}, {text:true,blocks:true});
    let width=image.width,height=image.height;
    if(!width||!height){const bitmap=await createImageBitmap(image);width=bitmap.width;height=bitmap.height;bitmap.close();}
@@ -205,12 +206,15 @@ function pdfLines(items){
  }
  return lines.sort((a,b)=>b.y-a.y).map(r=>r.items.sort((a,b)=>a.x-b.x).map(i=>i.text).join(' ').trim()).filter(Boolean).join('\n');
 }
-async function extractWithAI(job,page,canvas,text){
- status(job,'Analyzing layout and fields on page '+page);
- job.pageTexts||={};job.pageTexts[page]=text;
+function recordScanHints(job,page,canvas){
  const sample=document.createElement('canvas');sample.width=128;sample.height=128;
  const sampleContext=sample.getContext('2d',{willReadFrequently:true});sampleContext.drawImage(canvas,0,0,128,128);
  job.scanQuality||={};job.scanQuality[page]=assessScan({width:job.pdf?canvas.width:job.preprocessing?.[page]?.original_width||canvas.width,height:job.pdf?canvas.height:job.preprocessing?.[page]?.original_height||canvas.height,pixels:sampleContext.getImageData(0,0,128,128).data});
+}
+async function extractWithAI(job,page,canvas,text){
+ status(job,'Analyzing layout and fields on page '+page);
+ job.pageTexts||={};job.pageTexts[page]=text;
+ recordScanHints(job,page,canvas);
  try{
    if(!await window.PageSignalAccount.ensureSignedIn())throw new Error('Sign in before running AI extraction.');
    let image=canvas.toDataURL('image/jpeg',.85);
