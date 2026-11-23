@@ -9,7 +9,12 @@ export function assessScan({width,height,pixels}){
  const deviation=Math.sqrt(Math.max(0,squares/n-(sum/n)**2));
  if(ink/n<.002)warnings.push('possibly_blank');
  else if(deviation<12)warnings.push('low_contrast');
- return {schema_version:1,width,height,warnings,assessment:'heuristic',orientation_checked:false};
+ let laplacianVariance=null;const side=Math.sqrt(n);
+ if(Number.isInteger(side)&&side>=8){let total=0,totalSquared=0,count=0;const gray=i=>(pixels[i*4]+pixels[i*4+1]+pixels[i*4+2])/3;
+  for(let y=1;y<side-1;y++)for(let x=1;x<side-1;x++){const i=y*side+x,v=gray(i-1)+gray(i+1)+gray(i-side)+gray(i+side)-4*gray(i);total+=v;totalSquared+=v*v;count++;}
+  laplacianVariance=totalSquared/count-(total/count)**2;if(ink/n>=.002&&deviation>=12&&laplacianVariance<8)warnings.push('possibly_blurred');
+ }
+ return {schema_version:1,width,height,warnings,assessment:'heuristic',orientation_checked:false,laplacian_variance:laplacianVariance};
 }
 const norm=x=>String(x??'').normalize('NFKC').replace(/\s+/gu,' ').trim();
 export function verifyFields(result,text,page){

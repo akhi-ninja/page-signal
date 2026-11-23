@@ -51,3 +51,7 @@ test('failed or superseded preview rendering cannot send a crop from a stale can
  const target={job:{pageWords:{1:[{text:'DEMO',x:.1,y:.1,width:.2,height:.02}]}},version:1,renderedPage:2,renderedVersion:1,draw:async()=>{},host:{querySelector(){throw new Error('stale canvas must not be accessed');}}};
  await assert.rejects(DocumentViewer.prototype.cropSource.call(target,[{text:'DEMO',kind:'value'}],1),/preview changed/);
 });
+test('blur hint is a sampled edge heuristic, not a probability or automatic repair',()=>{
+ const pixels=new Uint8ClampedArray(32*32*4);for(let y=0;y<32;y++)for(let x=0;x<32;x++){const i=(y*32+x)*4;pixels[i]=pixels[i+1]=pixels[i+2]=x*8;pixels[i+3]=255;}
+ const r=assessScan({width:1200,height:800,pixels});assert.ok(r.warnings.includes('possibly_blurred'));assert.equal(r.assessment,'heuristic');assert.equal(r.orientation_checked,false);
+});

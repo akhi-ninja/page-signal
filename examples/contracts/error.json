@@ -1,0 +1,7 @@
+{
+  "schema_version": "pagesignal.error.v1",
+  "error": "Try later",
+  "code": "provider_rate_limit",
+  "retryable": true,
+  "retry_after_seconds": 3
+}

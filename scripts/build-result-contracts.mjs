@@ -1,0 +1,3 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+const pairs=[['packages/sdk/contracts.mjs','packages/core/contracts.mjs'],['packages/sdk/contracts.d.ts','packages/core/contracts.d.ts'],['packages/sdk/document.mjs','packages/core/document.mjs'],['packages/sdk/document.d.ts','packages/core/document.d.ts'],['packages/sdk/contracts.mjs','web/result-contracts.mjs']];
+for(const [source,target] of pairs){let expected=readFileSync(source,'utf8');if(target.startsWith('web/'))expected=expected.replace("'./document.mjs'","'./document-contract.mjs'");if(process.argv.includes('--check')){if(readFileSync(target,'utf8')!==expected)throw Error('Run node scripts/build-result-contracts.mjs');}else writeFileSync(target,expected);}

@@ -2,7 +2,7 @@
 
 This increment adds deterministic reading-quality and evidence checks; it does not add another autonomous agent or enable extra AI charges.
 
-- Browser-local scan hints: low resolution, low contrast and possibly blank pages. A 128×128 RGBA sample avoids scanning the full-resolution pixel buffer. These are heuristics, not probabilities, and never block an upload. Rotation/skew/blur detection is not yet implemented; `orientation_checked:false` is explicit.
+- Browser-local scan hints: low resolution, low contrast and possibly blank pages. A 128×128 RGBA sample avoids scanning the full-resolution pixel buffer. These are heuristics, not probabilities, and never block an upload. Automatic orientation/skew detection is not implemented; manual quarter-turns and a sampled blur hint are available in [reading options](reading-options.md); `orientation_checked:false` is explicit.
 - Field review metadata: `transcript_match` requires the literal value inside its evidence excerpt and that excerpt inside the supplied OCR/PDF text. This is a transcript consistency check, not image-level verification. Missing evidence, invalid emails and invalid ISO calendar dates require review; values are preserved without guessing a correction. Blank, unreadable, user-edited and checkbox fields have distinct review states. Checkbox marks still require visual verification.
 - LangGraph validation now routes unsupported transcript evidence to review. The hosted result adds per-field `verification` metadata; the original label/value/state remain unchanged. The existing optional full-page recheck can be triggered by these findings if an operator later enables it. No automatic extra call is enabled by this change.
 - Multi-page conflict detection groups fields by document type, form number, section and label. Different values on different pages are shown together for review, never automatically merged or overwritten. Repeated same-label occurrences on one page are excluded from comparison because association is ambiguous. Different values can be intentional; the tool does not claim one is wrong.
@@ -11,6 +11,6 @@ This increment adds deterministic reading-quality and evidence checks; it does n
 
 ## Validation and remaining work
 
-Tests cover literal evidence grounding, contradictory excerpts, email preservation, invalid dates, blank/checkbox/edit distinctions, scan samples, cross-page conflicts and crop boundaries. They measure software behavior, not real-world extraction accuracy. A paid model comparison has not been run.
+Tests cover literal evidence grounding, contradictory excerpts, email preservation, invalid dates, blank/checkbox/edit distinctions, scan samples, cross-page conflicts and crop boundaries. They measure software behavior, not real-world extraction accuracy. The [paired synthetic comparison](../benchmark/reports/paired-2026-11-23-v4.md) has been recorded; it is not a real handwriting or language OCR benchmark.
 
 Next work: improve context selection for difficult crop layouts, rotation/blur preprocessing, broader handwritten/multilingual/PDF fixtures, cost/latency measurement and a budgeted model baseline. Until measured, automatic additional calls remain off. No training dataset or accuracy percentage is claimed.
