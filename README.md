@@ -1,4 +1,4 @@
-# PageSignal [![Sponsor PageSignal](https://img.shields.io/badge/Sponsor-PageSignal-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/akhi-ninja)
+# PageSignal
 
 Version 2.0.0 provides native Angular, Vue and React workspaces. React users upgrading from version 1 must migrate from iframe props to the adapter API.
 
