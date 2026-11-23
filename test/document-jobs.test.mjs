@@ -84,3 +84,6 @@ test('manual approval keeps original values separately from reviewed corrections
   assert.equal(approved.result.pages[0].result.fields[0].value,'DEMO-1');const fields=approved.approved_result.documents[0].fields;assert.equal(fields[0].value,'DEMO-2');assert.equal(fields[0].original_value,'DEMO-1');assert.equal(fields[0].review_state,'manually_reviewed');assert.equal(fields[1].original_value,null);
  }finally{await db.close();}
 });
+test('malformed provider success fails explicitly without repeating the paid call or holding a stale lease',async()=>{
+ const {db,pool,store}=await database();try{const {id}=await store.create('alice',pages,'malformed-page-key');let calls=0;await processDocumentJob({jobId:id},{PAGESIGNAL_DURABLE_JOBS:'true'},{getRuntime:()=>({origin:'https://example.test',pool}),store,ownerVerified:async()=>true,reserve:async()=>({allowed:true}),extract:async()=>{calls++;return Response.json({bad:'shape'});},enqueue:async()=>{throw Error('Must not automatically repeat');}});const status=await store.read(id,'alice');assert.equal(calls,1);assert.equal(status.pages[0].status,'failed');assert.equal(status.pages[0].error.code,'provider_malformed_output');assert.equal(status.pages[0].attempts,1);}finally{await db.close();}
+});

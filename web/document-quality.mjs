@@ -33,6 +33,7 @@ export function verifyFields(result,text,page){
     const match=value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if(match){const [y,m,d]=match.slice(1).map(Number);const date=new Date(Date.UTC(y,m-1,d));if(date.getUTCFullYear()!==y||date.getUTCMonth()!==m-1||date.getUTCDate()!==d)reasons.push('invalid_calendar_date');}
    }
+   if(/\b(total|subtotal|tax|amount|price|fee|balance|cost|premium)\b/i.test(field.label)&&!/^(?:[A-Z]{3}\s*)?[$€£₹]?\s*[-+(]?\d[\d.,\s]*(?:[%)]|\s*[A-Z]{3})?$/.test(value))reasons.push('numeric_value_requires_review');
    if(!excerpt)reasons.push('missing_evidence');
    else if(!source.includes(excerpt.toLowerCase()))reasons.push('evidence_not_in_transcript');
    else if(!excerpt.toLowerCase().includes(value.toLowerCase()))reasons.push('evidence_does_not_contain_value');

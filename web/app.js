@@ -411,7 +411,7 @@ async function recheckSource(job,page,index){
  try{
   const crop=await activeViewer.cropSource([{text:field.evidence,kind:'evidence'},{text:field.value,kind:'value'}],page);
   if(crop.image.length>uploadLimits.imageDataChars)throw new Error('Source crop is too large. Review the original manually.');
-  const response=await fetch('/api/ai/extract',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:crop.image,text:''})});
+  const response=await fetch('/api/ai/extract',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:crop.image,text:'',field_target:{section:field.section??null,label:field.label}})});
   const result=await response.json();if(!response.ok)throw new Error(result.error||'Source recheck failed.');
   field.recheck={source:crop.source,proposals:(result.fields||[]).filter(f=>f&&typeof f.label==='string').slice(0,12),message:'AI crop result — review against the original before applying'};
   if(!field.recheck.proposals.length)field.recheck.message='No field could be read from this crop. Review the original manually.';

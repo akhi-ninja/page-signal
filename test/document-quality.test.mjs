@@ -55,3 +55,7 @@ test('blur hint is a sampled edge heuristic, not a probability or automatic repa
  const pixels=new Uint8ClampedArray(32*32*4);for(let y=0;y<32;y++)for(let x=0;x<32;x++){const i=(y*32+x)*4;pixels[i]=pixels[i+1]=pixels[i+2]=x*8;pixels[i+3]=255;}
  const r=assessScan({width:1200,height:800,pixels});assert.ok(r.warnings.includes('possibly_blurred'));assert.equal(r.assessment,'heuristic');assert.equal(r.orientation_checked,false);
 });
+test('corrupted monetary text requires review even if OCR and field evidence agree',()=>{
+ const f={section:null,label:'Total',value:'4S.OO',state:'filled',evidence:'Total: 4S.OO'};const result=verifyFields({fields:[f]},'Total: 4S.OO')[0];assert.equal(result.value,'4S.OO');assert.ok(result.verification.reasons.includes('numeric_value_requires_review'));
+ assert.equal(verifyFields({fields:[{...f,value:'45.00',evidence:'Total: 45.00'}]},'Total: 45.00')[0].verification.status,'transcript_match');
+});

@@ -22,7 +22,7 @@ export type {WorkspaceAdapter,WorkspaceDocument} from '@pagesignal/sdk/workspace
  <label>Question or fields to find<textarea [value]="question" (input)="question=$any($event.target).value"></textarea></label>
  <button type="button" [disabled]="!doc.result || doc.queryPending || !question.trim()" (click)="store.query(doc.id,question,'fields')">Find fields</button>
  <button type="button" [disabled]="!doc.result || doc.queryPending || !question.trim()" (click)="store.query(doc.id,question,'chat')">Ask</button>
- @if(doc.queryPending){<p role="status">Finding information…</p>}@if(doc.queryResult){<pre aria-live="polite">{{doc.queryResult | json}}</pre>}
+ @if(doc.queryPending){<button type="button" (click)="store.cancelQuery(doc.id)">Cancel question</button><p role="status">Finding information…</p>}@if(doc.queryResult){<pre aria-live="polite">{{doc.queryResult | json}}</pre>}
  </section><section class="preview"><h2>Document preview</h2>@if(enhancedPreview){<div #previewHost></div>}@else if(doc.file.type==='application/pdf'){<object [data]="preview" type="application/pdf"><a [href]="doc.previewUrl" target="_blank" rel="noopener">Open PDF</a></object>}@else{<img [src]="doc.previewUrl" [alt]="doc.name">}</section></div>}@else{<p>Upload a document to begin.</p>}
  </section>`
 })

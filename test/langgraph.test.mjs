@@ -81,3 +81,6 @@ test('real PostgresSaver SQL migrates, restores state across instances, isolates
   await freshStore.delete(owner);const deleted=await next.graph.getState(config);assert.deepEqual(deleted.values,{});
  }finally{await db.close();}
 });
+test('hosted graph exposes only numeric stage latency metadata',async()=>{
+ const response=await orchestratedExtract(request(),{OPENAI_API_KEY:'test',PAGESIGNAL_ORCHESTRATOR:'langgraph'},{extractPage:async()=>result()});const stages=JSON.parse(response.headers.get('X-PageSignal-Stage-Ms'));assert.deepEqual(Object.keys(stages),['workflow_ms','extract_ms','field_validation_ms']);assert.ok(Object.values(stages).every(v=>Number.isFinite(v)&&v>=0));
+});
