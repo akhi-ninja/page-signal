@@ -9,7 +9,8 @@
     "index.mjs",
     "extraction.mjs",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "provider-errors.mjs"
   ],
   "engines": {
     "node": ">=22"

@@ -1,3 +1,4 @@
+import {reconcileDocument} from '/document-contract.mjs';
 import { assessScan, verifyFields, reconcilePages } from '/document-quality.mjs';
 import { loadOCR } from '/ocr-loader.mjs';
 import { DocumentViewer, pdfWordBoxes, ocrWordBoxes } from '/document-viewer.mjs';
@@ -55,6 +56,7 @@ function output(job){
    processing_status:job.aiPages.some(page=>page.error||page.classification_status!=='identified'||verifyFields(page,job.pageTexts?.[page.page]||'',page.page).some(f=>['needs_review','illegible'].includes(f.verification.status)))||reconcilePages(job.aiPages).conflicts.length?'needs_review':'processed',
    pages:job.aiPages.map(p=>p.error?p:{...p,fields:verifyFields(p,job.pageTexts?.[p.page]||'',p.page)}),
    document_review:reconcilePages(job.aiPages),
+   document_grouping:job.aiPages.length?reconcileDocument(job.aiPages.map(p=>p.error?{page:p.page,error:{code:'page_failed'}}:{page:p.page,result:p})):null,
    scan_quality:job.scanQuality||{},
    ...documentIdentity(job),
    local_classification:job.classification,
@@ -210,7 +212,7 @@ async function extractWithAI(job,page,canvas,text){
    if(image.length>uploadLimits.imageDataChars)throw new Error('This page image is too large for AI extraction.');
    const response=await fetch('/api/ai/extract',{
      method:'POST',headers:{'Content-Type':'application/json'},
-     body:JSON.stringify({image,text:text.slice(0,20000)})
+     body:JSON.stringify({image,text:text.slice(0,20000),words:(job.pageWords?.[page]||[]).slice(0,2000)})
    });
    const result=await response.json();
    if(!response.ok)throw new Error(result.error||'AI could not extract this page.');
@@ -220,6 +222,7 @@ async function extractWithAI(job,page,canvas,text){
      if(!result.document_type||result.document_type==='unknown')result.document_type=printed.type;
      result.document_title||=printed.title;
    }
+   for(const crop of result.vision_recheck||[]){const matches=result.fields.filter(f=>f.label===crop.target.label&&f.section===crop.target.section);if(matches.length===1)matches[0].recheck={source:{page,box:crop.source.box},proposals:[crop.proposal],message:'Automatic crop proposal — compare with the original before applying'};}
    job.aiPages.push({page,...result});
  }catch(error){job.aiPages.push({page,error:error.message});}
 }

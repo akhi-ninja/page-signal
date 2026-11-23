@@ -13,6 +13,14 @@
     "./preview": {
       "types": "./preview.d.ts",
       "import": "./preview.mjs"
+    },
+    "./document": {
+      "types": "./document.d.ts",
+      "import": "./document.mjs"
+    },
+    "./jobs": {
+      "types": "./jobs.d.ts",
+      "import": "./jobs.mjs"
     }
   },
   "files": [
@@ -22,7 +30,11 @@
     "workspace.mjs",
     "workspace.d.ts",
     "preview.mjs",
-    "preview.d.ts"
+    "preview.d.ts",
+    "document.mjs",
+    "document.d.ts",
+    "jobs.mjs",
+    "jobs.d.ts"
   ],
   "engines": {
     "node": ">=22"

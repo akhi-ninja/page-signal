@@ -5,6 +5,21 @@
   "functions": {
     "api/ai/extract.mjs": {
       "maxDuration": 120
+    },
+    "api/ai/jobs.mjs": {
+      "maxDuration": 60
+    },
+    "api/internal/document-jobs.mjs": {
+      "maxDuration": 120,
+      "experimentalTriggers": [
+        {
+          "type": "queue/v2beta",
+          "topic": "pagesignal-document-jobs"
+        }
+      ]
+    },
+    "api/internal/job-retention.mjs": {
+      "maxDuration": 60
     }
   },
   "rewrites": [
@@ -62,5 +77,11 @@
       "permanent": true
     }
   ],
-  "buildCommand": "node scripts/optional-benchmark-build.mjs"
+  "buildCommand": "node scripts/optional-benchmark-build.mjs",
+  "crons": [
+    {
+      "path": "/api/internal/job-retention",
+      "schedule": "0 3 * * *"
+    }
+  ]
 }

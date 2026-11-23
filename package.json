@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "start": "node server.mjs",
-    "test": "node scripts/build-workspace-style.mjs --check && node --test test/*.test.mjs",
+    "test": "node scripts/build-document-contract.mjs --check && node scripts/build-workspace-style.mjs --check && node --test test/*.test.mjs",
     "pack:packages": "npm run build:packages && npm pack --workspace @pagesignal/core --workspace @pagesignal/sdk --workspace @pagesignal/react --workspace @pagesignal/vue && npm pack ./packages/angular/dist",
     "docs:build": "node scripts/build-docs.mjs",
     "docs:check": "node scripts/build-docs.mjs --check",
@@ -20,13 +20,16 @@
     "styles:check": "node scripts/build-workspace-style.mjs --check",
     "benchmark": "node scripts/evaluate-extraction.mjs",
     "benchmark:compare": "node scripts/compare-extraction.mjs",
-    "workflow:migrate": "node --env-file-if-exists=.env scripts/migrate-workflows.mjs"
+    "workflow:migrate": "node --env-file-if-exists=.env scripts/migrate-workflows.mjs",
+    "jobs:migrate": "node --env-file-if-exists=.env scripts/migrate-document-jobs.mjs"
   },
   "dependencies": {
     "@langchain/langgraph": "1.7.5",
     "@langchain/langgraph-checkpoint-postgres": "1.1.4",
+    "@vercel/queue": "0.11.0",
     "better-auth": "1.7.25",
-    "pg": "8.16.3"
+    "pg": "8.16.3",
+    "sharp": "0.34.5"
   },
   "devDependencies": {
     "@angular/common": "21.2.26",

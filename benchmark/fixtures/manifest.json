@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "license": "CC0-1.0",
   "fixtures": [
     {
@@ -673,6 +673,343 @@
             "section": null,
             "label": "Notice period",
             "value": "30 days",
+            "state": "filled"
+          }
+        ],
+        "tables": []
+      }
+    },
+    {
+      "id": "pdf-text-page1",
+      "documentId": "pdf-text",
+      "page": 1,
+      "category": "invoice",
+      "quality": "text_pdf",
+      "image": "pdf-text-page1.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A REAL INVOICE\nINVOICE\nInvoice number: DEMO-104\nBill to: Example Workshop\nEmail: billing@example.test\nDue date: 2026-12-01\nTotal: 45.00\nNotes:\nDescription | Quantity | Amount\nPaper packs | 2 | 30.00\nFolders | 1 | 15.00",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "invoice",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Invoice number",
+            "value": "DEMO-104",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Bill to",
+            "value": "Example Workshop",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Email",
+            "value": "billing@example.test",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Due date",
+            "value": "2026-12-01",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Total",
+            "value": "45.00",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Notes",
+            "value": null,
+            "state": "blank"
+          }
+        ],
+        "tables": [
+          {
+            "title": null,
+            "columns": [
+              "Description",
+              "Quantity",
+              "Amount"
+            ],
+            "rows": [
+              [
+                "Paper packs",
+                "2",
+                "30.00"
+              ],
+              [
+                "Folders",
+                "1",
+                "15.00"
+              ]
+            ]
+          }
+        ]
+      },
+      "sourcePdf": "synthetic-text.pdf",
+      "sourcePage": 1
+    },
+    {
+      "id": "pdf-scanned-page1",
+      "documentId": "pdf-scanned",
+      "page": 1,
+      "category": "invoice",
+      "quality": "scanned_pdf_transcript_assisted",
+      "image": "pdf-scanned-page1.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A REAL INVOICE\nINVOICE\nInvoice number: DEMO-104\nBill to: Example Workshop\nEmail: billing@example.test\nDue date: 2026-12-01\nTotal: 45.00\nNotes:\nDescription | Quantity | Amount\nPaper packs | 2 | 30.00\nFolders | 1 | 15.00",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "invoice",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Invoice number",
+            "value": "DEMO-104",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Bill to",
+            "value": "Example Workshop",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Email",
+            "value": "billing@example.test",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Due date",
+            "value": "2026-12-01",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Total",
+            "value": "45.00",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Notes",
+            "value": null,
+            "state": "blank"
+          }
+        ],
+        "tables": [
+          {
+            "title": null,
+            "columns": [
+              "Description",
+              "Quantity",
+              "Amount"
+            ],
+            "rows": [
+              [
+                "Paper packs",
+                "2",
+                "30.00"
+              ],
+              [
+                "Folders",
+                "1",
+                "15.00"
+              ]
+            ]
+          }
+        ]
+      },
+      "sourcePdf": "synthetic-scanned.pdf",
+      "sourcePage": 1
+    },
+    {
+      "id": "pdf-mixed-page1",
+      "documentId": "pdf-contract",
+      "page": 1,
+      "category": "contract",
+      "quality": "mixed_pdf",
+      "image": "pdf-mixed-page1.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A LEGAL AGREEMENT\nSERVICE AGREEMENT\nAgreement number: DEMO-C9\nProvider: Example Provider\nCustomer: Example Customer\nStart date: 2026-12-01\nPage 1 of 2",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "contract",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Agreement number",
+            "value": "DEMO-C9",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Provider",
+            "value": "Example Provider",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Customer",
+            "value": "Example Customer",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Start date",
+            "value": "2026-12-01",
+            "state": "filled"
+          }
+        ],
+        "tables": []
+      },
+      "sourcePdf": "synthetic-mixed.pdf",
+      "sourcePage": 1
+    },
+    {
+      "id": "pdf-mixed-page2",
+      "documentId": "pdf-contract",
+      "page": 2,
+      "category": "contract",
+      "quality": "mixed_pdf",
+      "image": "pdf-mixed-page2.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A LEGAL AGREEMENT\nSERVICE AGREEMENT - CONTINUED\nAgreement number: DEMO-C9\nNotice period: 30 days\nRenewal date: 2027-12-01\nSignature:\nPage 2 of 2",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "contract",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Agreement number",
+            "value": "DEMO-C9",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Notice period",
+            "value": "30 days",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Renewal date",
+            "value": "2027-12-01",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Signature",
+            "value": null,
+            "state": "blank"
+          }
+        ],
+        "tables": []
+      },
+      "sourcePdf": "synthetic-mixed.pdf",
+      "sourcePage": 2
+    },
+    {
+      "id": "pdf-mixed-page3",
+      "documentId": "pdf-invoice",
+      "page": 3,
+      "category": "invoice",
+      "quality": "mixed_pdf",
+      "image": "pdf-mixed-page3.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A REAL INVOICE\nINVOICE\nInvoice number: DEMO-104\nBill to: Example Workshop\nEmail: billing@example.test\nDue date: 2026-12-01\nTotal: 45.00\nNotes:\nDescription | Quantity | Amount\nPaper packs | 2 | 30.00\nFolders | 1 | 15.00",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "invoice",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Invoice number",
+            "value": "DEMO-104",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Bill to",
+            "value": "Example Workshop",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Email",
+            "value": "billing@example.test",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Due date",
+            "value": "2026-12-01",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Total",
+            "value": "45.00",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Notes",
+            "value": null,
+            "state": "blank"
+          }
+        ],
+        "tables": [
+          {
+            "title": null,
+            "columns": [
+              "Description",
+              "Quantity",
+              "Amount"
+            ],
+            "rows": [
+              [
+                "Paper packs",
+                "2",
+                "30.00"
+              ],
+              [
+                "Folders",
+                "1",
+                "15.00"
+              ]
+            ]
+          }
+        ]
+      },
+      "sourcePdf": "synthetic-mixed.pdf",
+      "sourcePage": 3
+    },
+    {
+      "id": "receipt-drawn-strokes",
+      "documentId": "drawn-receipt",
+      "page": 1,
+      "category": "receipt",
+      "quality": "synthetic_handwriting_like",
+      "image": "receipt-drawn-strokes.jpg",
+      "text": "",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic vector strokes; CC0-1.0. Not real human handwriting.",
+      "expected": {
+        "document_type": "receipt",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Total",
+            "value": "42.50",
             "state": "filled"
           }
         ],

@@ -7,6 +7,7 @@ export function compareReports(baseline, candidate, { maxDrop = 0 } = {}) {
  if (!baseIds?.length || JSON.stringify(baseIds)!==JSON.stringify(nextIds) || baseline.sampleCount!==baseIds.length || candidate.sampleCount!==nextIds.length) throw new Error('Reports must cover the same nonempty fixture IDs.');
  // Hashes are required: manual version labels cannot prove identical fixture inputs.
  if (!baseline.run.manifestSha256 || baseline.run.manifestSha256!==candidate.run.manifestSha256 || !baseline.run.fixtureInputsSha256 || baseline.run.fixtureInputsSha256!==candidate.run.fixtureInputsSha256) throw new Error('Reports must use identical fixture manifest and input hashes.');
+ if((baseline.run.renderedInputsSha256||candidate.run.renderedInputsSha256)&&baseline.run.renderedInputsSha256!==candidate.run.renderedInputsSha256)throw Error('Rendered inputs differ.');
  const changes=[], regressions=[];
  for (const [group, base] of Object.entries(baseline.groups ?? {})) {
   const next=candidate.groups?.[group];
