@@ -86,5 +86,6 @@ test('hosted graph exposes only numeric stage latency metadata',async()=>{
 });
 test('graph preserves safe malformed-output codes and provider retry hints',async()=>{
  const malformed=await orchestratedExtract(request(),{OPENAI_API_KEY:'test',PAGESIGNAL_ORCHESTRATOR:'langgraph'},{extractPage:async()=>({fields:[],tables:[]})});assert.equal(malformed.status,502);assert.equal((await malformed.json()).code,'provider_malformed_output');
+ const inconsistent=result();inconsistent.fields[0].value=null;const invalidState=await orchestratedExtract(request(),{OPENAI_API_KEY:'test',PAGESIGNAL_ORCHESTRATOR:'langgraph'},{extractPage:async()=>inconsistent});assert.equal(invalidState.status,502);assert.equal((await invalidState.json()).code,'provider_malformed_output');
  const throttled=await orchestratedExtract(request(),{OPENAI_API_KEY:'test',PAGESIGNAL_ORCHESTRATOR:'langgraph'},{extractPage:async()=>{throw Object.assign(Error('private provider body'),{code:'provider_rate_limit',status:502,retryable:true,retryAfter:10});}});assert.equal(throttled.headers.get('Retry-After'),'10');const body=await throttled.json();assert.equal(body.code,'provider_rate_limit');assert.ok(!JSON.stringify(body).includes('private provider body'));
 });
