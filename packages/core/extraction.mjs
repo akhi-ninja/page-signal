@@ -1,3 +1,5 @@
+import {validateQueryResult} from './contracts.mjs';
+import {providerFailure,applyUsageHeaders,providerException,providerIncomplete} from './provider-errors.mjs';
 const string={type:'string'};
 const nullable={type:['string','null']};
 const object=(properties)=>({type:'object',properties,required:Object.keys(properties),additionalProperties:false});
@@ -34,7 +36,7 @@ const querySchema=object({
  }))
 });
 const normalizeEvidence=value=>value.normalize('NFKC').replace(/\s+/g,' ').trim();
-async function queryDocument(input,env){
+async function queryDocument(input,env,signal){
  const {mode,question,pages,context}=input;
  if(!['fields','chat'].includes(mode)||typeof question!=='string'||!question.trim()||question.length>2000||
     typeof context!=='string'||context.length>6000||!Array.isArray(pages)||!pages.length||pages.length>40||
@@ -58,13 +60,14 @@ async function queryDocument(input,env){
     max_output_tokens:3500,
     text:{format:{type:'json_schema',name:'document_query',strict:true,schema:querySchema}}
    }),
-   signal:AbortSignal.timeout(90000)
+   signal:AbortSignal.any([signal,AbortSignal.timeout(90000)])
   });
-  if(!response.ok)return json({error:'OpenAI could not answer (HTTP '+response.status+').'},502);
+  if(!response.ok)return providerFailure(response);
   const result=await response.json();
   const content=result.output?.flatMap(message=>message.content||[]).find(item=>item.type==='output_text');
-  if(result.status!=='completed'||!content)return json({error:'AI did not finish the question.'},502);
+  if(result.status!=='completed'||!content)return providerIncomplete();
   const data=JSON.parse(content.text);
+  try{validateQueryResult(data);}catch{return providerIncomplete();}
   const pageText=new Map(pages.map(p=>[p.page,normalizeEvidence(p.text)]));
   const supported=source=>Boolean(source?.excerpt?.trim()&&pageText.get(source.page)?.includes(normalizeEvidence(source.excerpt)));
   const citations=data.citations.filter(supported);
@@ -87,7 +90,7 @@ async function queryDocument(input,env){
    citations,
    fields
   });
- }catch{return json({error:'The question timed out or returned an invalid result.'},502);}
+ }catch(error){return providerException(error,signal);}
 }
 export async function extract(request,env){
  if(request.method!=='POST')return json({error:'Method not allowed.'},405);
@@ -96,7 +99,7 @@ export async function extract(request,env){
      if(Number(request.headers.get('content-length'))>4000000)return json({error:'Page image is too large.'},413);
      let input;
      try{input=await request.json();}catch{return json({error:'Invalid JSON body.'},400);}
-     if(input?.operation==='document_query')return queryDocument(input,env);
+     if(input?.operation==='document_query')return queryDocument(input,env,request.signal);
      if(typeof input?.image!=='string'||input.image.length>3800000||!/^data:image\/jpeg;base64,[a-z0-9+/]+=*$/i.test(input.image)||typeof input.text!=='string'||input.text.length>20000)return json({error:'Invalid page image or OCR text.'},400);
      try{
        const response=await fetch('https://api.openai.com/v1/responses',{
@@ -105,12 +108,12 @@ export async function extract(request,env){
            model:env.OPENAI_DOCUMENT_MODEL||'gpt-4.1-mini',store:false,instructions,
            input:[{role:'user',content:[{type:'input_text',text:'OCR transcription for reference:\n'+input.text},{type:'input_image',image_url:input.image,detail:'high'}]}],
            max_output_tokens:14000,text:{format:{type:'json_schema',name:'document_page',strict:true,schema}}
-         }),signal:AbortSignal.timeout(90000)
+         }),signal:AbortSignal.any([request.signal,AbortSignal.timeout(90000)])
        });
-       if(!response.ok)return json({error:'OpenAI rejected the extraction request (HTTP '+response.status+'). Check the site credential, model access, or usage limits.'},502);
+       if(!response.ok)return providerFailure(response);
        const result=await response.json();
        const content=result.output?.flatMap(message=>message.content||[]).find(item=>item.type==='output_text');
-       if(result.status!=='completed'||!content)return json({error:'AI did not finish this page. Try a smaller or clearer scan.'},502);
-       return json(JSON.parse(content.text));
-     }catch{return json({error:'The AI request timed out or returned an invalid result.'},502);}
+       if(result.status!=='completed'||!content)return providerIncomplete();
+       return applyUsageHeaders(json(JSON.parse(content.text)),result);
+     }catch(error){return providerException(error,request.signal);}
  }

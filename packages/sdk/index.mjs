@@ -37,6 +37,9 @@ export class PageSignalClient {
     if (!response.ok) {
       const error = new Error(result.error || 'PageSignal request failed.');
       error.status = response.status;
+      if(typeof result.code==='string')error.code=result.code;
+      if(typeof result.retryable==='boolean')error.retryable=result.retryable;
+      if(Number.isFinite(result.retry_after_seconds))error.retryAfterSeconds=result.retry_after_seconds;
       throw error;
     }
     return result;

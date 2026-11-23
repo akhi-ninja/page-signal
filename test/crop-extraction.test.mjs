@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {targetedExtract} from '../lib/crop-extraction.mjs';
+const page={image:'data:image/jpeg;base64,AA==',text:'',field_target:{section:null,label:'Email'}};
+test('dedicated crop reader uses target as a locator and returns one review-only field without reclassification',async()=>{
+ const original=globalThis.fetch;globalThis.fetch=async(_url,init)=>{const body=JSON.parse(init.body);assert.equal(body.store,false);assert.equal(body.max_output_tokens,600);assert.match(body.instructions,/locator hint, not source evidence/);assert.equal(JSON.parse(body.input[0].content[0].text).requested_field.label,'Email');return Response.json({status:'completed',model:'gpt-4.1-mini',output:[{content:[{type:'output_text',text:JSON.stringify({label:'Injected label',value:'team@example.test',state:'filled',evidence:'team@example.test'})}]}]});};
+ try{const response=await targetedExtract(page,{OPENAI_API_KEY:'test'});assert.equal(response.status,200);const r=await response.json();assert.equal(r.document_type,'unknown');assert.equal(r.fields.length,1);assert.equal(r.fields[0].label,'Email');assert.equal(r.fields[0].value,'team@example.test');assert.equal(r.classification_status,'unidentified');}finally{globalThis.fetch=original;}
+});
+test('crop reader rejects malformed field states and invalid targets without fabricated repairs',async()=>{
+ const original=globalThis.fetch;let calls=0;globalThis.fetch=async()=>{calls++;return Response.json({status:'completed',output:[{content:[{type:'output_text',text:JSON.stringify({value:null,state:'filled',evidence:null})}]}]});};
+ try{assert.equal((await targetedExtract({...page,field_target:{section:null,label:''}},{OPENAI_API_KEY:'test'})).status,400);assert.equal(calls,0);assert.equal((await targetedExtract(page,{})).status,503);const response=await targetedExtract(page,{OPENAI_API_KEY:'test'});assert.equal((await response.json()).code,'provider_malformed_output');}finally{globalThis.fetch=original;}
+});

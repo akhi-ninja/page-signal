@@ -9,7 +9,12 @@ export function assessScan({width,height,pixels}){
  const deviation=Math.sqrt(Math.max(0,squares/n-(sum/n)**2));
  if(ink/n<.002)warnings.push('possibly_blank');
  else if(deviation<12)warnings.push('low_contrast');
- return {schema_version:1,width,height,warnings,assessment:'heuristic',orientation_checked:false};
+ let laplacianVariance=null;const side=Math.sqrt(n);
+ if(Number.isInteger(side)&&side>=8){let total=0,totalSquared=0,count=0;const gray=i=>(pixels[i*4]+pixels[i*4+1]+pixels[i*4+2])/3;
+  for(let y=1;y<side-1;y++)for(let x=1;x<side-1;x++){const i=y*side+x,v=gray(i-1)+gray(i+1)+gray(i-side)+gray(i+side)-4*gray(i);total+=v;totalSquared+=v*v;count++;}
+  laplacianVariance=totalSquared/count-(total/count)**2;if(ink/n>=.002&&deviation>=12&&laplacianVariance<8)warnings.push('possibly_blurred');
+ }
+ return {schema_version:1,width,height,warnings,assessment:'heuristic',orientation_checked:false,laplacian_variance:laplacianVariance};
 }
 const norm=x=>String(x??'').normalize('NFKC').replace(/\s+/gu,' ').trim();
 export function verifyFields(result,text,page){
@@ -28,6 +33,7 @@ export function verifyFields(result,text,page){
     const match=value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if(match){const [y,m,d]=match.slice(1).map(Number);const date=new Date(Date.UTC(y,m-1,d));if(date.getUTCFullYear()!==y||date.getUTCMonth()!==m-1||date.getUTCDate()!==d)reasons.push('invalid_calendar_date');}
    }
+   if(/\b(total|subtotal|tax|amount|price|fee|balance|cost|premium)\b/i.test(field.label)&&!/^(?:[A-Z]{3}\s*)?[$€£₹]?\s*[-+(]?\d[\d.,\s]*(?:[%)]|\s*[A-Z]{3})?$/.test(value))reasons.push('numeric_value_requires_review');
    if(!excerpt)reasons.push('missing_evidence');
    else if(!source.includes(excerpt.toLowerCase()))reasons.push('evidence_not_in_transcript');
    else if(!excerpt.toLowerCase().includes(value.toLowerCase()))reasons.push('evidence_does_not_contain_value');

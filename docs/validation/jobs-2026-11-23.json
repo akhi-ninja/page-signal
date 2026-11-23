@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "stage": "verify",
+  "verifiedAt": "2026-11-23T21:47:35.603Z",
+  "sourceRevision": "18d543c4e3fbca1b27c08f23da268eba3b186c8d",
+  "checks": [
+    "actual_session_required",
+    "origin_rejected",
+    "real_queue_two_page_completion",
+    "real_session_owner_isolation",
+    "separate_worker_crash_requires_explicit_retry",
+    "queue_preserves_cancellation",
+    "authenticated_approval",
+    "two_provider_attempts_charged_to_synthetic_owner",
+    "authenticated_deletion",
+    "synthetic_users_sessions_jobs_removed"
+  ],
+  "scope": "Real Neon SQL and signed BetterAuth sessions through the job handler; queue delivery crosses deployed worker instances. No browser OAuth flow was exercised. No user credentials or document values retained."
+}

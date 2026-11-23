@@ -1,0 +1,25 @@
+{
+  "schema_version": "pagesignal.query.v1",
+  "result": {
+    "answer": "10.00",
+    "citations": [
+      {
+        "page": 1,
+        "excerpt": "Total: 10.00"
+      }
+    ],
+    "fields": [
+      {
+        "label": "Total",
+        "value": "10.00",
+        "source": {
+          "page": 1,
+          "excerpt": "Total: 10.00"
+        },
+        "id": "query:Total:0",
+        "review_state": "needs_review"
+      }
+    ]
+  },
+  "metadata": {}
+}

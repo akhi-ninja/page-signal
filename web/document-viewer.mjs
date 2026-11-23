@@ -1,3 +1,4 @@
+import {imagePlan,paintImage} from './reading-options.mjs';
 import { cropRegion } from './document-quality.mjs';
 // Coordinates are derived from the PDF text layer or local OCR, never guessed by AI.
 const tokens = value => String(value ?? '').toLowerCase().normalize('NFKC').match(/[\p{L}\p{N}]+/gu) || [];
@@ -63,12 +64,13 @@ export class DocumentViewer {
         const pdfjs=await this.loadPdf();if(this.cancelled||version!==this.version)return;
         if(!this.pdfTask)this.pdfTask=pdfjs.getDocument({data:new Uint8Array(await this.job.file.arrayBuffer()),isEvalSupported:false});
         const pdf=await this.pdfTask.promise,page=await pdf.getPage(this.page);if(this.cancelled||version!==this.version)return;
-        const base=page.getViewport({scale:1}),viewport=page.getViewport({scale:width/base.width});height=viewport.height;
+        const rotation=(page.rotate+(this.job.reading?.rotation||0))%360;
+        const base=page.getViewport({scale:1,rotation}),viewport=page.getViewport({scale:width/base.width,rotation});height=viewport.height;
         const ratio=Math.min(devicePixelRatio||1,2);buffer.width=Math.ceil(width*ratio);buffer.height=Math.ceil(height*ratio);
         this.renderTask=page.render({canvasContext:buffer.getContext('2d'),viewport,transform:[ratio,0,0,ratio,0,0]});await this.renderTask.promise;page.cleanup();
       }else{
-        const bitmap=await createImageBitmap(this.job.file);height=width*bitmap.height/bitmap.width;
-        buffer.width=Math.ceil(width);buffer.height=Math.ceil(height);buffer.getContext('2d').drawImage(bitmap,0,0,width,height);bitmap.close();
+        const bitmap=await createImageBitmap(this.job.file),plan=imagePlan(bitmap.width,bitmap.height,{rotation:this.job.reading?.rotation||0,targetWidth:width,maxEdge:4600});
+        paintImage(buffer,bitmap,plan);height=width*plan.height/plan.width;bitmap.close();
       }
       if(this.cancelled||version!==this.version)return;
       canvas.width=buffer.width;canvas.height=buffer.height;canvas.getContext('2d').drawImage(buffer,0,0);canvas.style.width=width+'px';canvas.style.height=height+'px';sheet.style.width=width+'px';sheet.style.height=height+'px';

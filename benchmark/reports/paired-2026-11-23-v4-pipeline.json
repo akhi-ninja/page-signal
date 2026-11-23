@@ -1,0 +1,1595 @@
+{
+  "schemaVersion": 1,
+  "sampleCount": 19,
+  "groups": {
+    "all": {
+      "counts": {
+        "pages": 19,
+        "classified": 13,
+        "expectedFields": 89,
+        "predictedValues": 76,
+        "expectedValues": 76,
+        "correctValues": 75,
+        "unsupportedValues": 1,
+        "correctStates": 83,
+        "matchedFields": 84,
+        "evidenceEligible": 76,
+        "correctEvidence": 71,
+        "expectedCells": 63,
+        "correctCells": 63,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0.6842105263157895,
+        "fieldPrecision": 0.9868421052631579,
+        "fieldRecall": 0.9868421052631579,
+        "unsupportedValueRate": 0.013157894736842105,
+        "fieldCoverage": 0.9438202247191011,
+        "stateAccuracy": 0.9325842696629213,
+        "evidenceRecall": 0.9342105263157895,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "category:invoice": {
+      "counts": {
+        "pages": 8,
+        "classified": 8,
+        "expectedFields": 46,
+        "predictedValues": 39,
+        "expectedValues": 39,
+        "correctValues": 39,
+        "unsupportedValues": 0,
+        "correctStates": 43,
+        "matchedFields": 43,
+        "evidenceEligible": 39,
+        "correctEvidence": 36,
+        "expectedCells": 63,
+        "correctCells": 63,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.9347826086956522,
+        "stateAccuracy": 0.9347826086956522,
+        "evidenceRecall": 0.9230769230769231,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "quality:clean": {
+      "counts": {
+        "pages": 3,
+        "classified": 2,
+        "expectedFields": 16,
+        "predictedValues": 12,
+        "expectedValues": 13,
+        "correctValues": 12,
+        "unsupportedValues": 0,
+        "correctStates": 13,
+        "matchedFields": 13,
+        "evidenceEligible": 13,
+        "correctEvidence": 12,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0.6666666666666666,
+        "fieldPrecision": 1,
+        "fieldRecall": 0.9230769230769231,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.8125,
+        "stateAccuracy": 0.8125,
+        "evidenceRecall": 0.9230769230769231,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "category:receipt": {
+      "counts": {
+        "pages": 3,
+        "classified": 2,
+        "expectedFields": 10,
+        "predictedValues": 10,
+        "expectedValues": 10,
+        "correctValues": 10,
+        "unsupportedValues": 0,
+        "correctStates": 10,
+        "matchedFields": 10,
+        "evidenceEligible": 10,
+        "correctEvidence": 9,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0.6666666666666666,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 0.9,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "quality:rotated": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 5,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "category:custom_application_form": {
+      "counts": {
+        "pages": 2,
+        "classified": 2,
+        "expectedFields": 9,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 4,
+        "unsupportedValues": 1,
+        "correctStates": 6,
+        "matchedFields": 7,
+        "evidenceEligible": 5,
+        "correctEvidence": 4,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 0.8,
+        "fieldRecall": 0.8,
+        "unsupportedValueRate": 0.2,
+        "fieldCoverage": 0.7777777777777778,
+        "stateAccuracy": 0.6666666666666666,
+        "evidenceRecall": 0.8,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "category:letter": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 5,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "quality:low_resolution": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 5,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "category:contract": {
+      "counts": {
+        "pages": 5,
+        "classified": 0,
+        "expectedFields": 19,
+        "predictedValues": 17,
+        "expectedValues": 17,
+        "correctValues": 17,
+        "unsupportedValues": 0,
+        "correctStates": 19,
+        "matchedFields": 19,
+        "evidenceEligible": 17,
+        "correctEvidence": 17,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "quality:continuation": {
+      "counts": {
+        "pages": 1,
+        "classified": 0,
+        "expectedFields": 4,
+        "predictedValues": 3,
+        "expectedValues": 3,
+        "correctValues": 3,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 3,
+        "correctEvidence": 3,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "quality:upside_down": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.8333333333333334,
+        "stateAccuracy": 0.8333333333333334,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "quality:low_contrast": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.8333333333333334,
+        "stateAccuracy": 0.8333333333333334,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "quality:corrupted_ocr": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 6,
+        "matchedFields": 6,
+        "evidenceEligible": 5,
+        "correctEvidence": 3,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 0.6,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "quality:multilingual_spanish": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 4,
+        "predictedValues": 4,
+        "expectedValues": 4,
+        "correctValues": 4,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 4,
+        "correctEvidence": 4,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "quality:multilingual_french": {
+      "counts": {
+        "pages": 1,
+        "classified": 0,
+        "expectedFields": 4,
+        "predictedValues": 4,
+        "expectedValues": 4,
+        "correctValues": 4,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 4,
+        "correctEvidence": 4,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "quality:illegible": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 3,
+        "predictedValues": 2,
+        "expectedValues": 1,
+        "correctValues": 1,
+        "unsupportedValues": 1,
+        "correctStates": 2,
+        "matchedFields": 3,
+        "evidenceEligible": 1,
+        "correctEvidence": 1,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 0.5,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0.5,
+        "fieldCoverage": 1,
+        "stateAccuracy": 0.6666666666666666,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "quality:conflicting_continuation": {
+      "counts": {
+        "pages": 1,
+        "classified": 0,
+        "expectedFields": 3,
+        "predictedValues": 3,
+        "expectedValues": 3,
+        "correctValues": 3,
+        "unsupportedValues": 0,
+        "correctStates": 3,
+        "matchedFields": 3,
+        "evidenceEligible": 3,
+        "correctEvidence": 3,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    "quality:text_pdf": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 6,
+        "matchedFields": 6,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "quality:scanned_pdf_transcript_assisted": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 6,
+        "matchedFields": 6,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "quality:mixed_pdf": {
+      "counts": {
+        "pages": 3,
+        "classified": 1,
+        "expectedFields": 14,
+        "predictedValues": 12,
+        "expectedValues": 12,
+        "correctValues": 12,
+        "unsupportedValues": 0,
+        "correctStates": 14,
+        "matchedFields": 14,
+        "evidenceEligible": 12,
+        "correctEvidence": 11,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0.3333333333333333,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 0.9166666666666666,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    "quality:synthetic_handwriting_like": {
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 1,
+        "predictedValues": 1,
+        "expectedValues": 1,
+        "correctValues": 1,
+        "unsupportedValues": 0,
+        "correctStates": 1,
+        "matchedFields": 1,
+        "evidenceEligible": 1,
+        "correctEvidence": 0,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 0,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "invoice-clean",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.8333333333333334,
+        "stateAccuracy": 0.8333333333333334,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "receipt-rotated",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 5,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "form-repeated",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 3,
+        "expectedValues": 4,
+        "correctValues": 3,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 4,
+        "correctEvidence": 3,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 0.75,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.6666666666666666,
+        "stateAccuracy": 0.6666666666666666,
+        "evidenceRecall": 0.75,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "letter-low-resolution",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 5,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "agreement-page1",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 0,
+        "expectedFields": 4,
+        "predictedValues": 4,
+        "expectedValues": 4,
+        "correctValues": 4,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 4,
+        "correctEvidence": 4,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "agreement-page2",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 0,
+        "expectedFields": 4,
+        "predictedValues": 3,
+        "expectedValues": 3,
+        "correctValues": 3,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 3,
+        "correctEvidence": 3,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "invoice-rotated180",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.8333333333333334,
+        "stateAccuracy": 0.8333333333333334,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "invoice-lowcontrast",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 5,
+        "matchedFields": 5,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 0.8333333333333334,
+        "stateAccuracy": 0.8333333333333334,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "invoice-ocr-corrupt",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 6,
+        "matchedFields": 6,
+        "evidenceEligible": 5,
+        "correctEvidence": 3,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 0.6,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "invoice-spanish",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 4,
+        "predictedValues": 4,
+        "expectedValues": 4,
+        "correctValues": 4,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 4,
+        "correctEvidence": 4,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "receipt-french",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 0,
+        "expectedFields": 4,
+        "predictedValues": 4,
+        "expectedValues": 4,
+        "correctValues": 4,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 4,
+        "correctEvidence": 4,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "form-unreadable",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 3,
+        "predictedValues": 2,
+        "expectedValues": 1,
+        "correctValues": 1,
+        "unsupportedValues": 1,
+        "correctStates": 2,
+        "matchedFields": 3,
+        "evidenceEligible": 1,
+        "correctEvidence": 1,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 0.5,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0.5,
+        "fieldCoverage": 1,
+        "stateAccuracy": 0.6666666666666666,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "agreement-conflict-page2",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 0,
+        "expectedFields": 3,
+        "predictedValues": 3,
+        "expectedValues": 3,
+        "correctValues": 3,
+        "unsupportedValues": 0,
+        "correctStates": 3,
+        "matchedFields": 3,
+        "evidenceEligible": 3,
+        "correctEvidence": 3,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "pdf-text-page1",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 6,
+        "matchedFields": 6,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "pdf-scanned-page1",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 6,
+        "matchedFields": 6,
+        "evidenceEligible": 5,
+        "correctEvidence": 5,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "pdf-mixed-page1",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 0,
+        "expectedFields": 4,
+        "predictedValues": 4,
+        "expectedValues": 4,
+        "correctValues": 4,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 4,
+        "correctEvidence": 4,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "pdf-mixed-page2",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 0,
+        "expectedFields": 4,
+        "predictedValues": 3,
+        "expectedValues": 3,
+        "correctValues": 3,
+        "unsupportedValues": 0,
+        "correctStates": 4,
+        "matchedFields": 4,
+        "evidenceEligible": 3,
+        "correctEvidence": 3,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 0,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 1,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "pdf-mixed-page3",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 6,
+        "predictedValues": 5,
+        "expectedValues": 5,
+        "correctValues": 5,
+        "unsupportedValues": 0,
+        "correctStates": 6,
+        "matchedFields": 6,
+        "evidenceEligible": 5,
+        "correctEvidence": 4,
+        "expectedCells": 9,
+        "correctCells": 9,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 0.8,
+        "tableCellAccuracy": 1,
+        "extraTableCells": 0
+      }
+    },
+    {
+      "id": "receipt-drawn-strokes",
+      "missing": false,
+      "counts": {
+        "pages": 1,
+        "classified": 1,
+        "expectedFields": 1,
+        "predictedValues": 1,
+        "expectedValues": 1,
+        "correctValues": 1,
+        "unsupportedValues": 0,
+        "correctStates": 1,
+        "matchedFields": 1,
+        "evidenceEligible": 1,
+        "correctEvidence": 0,
+        "expectedCells": 0,
+        "correctCells": 0,
+        "extraCells": 0
+      },
+      "metrics": {
+        "classificationAccuracy": 1,
+        "fieldPrecision": 1,
+        "fieldRecall": 1,
+        "unsupportedValueRate": 0,
+        "fieldCoverage": 1,
+        "stateAccuracy": 1,
+        "evidenceRecall": 0,
+        "tableCellAccuracy": null,
+        "extraTableCells": 0
+      }
+    }
+  ],
+  "unknownPredictionIds": [],
+  "run": {
+    "kind": "live-model",
+    "engine": "pipeline",
+    "model": "gpt-4.1-mini",
+    "manifestVersion": 4,
+    "manifestSha256": "da874a0f9d0955f57c4c5eae2c4783d155e111c5627d2739e8cc04170db6436a",
+    "fixtureInputsSha256": "f7d6cbf6f1016e409cdec14b68508cbaa00e9fbeb3e1aadaca2a72ad890d39eb",
+    "renderedInputsSha256": "3c34b4917c8b2927cae130e1160986e32627042eba4d27bfa2e048ce7c0fb968",
+    "reviewEffort": {
+      "kind": "automated_review_field_proxy",
+      "fields": 5,
+      "humanMinutes": null
+    },
+    "createdAt": "2026-11-23T20:20:29.222Z",
+    "promptAndSchemaSource": "packages/core/extraction.mjs",
+    "sourceRevision": "8d235cbb3e76a127f96e307d47f6d170b9146531",
+    "promptSchemaSha256": "a9884faadc4d34bc2b715db0e571ae2687cb790b302d9e877dcbb7a9170dc654",
+    "providerMetrics": {
+      "requests": 19,
+      "usageMeasuredRequests": 19,
+      "tokenUsage": {
+        "inputTokens": 41620,
+        "cachedInputTokens": 0,
+        "outputTokens": 4339
+      },
+      "estimatedCostUsd": 0.0235904,
+      "knownEstimatedCostUsd": 0.0235904,
+      "costNote": "Estimate from measured tokens at standard GPT-4.1 mini rates: input $0.40, cached input $0.10, output $1.60 per million. Excludes Vercel, tax and discounts. Unknown usage/tier is not treated as free.",
+      "pricingSource": "https://developers.openai.com/api/docs/models/gpt-4.1-mini",
+      "pricingCheckedOn": "2026-11-22",
+      "calls": [
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 2022,
+            "cachedInputTokens": 0,
+            "outputTokens": 275
+          },
+          "estimatedCostUsd": 0.0012488000000000002,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1992,
+            "cachedInputTokens": 0,
+            "outputTokens": 217
+          },
+          "estimatedCostUsd": 0.001144,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1995,
+            "cachedInputTokens": 0,
+            "outputTokens": 236
+          },
+          "estimatedCostUsd": 0.0011756,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 930,
+            "cachedInputTokens": 0,
+            "outputTokens": 208
+          },
+          "estimatedCostUsd": 0.0007048,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1993,
+            "cachedInputTokens": 0,
+            "outputTokens": 192
+          },
+          "estimatedCostUsd": 0.0011044000000000002,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1997,
+            "cachedInputTokens": 0,
+            "outputTokens": 203
+          },
+          "estimatedCostUsd": 0.0011236000000000002,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 2022,
+            "cachedInputTokens": 0,
+            "outputTokens": 272
+          },
+          "estimatedCostUsd": 0.001244,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 2022,
+            "cachedInputTokens": 0,
+            "outputTokens": 285
+          },
+          "estimatedCostUsd": 0.0012648000000000002,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 2023,
+            "cachedInputTokens": 0,
+            "outputTokens": 317
+          },
+          "estimatedCostUsd": 0.0013164000000000001,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1986,
+            "cachedInputTokens": 0,
+            "outputTokens": 200
+          },
+          "estimatedCostUsd": 0.0011144,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1990,
+            "cachedInputTokens": 0,
+            "outputTokens": 210
+          },
+          "estimatedCostUsd": 0.001132,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1979,
+            "cachedInputTokens": 0,
+            "outputTokens": 165
+          },
+          "estimatedCostUsd": 0.0010555999999999999,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1989,
+            "cachedInputTokens": 0,
+            "outputTokens": 180
+          },
+          "estimatedCostUsd": 0.0010835999999999999,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 3019,
+            "cachedInputTokens": 0,
+            "outputTokens": 292
+          },
+          "estimatedCostUsd": 0.0016748000000000002,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 3019,
+            "cachedInputTokens": 0,
+            "outputTokens": 284
+          },
+          "estimatedCostUsd": 0.0016620000000000003,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 2990,
+            "cachedInputTokens": 0,
+            "outputTokens": 199
+          },
+          "estimatedCostUsd": 0.0015144000000000002,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 2994,
+            "cachedInputTokens": 0,
+            "outputTokens": 206
+          },
+          "estimatedCostUsd": 0.0015272000000000003,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 3019,
+            "cachedInputTokens": 0,
+            "outputTokens": 286
+          },
+          "estimatedCostUsd": 0.0016652000000000004,
+          "serviceTier": "default"
+        },
+        {
+          "httpStatus": 200,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "usage": {
+            "inputTokens": 1639,
+            "cachedInputTokens": 0,
+            "outputTokens": 112
+          },
+          "estimatedCostUsd": 0.0008348,
+          "serviceTier": "default"
+        }
+      ]
+    },
+    "tokenUsage": {
+      "inputTokens": 41620,
+      "cachedInputTokens": 0,
+      "outputTokens": 4339
+    },
+    "costUsd": 0.0235904,
+    "costNote": "Estimate from measured tokens at standard GPT-4.1 mini rates: input $0.40, cached input $0.10, output $1.60 per million. Excludes Vercel, tax and discounts. Unknown usage/tier is not treated as free.",
+    "executionEnvironment": "vercel-build",
+    "p50LatencyMs": 3459,
+    "p95LatencyMs": 5493,
+    "executions": [
+      {
+        "id": "invoice-clean",
+        "status": "completed",
+        "latencyMs": 5493,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "receipt-rotated",
+        "status": "completed",
+        "latencyMs": 3179,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "form-repeated",
+        "status": "completed",
+        "latencyMs": 3459,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 2
+      },
+      {
+        "id": "letter-low-resolution",
+        "status": "completed",
+        "latencyMs": 2875,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "agreement-page1",
+        "status": "completed",
+        "latencyMs": 2834,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "agreement-page2",
+        "status": "completed",
+        "latencyMs": 2189,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "invoice-rotated180",
+        "status": "completed",
+        "latencyMs": 3777,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "invoice-lowcontrast",
+        "status": "completed",
+        "latencyMs": 3392,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "invoice-ocr-corrupt",
+        "status": "completed",
+        "latencyMs": 3777,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 2
+      },
+      {
+        "id": "invoice-spanish",
+        "status": "completed",
+        "latencyMs": 3856,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "receipt-french",
+        "status": "completed",
+        "latencyMs": 2761,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "form-unreadable",
+        "status": "completed",
+        "latencyMs": 2153,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "agreement-conflict-page2",
+        "status": "completed",
+        "latencyMs": 2641,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "pdf-text-page1",
+        "status": "completed",
+        "latencyMs": 3574,
+        "textMode": "pdf_text_layer",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "pdf-scanned-page1",
+        "status": "completed",
+        "latencyMs": 4326,
+        "textMode": "fixture_transcript",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "pdf-mixed-page1",
+        "status": "completed",
+        "latencyMs": 3919,
+        "textMode": "pdf_text_layer",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "pdf-mixed-page2",
+        "status": "completed",
+        "latencyMs": 3621,
+        "textMode": "pdf_text_layer",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "pdf-mixed-page3",
+        "status": "completed",
+        "latencyMs": 3680,
+        "textMode": "pdf_text_layer",
+        "reviewFieldCount": 0
+      },
+      {
+        "id": "receipt-drawn-strokes",
+        "status": "completed",
+        "latencyMs": 2047,
+        "textMode": "vision_only",
+        "reviewFieldCount": 1
+      }
+    ]
+  }
+}

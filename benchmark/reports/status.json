@@ -1,11 +1,17 @@
 {
   "schemaVersion": 1,
-  "status": "measured_starter_corpus",
-  "corpusVersion": 2,
-  "syntheticPageCount": 9,
-  "liveModelRuns": 1,
-  "accuracy": null,
-  "costUsd": null,
-  "note": "A nine-page synthetic OCR-assisted extractor baseline is measured. General production accuracy, browser OCR/PDF ingestion, handwriting and multilingual performance remain unmeasured. See the report and analysis for strict field/label scoring limitations.",
-  "report": "baseline-2026-11-22-v2.json"
+  "status": "paired_v4_measured",
+  "corpusVersion": 4,
+  "syntheticPageCount": 19,
+  "liveModelRuns": 3,
+  "pairedLiveModelRuns": 2,
+  "measuredCalls": 38,
+  "pairedEstimatedCostUsd": 0.0461536,
+  "reports": {
+    "pipeline": "paired-2026-11-23-v4-pipeline.json",
+    "langgraph": "paired-2026-11-23-v4-langgraph.json",
+    "comparison": "paired-2026-11-23-v4-comparison.json"
+  },
+  "historicalReport": "baseline-2026-11-22-v2.json",
+  "note": "One sequential paired synthetic run; not statistical significance or real handwriting/general accuracy. Human review minutes are null. Do not infer an orchestration accuracy benefit. Scanned PDF uses declared transcript fallback."
 }

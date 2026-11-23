@@ -38,3 +38,9 @@ test('malformed adapter results produce a recoverable error',async()=>{
  const store=createWorkspace({adapter:{extract:async()=>({fields:{incorrect:'shape'}})}});
  store.addFiles([image('a.png')]);await tick();assert.equal(store.getSnapshot().documents[0].status,'error');store.dispose();
 });
+test('explicit question cancellation aborts the adapter and ignores a late response',async()=>{
+ let signal,resolve;const store=createWorkspace({adapter:{extract:async()=>({fields:[]}),query:input=>{signal=input.signal;return new Promise(r=>resolve=r);}}});store.addFiles([image('a.png')]);await tick();const query=store.query('1','Question?');store.cancelQuery('1');assert.equal(signal.aborted,true);assert.equal(store.getSnapshot().documents[0].queryPending,false);resolve({answer:'late'});await query;assert.equal(store.getSnapshot().documents[0].queryResult,null);store.dispose();
+});
+test('native edits preserve original page-compatible values and explicit blank state',async()=>{
+ const store=createWorkspace({adapter:{extract:async()=>({fields:[{section:null,label:'Name',value:'Original',state:'filled',evidence:'Original'}]})}});store.addFiles([image('a.png')]);await tick();store.updateField('1',0,'Reviewed');store.updateField('1',0,'');const field=store.getSnapshot().documents[0].result.fields[0];assert.equal(field.original_value,'Original');assert.equal(field.value,null);assert.equal(field.state,'blank');assert.equal(field.reviewed,true);store.dispose();
+});

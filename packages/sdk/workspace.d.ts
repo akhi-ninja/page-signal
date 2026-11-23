@@ -1,4 +1,5 @@
-export interface ExtractedField { label: string; value: unknown; edited?: boolean; source?: {page?:number; excerpt?:string}; [key:string]:unknown }
+import type {SourceEvidence} from '@pagesignal/sdk/preview';
+export interface ExtractedField { label: string; value: unknown; edited?: boolean; source?: Partial<SourceEvidence>; [key:string]:unknown }
 export interface ExtractionResult { fields?: ExtractedField[]; [key:string]:unknown }
 export interface WorkspaceAdapter {
   extract(input:{file:File;signal:AbortSignal}): Promise<ExtractionResult>;
@@ -12,7 +13,7 @@ export interface WorkspaceOptions {adapter:WorkspaceAdapter;concurrency?:number;
 export interface WorkspaceController {
  subscribe(listener:()=>void):()=>void; getSnapshot():WorkspaceState;
  addFiles(files:Iterable<File>|ArrayLike<File>):void;select(id:string):void;remove(id:string):void;cancel(id:string):void;retry(id:string):void;
- updateField(id:string,index:number,value:unknown):void; query(id:string,question:string,mode?:'fields'|'chat'):Promise<void>;
+ updateField(id:string,index:number,value:unknown):void;cancelQuery(id:string):void; query(id:string,question:string,mode?:'fields'|'chat'):Promise<void>;
  exportJSON(id:string):string|null;dispose():void;
 }
 export function createWorkspace(options:WorkspaceOptions):WorkspaceController;

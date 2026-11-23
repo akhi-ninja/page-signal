@@ -1,0 +1,6 @@
+export interface PageField {section:string|null;label:string;value:string|null;state:'filled'|'blank'|'illegible'|'checked'|'unchecked';evidence:string|null;[key:string]:unknown}
+export interface PageResult {document_type:string;form_number?:string|null;issuer?:string|null;classification_status:'identified'|'needs_review'|'unidentified';page_role?:'first'|'continuation'|'standalone'|'unknown';fields:PageField[];tables:{title?:string|null;columns:string[];rows:(string|null)[][]}[];review_notes:string[];[key:string]:unknown}
+export interface DocumentPage {page:number;result?:PageResult;error?:{code:string}}
+export interface DocumentResult {schema_version:'pagesignal.document.v1';status:'needs_review'|'approved';reviewed_at?:string;pages:DocumentPage[];documents:{id:string;pages:number[];status:string;fields:(PageField&{id:string;original_value:string|null;normalized_value:string|null;source:{page:number;excerpt:string|null}})[];conflicts:{field_ids:string[];reason:string;status:string}[];table_continuations:unknown[];errors:{page:number;code:string}[]}[];note:string}
+export function validatePageResult(result:unknown):PageResult;
+export function reconcileDocument(pages:DocumentPage[]):DocumentResult;

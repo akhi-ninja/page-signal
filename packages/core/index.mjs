@@ -1,17 +1,22 @@
 import { extract } from './extraction.mjs';
 
 export class PageSignalError extends Error {
-  constructor(message, status) {
+  constructor(message, status, details = {}) {
     super(message);
     this.name = 'PageSignalError';
     this.status = status;
+    if(typeof details.code==='string')this.code=details.code;
+    if(typeof details.retryable==='boolean')this.retryable=details.retryable;
+    if(Number.isFinite(details.retry_after_seconds))this.retryAfterSeconds=details.retry_after_seconds;
   }
 }
 
-async function invoke(payload, { apiKey, model } = {}) {
+async function invoke(payload, { apiKey, model, signal } = {}) {
+  signal?.throwIfAborted();
   if (!apiKey) throw new PageSignalError('An OpenAI API key is required.', 503);
   const request = new Request('https://pagesignal.internal/api/ai/extract', {
     method: 'POST',
+    signal,
     headers: {
       Origin: 'https://pagesignal.internal',
       'Content-Type': 'application/json'
@@ -23,7 +28,7 @@ async function invoke(payload, { apiKey, model } = {}) {
     OPENAI_DOCUMENT_MODEL: model
   });
   const result = await response.json();
-  if (!response.ok) throw new PageSignalError(result.error, response.status);
+  if (!response.ok) throw new PageSignalError(result.error, response.status, result);
   return result;
 }
 

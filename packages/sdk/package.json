@@ -9,6 +9,22 @@
     "./workspace": {
       "types": "./workspace.d.ts",
       "import": "./workspace.mjs"
+    },
+    "./preview": {
+      "types": "./preview.d.ts",
+      "import": "./preview.mjs"
+    },
+    "./document": {
+      "types": "./document.d.ts",
+      "import": "./document.mjs"
+    },
+    "./jobs": {
+      "types": "./jobs.d.ts",
+      "import": "./jobs.mjs"
+    },
+    "./contracts": {
+      "types": "./contracts.d.ts",
+      "import": "./contracts.mjs"
     }
   },
   "files": [
@@ -16,7 +32,15 @@
     "README.md",
     "LICENSE",
     "workspace.mjs",
-    "workspace.d.ts"
+    "workspace.d.ts",
+    "preview.mjs",
+    "preview.d.ts",
+    "document.mjs",
+    "document.d.ts",
+    "jobs.mjs",
+    "jobs.d.ts",
+    "contracts.mjs",
+    "contracts.d.ts"
   ],
   "engines": {
     "node": ">=22"

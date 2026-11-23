@@ -4,12 +4,24 @@
   "type": "module",
   "license": "MIT",
   "description": "PageSignal page extraction engine with an injected model credential",
-  "exports": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./contracts": {
+      "types": "./contracts.d.ts",
+      "import": "./contracts.mjs"
+    }
+  },
   "files": [
     "index.mjs",
     "extraction.mjs",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "provider-errors.mjs",
+    "contracts.mjs",
+    "contracts.d.ts",
+    "document.mjs",
+    "document.d.ts",
+    "retry-policy.mjs"
   ],
   "engines": {
     "node": ">=22"

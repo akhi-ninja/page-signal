@@ -1,3 +1,5 @@
+import {readingOptions,imagePlan,paintImage} from '/reading-options.mjs';
+import {reconcileDocument} from '/document-contract.mjs';
 import { assessScan, verifyFields, reconcilePages } from '/document-quality.mjs';
 import { loadOCR } from '/ocr-loader.mjs';
 import { DocumentViewer, pdfWordBoxes, ocrWordBoxes } from '/document-viewer.mjs';
@@ -7,7 +9,7 @@ const uploadLimits={files:10,fileBytes:30*1024*1024,batchBytes:100*1024*1024,pdf
 const isSupportedFile=name=>/\.(pdf|png|jpe?g|webp|bmp)$/i.test(name);
 let viewer=null;
 const workspaceAllowed=()=>window.PageSignalAccount.state.authRequired===false||Boolean(window.PageSignalAccount.state.user);
-let selected=null, tab='Fields', running=false, worker=null, pdfModule=null;
+let selected=null, tab='Fields', running=false, worker=null, workerLanguages=null, pdfModule=null;
 const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,k=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[k]));
 function documentIdentity(job){
  const matches=job.aiPages.filter(page=>page.document_type&&page.document_type!=='unknown'&&page.classification_status!=='unidentified');
@@ -41,9 +43,8 @@ function reviewedValues(job){
    add(key,field.value,field.page?{page:field.page,excerpt:null}:field.reviewed?{reviewed:true}:null);
  }
  for(const field of Object.values(job.requestedFields||{})){
-   fields[fieldKey(field.label)]=field.value;
-   evidence[fieldKey(field.label)]=field.source?{...field.source,reviewed:Boolean(field.reviewed)}:
-     {status:field.value==null?'not_found':'needs_review',reviewed:Boolean(field.reviewed)};
+   add(field.label,field.value,field.source?{...field.source,reviewed:Boolean(field.reviewed)}:
+     {status:field.value==null?'not_found':'needs_review',reviewed:Boolean(field.reviewed)});
  }
  return {fields,evidence};
 }
@@ -55,10 +56,12 @@ function output(job){
    processing_status:job.aiPages.some(page=>page.error||page.classification_status!=='identified'||verifyFields(page,job.pageTexts?.[page.page]||'',page.page).some(f=>['needs_review','illegible'].includes(f.verification.status)))||reconcilePages(job.aiPages).conflicts.length?'needs_review':'processed',
    pages:job.aiPages.map(p=>p.error?p:{...p,fields:verifyFields(p,job.pageTexts?.[p.page]||'',p.page)}),
    document_review:reconcilePages(job.aiPages),
+   document_grouping:job.aiPages.length?reconcileDocument(job.aiPages.map(p=>p.error?{page:p.page,error:{code:'page_failed'}}:{page:p.page,result:p})):null,
    scan_quality:job.scanQuality||{},
    ...documentIdentity(job),
    local_classification:job.classification,
    local_fields:job.fields,
+   reading_options:job.reading||readingOptions(),preprocessing:job.preprocessing||{},reading_status:job.readingStatus||'not_assessed',
    raw_text:job.text
  };
  return {
@@ -72,6 +75,7 @@ function output(job){
    acord_form_number:job.classification.type==='acord_form'?job.classification.form||null:null,
    acord_form_title:formNumbers[job.classification.form]||null,
    local_fields:job.fields,
+   reading_options:job.reading||readingOptions(),preprocessing:job.preprocessing||{},reading_status:job.readingStatus||'not_assessed',
    raw_text:job.text
  };
 }
@@ -168,19 +172,24 @@ function recognize(job,image,page){
 }
 async function readWithOCR(job,image,page){
  activeOCR={job,page};
+ const languages=(job.reading||readingOptions()).languages;
+ if(worker&&workerLanguages!==languages.join('+')){await worker.terminate();worker=null;}
  if(!worker){
-   status(job,'Loading English OCR model');
+   status(job,'Loading selected OCR languages');
    const Tesseract=await loadOCR();
-   worker=await Tesseract.createWorker('eng',1,{logger(message){
+   workerLanguages=languages.join('+');
+   worker=await Tesseract.createWorker(languages,1,{logger(message){
      if(activeOCR&&message.status==='recognizing text')status(activeOCR.job,'Reading page '+activeOCR.page,message.progress);
    }});
  }
  status(job,'Reading page '+page);
  try{
+   if(image.getContext)recordScanHints(job,page,image);
    const result=await worker.recognize(image,{}, {text:true,blocks:true});
    let width=image.width,height=image.height;
    if(!width||!height){const bitmap=await createImageBitmap(image);width=bitmap.width;height=bitmap.height;bitmap.close();}
    job.pageWords||={};job.pageWords[page]=ocrWordBoxes(result.data,width,height);
+   job.ocrLanguage=languages.join('+');
    return result.data.text;
  }
  catch(error){await worker.terminate().catch(()=>{});worker=null;throw error;}
@@ -197,12 +206,15 @@ function pdfLines(items){
  }
  return lines.sort((a,b)=>b.y-a.y).map(r=>r.items.sort((a,b)=>a.x-b.x).map(i=>i.text).join(' ').trim()).filter(Boolean).join('\n');
 }
+function recordScanHints(job,page,canvas){
+ const sample=document.createElement('canvas');sample.width=128;sample.height=128;
+ const sampleContext=sample.getContext('2d',{willReadFrequently:true});sampleContext.drawImage(canvas,0,0,128,128);
+ job.scanQuality||={};job.scanQuality[page]=assessScan({width:job.pdf?canvas.width:job.preprocessing?.[page]?.original_width||canvas.width,height:job.pdf?canvas.height:job.preprocessing?.[page]?.original_height||canvas.height,pixels:sampleContext.getImageData(0,0,128,128).data});
+}
 async function extractWithAI(job,page,canvas,text){
  status(job,'Analyzing layout and fields on page '+page);
  job.pageTexts||={};job.pageTexts[page]=text;
- const sample=document.createElement('canvas');sample.width=128;sample.height=128;
- const sampleContext=sample.getContext('2d',{willReadFrequently:true});sampleContext.drawImage(canvas,0,0,128,128);
- job.scanQuality||={};job.scanQuality[page]=assessScan({width:canvas.width,height:canvas.height,pixels:sampleContext.getImageData(0,0,128,128).data});
+ recordScanHints(job,page,canvas);
  try{
    if(!await window.PageSignalAccount.ensureSignedIn())throw new Error('Sign in before running AI extraction.');
    let image=canvas.toDataURL('image/jpeg',.85);
@@ -210,7 +222,7 @@ async function extractWithAI(job,page,canvas,text){
    if(image.length>uploadLimits.imageDataChars)throw new Error('This page image is too large for AI extraction.');
    const response=await fetch('/api/ai/extract',{
      method:'POST',headers:{'Content-Type':'application/json'},
-     body:JSON.stringify({image,text:text.slice(0,20000)})
+     body:JSON.stringify({image,text:text.slice(0,20000),words:(job.pageWords?.[page]||[]).slice(0,2000)})
    });
    const result=await response.json();
    if(!response.ok)throw new Error(result.error||'AI could not extract this page.');
@@ -220,6 +232,7 @@ async function extractWithAI(job,page,canvas,text){
      if(!result.document_type||result.document_type==='unknown')result.document_type=printed.type;
      result.document_title||=printed.title;
    }
+   for(const crop of result.vision_recheck||[]){const matches=result.fields.filter(f=>f.label===crop.target.label&&f.section===crop.target.section);if(matches.length===1)matches[0].recheck={source:{page,box:crop.source.box},proposals:[crop.proposal],message:'Automatic crop proposal — compare with the original before applying'};}
    job.aiPages.push({page,...result});
  }catch(error){job.aiPages.push({page,error:error.message});}
 }
@@ -242,13 +255,16 @@ async function readPdf(job){
      status(job,'Checking page '+n+' of '+pdf.numPages);
      const page=await pdf.getPage(n);
      if(!workspaceAllowed())throw new Error('Sign in to process documents.');
+     const rotation=(page.rotate+(job.reading?.rotation||0))%360;
      const items=(await page.getTextContent()).items;
      let text=pdfLines(items);
-     job.pageWords||={};job.pageWords[n]=pdfWordBoxes(items,page.getViewport({scale:1}),pdfModule.Util.transform);
+     job.pageWords||={};job.pageWords[n]=pdfWordBoxes(items,page.getViewport({scale:1,rotation}),pdfModule.Util.transform);
      const needsOcr=text.replace(/\s/g,'').length<45||classify(text).type==='other';
      if(needsOcr||job.ai){
-       const base=page.getViewport({scale:1});
-       const viewport=page.getViewport({scale:Math.min(3,2300/Math.max(base.width,base.height))});
+       const base=page.getViewport({scale:1,rotation});
+       const plan=imagePlan(base.width,base.height);
+       const viewport=page.getViewport({scale:plan.width/base.width,rotation});
+       job.preprocessing||={};job.preprocessing[n]={...plan,rotation_degrees:rotation,pdf_rotation_degrees:page.rotate,user_rotation_degrees:job.reading?.rotation||0};
        const canvas=document.createElement('canvas');
        canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);
        await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
@@ -276,19 +292,14 @@ async function run(){
        if(!workspaceAllowed())throw new Error('Sign in to process documents.');
        if(job.pdf){job.text=await readPdf(job);}
        else{
-         job.pages=1;job.text=(await recognize(job,job.file,1)).trim();job.ocrPages=[1];
-         if(job.ai){
-           const bitmap=await createImageBitmap(job.file);
-           const scale=Math.min(1,2300/Math.max(bitmap.width,bitmap.height));
-           const canvas=document.createElement('canvas');
-           canvas.width=Math.max(1,Math.round(bitmap.width*scale));
-           canvas.height=Math.max(1,Math.round(bitmap.height*scale));
-           const context=canvas.getContext('2d');
-           context.fillStyle='white';context.fillRect(0,0,canvas.width,canvas.height);
-           context.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
-           await extractWithAI(job,1,canvas,job.text);
-         }
+         job.pages=1;const bitmap=await createImageBitmap(job.file),canvas=document.createElement('canvas');
+         const plan=imagePlan(bitmap.width,bitmap.height,{rotation:job.reading?.rotation||0});
+         paintImage(canvas,bitmap,plan);bitmap.close();job.preprocessing={1:plan};
+         job.text=(await recognize(job,canvas,1)).trim();job.ocrPages=[1];
+         if(job.ai)await extractWithAI(job,1,canvas,job.text);
+         canvas.width=0;canvas.height=0;
        }
+       job.readingStatus=job.text.trim()?'text_available':'unreadable_local_text';
        job.classification=classify(job.text);
        job.fields=extractFields(job.text,job.classification);
        job.status='Complete';
@@ -320,7 +331,7 @@ async function enqueue(files){
    else if(!file.size)error='This file is empty.';
    else if(file.size>uploadLimits.fileBytes)error='This file exceeds the 30 MiB limit.';
    const valid=!error;
-   return {ai:$('ai').checked,id:crypto.randomUUID(),name:file.name,file,url:valid?URL.createObjectURL(file):'',pdf:/\.pdf$/i.test(file.name),status:valid?'Queued':'Failed',error,valid};
+   return {reading:readingOptions({languages:($('ocr-language')?.value||'eng').split('+'),rotation:Number($('reading-rotation')?.value||0)}),ai:$('ai').checked,id:crypto.randomUUID(),name:file.name,file,url:valid?URL.createObjectURL(file):'',pdf:/\.pdf$/i.test(file.name),status:valid?'Queued':'Failed',error,valid};
  });
  jobs.push(...added);
  const count=added.filter(job=>job.valid).length;
@@ -400,7 +411,7 @@ async function recheckSource(job,page,index){
  try{
   const crop=await activeViewer.cropSource([{text:field.evidence,kind:'evidence'},{text:field.value,kind:'value'}],page);
   if(crop.image.length>uploadLimits.imageDataChars)throw new Error('Source crop is too large. Review the original manually.');
-  const response=await fetch('/api/ai/extract',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:crop.image,text:''})});
+  const response=await fetch('/api/ai/extract',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:crop.image,text:'',field_target:{section:field.section??null,label:field.label}})});
   const result=await response.json();if(!response.ok)throw new Error(result.error||'Source recheck failed.');
   field.recheck={source:crop.source,proposals:(result.fields||[]).filter(f=>f&&typeof f.label==='string').slice(0,12),message:'AI crop result — review against the original before applying'};
   if(!field.recheck.proposals.length)field.recheck.message='No field could be read from this crop. Review the original manually.';
@@ -423,7 +434,7 @@ $('result').addEventListener('click',e=>{
  if(recheck||apply){
   const job=jobs.find(j=>j.id===selected);if(!job)return;
   if(recheck){void recheckSource(job,Number(recheck.dataset.recheckPage),Number(recheck.dataset.recheckField));}
-  else{const field=job.aiPages.find(p=>p.page===Number(apply.dataset.applyRecheckPage))?.fields[Number(apply.dataset.applyRecheckField)];const proposal=field?.recheck?.proposals[Number(apply.dataset.proposal)];if(proposal){field.value=proposal.value;field.state=proposal.state;field.evidence=proposal.evidence;field.reviewed=true;field.recheck.message='Applied after user review';render();}}
+  else{const field=job.aiPages.find(p=>p.page===Number(apply.dataset.applyRecheckPage))?.fields[Number(apply.dataset.applyRecheckField)];const proposal=field?.recheck?.proposals[Number(apply.dataset.proposal)];if(proposal){if(!Object.hasOwn(field,'original_value'))field.original_value=field.value;field.value=proposal.value;field.state=proposal.state;field.evidence=proposal.evidence;field.reviewed=true;field.recheck.message='Applied after user review';render();}}
   return;
  }
  const sourceButton=e.target.closest('[data-source-page]');
@@ -454,7 +465,8 @@ $('result').addEventListener('input',e=>{
    if(e.target.id==='question-text')job.questionDraft=e.target.value;
    else{
      const field=job.requestedFields[e.target.dataset.requestKey];
-     field.value=e.target.value.trim()||null;
+     if(!Object.hasOwn(field,'original_value'))field.original_value=field.value;
+   field.value=e.target.value.trim()||null;
      field.reviewed=true;
    }
    return;
@@ -463,6 +475,7 @@ $('result').addEventListener('input',e=>{
  if(aiPage){
    const job=jobs.find(j=>j.id===selected);
    const field=job.aiPages.find(p=>p.page===Number(aiPage)).fields[Number(aiField)];
+   if(!Object.hasOwn(field,'original_value'))field.original_value=field.value;
    field.value=e.target.value.trim()||null;
    if(!['checked','unchecked'].includes(field.state))field.state=field.value===null?'blank':'filled';
    field.reviewed=true;
@@ -479,7 +492,7 @@ $('result').addEventListener('change',e=>{
  if(e.target.dataset.checkboxPage){
    const job=jobs.find(j=>j.id===selected);
    const field=job.aiPages.find(p=>p.page===Number(e.target.dataset.checkboxPage)).fields[Number(e.target.dataset.checkboxField)];
-   field.checkbox=true;field.state=e.target.value;field.value=null;field.reviewed=true;
+   if(!Object.hasOwn(field,'original_value'))field.original_value=field.value;field.checkbox=true;field.state=e.target.value;field.value=null;field.reviewed=true;
    render();return;
  }
  if(!['kind','formNo'].includes(e.target.id))return;

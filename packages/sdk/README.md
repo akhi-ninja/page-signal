@@ -108,3 +108,9 @@ The two /api/documents routes above are examples you implement in your applicati
 
 No data is sent anywhere until your adapter runs. Do not import the SDK root client into browser code with a service key. Browser applications should import only the workspace entry point, or just a framework component. AI results require review against the source.
 
+
+## Optional preview and integration quality
+
+The next source release adds `enhancedPreview` and a host-owned `previewRenderer` for consistent native page navigation, zoom and normalized evidence overlays. Default preview behavior stays compatible. No iframe, PDF.js, OCR, credentials or LangGraph are bundled in this UI package. PDF.js is used only by the optional runnable repository example.
+
+See the [runnable React, Angular and Vue integrations](https://github.com/akhi-ninja/page-signal/tree/development/examples/native) for a local server adapter, PDF/image rendering, CSS themes, custom fields/slots/templates, lifecycle/cancellation rules, evidence coordinates, supported versions, security boundaries and migration guidance. The hosted website features are not automatically included in npm packages. These source changes are not yet published to npm.
