@@ -42,8 +42,8 @@ test('fixture corpus has only synthetic provenance, real JPEGs and category/qual
   assert.match(fixture.provenance,/synthetic/);
   const bytes=await readFile(new URL('../benchmark/fixtures/'+fixture.image,import.meta.url));assert.equal(bytes.readUInt16BE(0),0xffd8);
  }
- const result=scoreSuite(manifest,{});assert.equal(result.sampleCount,13);assert.equal(result.groups.all.metrics.fieldRecall,0);assert.ok(result.groups['quality:rotated']);
- assert.equal(manifest.version,3);assert.ok(result.groups['quality:multilingual_spanish']);assert.ok(result.groups['quality:multilingual_french']);assert.ok(result.groups['quality:illegible']);assert.ok(result.groups['quality:conflicting_continuation']);
+ const result=scoreSuite(manifest,{});assert.equal(result.sampleCount,19);assert.equal(result.groups.all.metrics.fieldRecall,0);assert.ok(result.groups['quality:rotated']);
+ assert.equal(manifest.version,4);assert.ok(result.groups['quality:multilingual_spanish']);assert.ok(result.groups['quality:multilingual_french']);assert.ok(result.groups['quality:illegible']);assert.ok(result.groups['quality:conflicting_continuation']);
 });
 test('malformed offline predictions are rejected with a useful error',()=>{
  for (const actual of [{...perfect(),fields:[null]},{...perfect(),tables:[{columns:['A'],rows:[null]}]},{...perfect(),fields:[{label:'A',value:42,state:'filled',section:null}]}]) assert.throws(()=>scorePage(expected,actual,source),/Invalid page prediction/);

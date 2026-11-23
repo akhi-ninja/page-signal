@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "status": "expanded_corpus_unmeasured",
-  "corpusVersion": 3,
-  "syntheticPageCount": 13,
+  "corpusVersion": 4,
+  "syntheticPageCount": 19,
   "liveModelRuns": 1,
   "accuracy": null,
   "costUsd": null,
-  "note": "Thirteen synthetic fixtures are available. Only the historical nine-page v2 corpus has a live baseline. New multilingual, illegible and conflicting-page cases, general accuracy, PDF ingestion and recheck benefit remain unmeasured.",
+  "note": "Corpus v4 has 19 synthetic pages including actual PDF ingestion and artificial drawn strokes. Historical v2 baseline remains measured; paired v4 live comparison is not yet recorded. Real human handwriting/general accuracy and human review minutes remain unmeasured.",
   "report": "baseline-2026-11-22-v2.json",
   "measuredCorpusVersion": 2,
   "measuredSyntheticPageCount": 9

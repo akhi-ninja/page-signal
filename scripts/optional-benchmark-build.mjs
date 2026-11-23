@@ -4,3 +4,8 @@ if(process.env.VERCEL_ENV==='preview'&&process.env.VERCEL_GIT_COMMIT_REF==='deve
  console.log('Running one bounded nine-page synthetic benchmark; no retries.');
  execFileSync(process.execPath,['scripts/evaluate-extraction.mjs','--live','--max-pages','9','--engine','langgraph','--max-cost-usd','0.50','--out','web/benchmark-live-v2.json'],{stdio:'inherit'});
 }else console.log('Static app ready; paid benchmark is disabled.');
+
+if(process.env.VERCEL_ENV==='preview'&&process.env.VERCEL_GIT_COMMIT_REF==='development'&&process.env.PAGESIGNAL_RUN_BENCHMARK==='paired-v4'){
+ for(const engine of ['pipeline','langgraph'])execFileSync(process.execPath,['scripts/evaluate-extraction.mjs','--live','--max-pages','19','--engine',engine,'--max-cost-usd','0.50','--out',`web/benchmark-${engine}-v4.json`],{stdio:'inherit'});
+ try{execFileSync(process.execPath,['scripts/compare-extraction.mjs','--baseline','web/benchmark-pipeline-v4.json','--candidate','web/benchmark-langgraph-v4.json','--out','web/benchmark-comparison-v4.json'],{stdio:'inherit'});}catch(error){if(error.status!==1)throw error;}
+}

@@ -445,3 +445,9 @@ AI review shows scan-quality hints and field evidence status. A transcript match
 React, Angular and Vue source integrations share an optional native preview controller for zoom, fit width, page navigation and source evidence overlays. PDF navigation/overlays require a host page renderer; the browser-native PDF fallback remains available. Heavy PDF/OCR dependencies stay outside the UI packages. See [runnable examples and contracts](https://github.com/akhi-ninja/page-signal/tree/development/examples/native) for the server adapter, lazy PDF.js example, custom fields, themes, lifecycle rules, supported framework versions and migration guidance. This source improvement is not an npm release.
 
 CI checks packed consumer installs, strict TypeScript exports, DOM-free imports, framework mounts, cancellation, accessibility semantics and keyboard focus. Bundle reports exclude framework peers and optional PDF/OCR runtimes. Automated checks do not establish formal WCAG conformance or replace assistive-technology/device testing.
+
+## Durable jobs and document reconciliation
+
+Optional same-origin document jobs support encrypted persistent state, per-page outcomes, bounded retries, cancellation, explicit review and deletion using Vercel Queues and Neon. Jobs are disabled until configured and migrated. See [job API and operational limits](https://github.com/akhi-ninja/page-signal/blob/development/docs/document-jobs.md). New browser-safe SDK source entry points `@pagesignal/sdk/document` and `@pagesignal/sdk/jobs` expose versioned reconciliation and job-client contracts without model credentials. These source additions are not yet an npm release.
+
+Targeted crop rechecks remain opt-in and produce proposals requiring human acceptance. Conflicts, uncertain document boundaries and cross-page table joins remain reviewable rather than silently repaired.
