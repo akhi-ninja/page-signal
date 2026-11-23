@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "aa681753020e93f667db246da5a99ad9cf653c20",
+  "model": "gpt-4.1-mini",
+  "createdAt": "2026-11-23T22:05:24.069Z",
+  "cases": [
+    {
+      "field": "Total",
+      "syntheticOriginalPreserved": true,
+      "proposalPresent": true,
+      "proposalExactMatch": true,
+      "requiresReview": true,
+      "extraModelCalls": 1,
+      "latencyMs": 1629
+    },
+    {
+      "field": "Email",
+      "syntheticOriginalPreserved": true,
+      "proposalPresent": true,
+      "proposalExactMatch": true,
+      "requiresReview": true,
+      "extraModelCalls": 1,
+      "latencyMs": 1251
+    }
+  ],
+  "provider": {
+    "requests": 2,
+    "usageMeasuredRequests": 2,
+    "tokenUsage": {
+      "inputTokens": 460,
+      "cachedInputTokens": 0,
+      "outputTokens": 41
+    },
+    "estimatedCostUsd": 0.0002496,
+    "knownEstimatedCostUsd": 0.0002496,
+    "costNote": "Estimate from measured tokens at standard GPT-4.1 mini rates: input $0.40, cached input $0.10, output $1.60 per million. Excludes Vercel, tax and discounts. Unknown usage/tier is not treated as free.",
+    "pricingSource": "https://developers.openai.com/api/docs/models/gpt-4.1-mini",
+    "pricingCheckedOn": "2026-11-22",
+    "calls": [
+      {
+        "httpStatus": 200,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "usage": {
+          "inputTokens": 218,
+          "cachedInputTokens": 0,
+          "outputTokens": 22
+        },
+        "estimatedCostUsd": 0.0001224,
+        "serviceTier": "default"
+      },
+      {
+        "httpStatus": 200,
+        "model": "gpt-4.1-mini-2025-04-14",
+        "usage": {
+          "inputTokens": 242,
+          "cachedInputTokens": 0,
+          "outputTokens": 19
+        },
+        "estimatedCostUsd": 0.00012720000000000003,
+        "serviceTier": "default"
+      }
+    ]
+  },
+  "limitations": "Two controlled synthetic OCR-corruption crops; first-pass result and coordinates are fixture inputs. Only the crop call uses a live model. Not a general accuracy study, human handwriting test or comparison against full-page rechecks. No proposals are auto-applied."
+}

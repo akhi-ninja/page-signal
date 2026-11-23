@@ -9,7 +9,7 @@ import {documentJobs} from '../lib/job-api.mjs';
 import {enqueueDocumentJob} from '../lib/job-queue.mjs';
 import retention from '../api/internal/job-retention.mjs';
 const stage=process.env.PAGESIGNAL_JOB_SMOKE,run=process.env.PAGESIGNAL_JOB_SMOKE_ID;
-if(process.env.VERCEL_ENV!=='preview'||process.env.VERCEL_GIT_COMMIT_REF!=='development'||!['migrate','seed','verify','cleanup','inspect','deliver'].includes(stage)||!/^[-a-f0-9]{36}$/.test(run||''))throw Error('Explicit development-preview smoke configuration required');
+if(process.env.VERCEL_ENV!=='preview'||process.env.VERCEL_GIT_COMMIT_REF!=='development'||!['migrate','seed','verify','cleanup','inspect','deliver','retry'].includes(stage)||!/^[-a-f0-9]{36}$/.test(run||''))throw Error('Explicit development-preview smoke configuration required');
 if(process.env.PAGESIGNAL_DURABLE_JOBS!=='true'||!process.env.CRON_SECRET||process.env.CRON_SECRET.length<32)throw Error('Configure jobs and retention before verification');
 const runtime=getAuthRuntime(process.env);if(!runtime)throw Error('Account runtime required');
 const store=createJobStore(runtime.pool,process.env.BETTER_AUTH_SECRET,{scope:jobScope(process.env)}),checks=[];
@@ -43,7 +43,7 @@ try{
    }else assert.ok(record,'Smoke run not found');
    const ownerCookie=await cookie(record.users[0]),strangerCookie=await cookie(record.users[1]);
    const request=(method,id,body,session=ownerCookie,origin=runtime.origin)=>new Request(runtime.origin+'/api/ai/jobs'+(id?'?id='+id:''),{method,headers:{Origin:origin,'Content-Type':'application/json',...(session?{Cookie:session}:{})},...(body?{body:JSON.stringify(body)}:{})});
-   const deps={enqueue:async(id,options)=>{if(!record.jobs.includes(id)){record.jobs.push(id);await save();}const target=process.env.PAGESIGNAL_JOB_SMOKE_CONSUMER;if(stage==='seed'&&/^dpl_[a-zA-Z0-9]+$/.test(target||''))return new QueueClient({region:'iad1',deploymentId:target}).send('pagesignal-document-jobs',{jobId:id},{...options,retentionSeconds:600,delaySeconds:90});return enqueueDocumentJob(id,{...options,delaySeconds:stage==='seed'?90:0});}};
+   const deps={enqueue:async(id,options)=>{if(!record.jobs.includes(id)){record.jobs.push(id);await save();}const target=process.env.PAGESIGNAL_JOB_SMOKE_CONSUMER;if(/^dpl_[a-zA-Z0-9]+$/.test(target||''))return new QueueClient({region:'iad1',deploymentId:target}).send('pagesignal-document-jobs',{jobId:id},{...options,retentionSeconds:600,delaySeconds:90});return enqueueDocumentJob(id,{...options,delaySeconds:stage==='seed'?90:0});}};
    const api=async(method,id,body,session,origin)=>documentJobs(request(method,id,body,session,origin),process.env,deps);
    assert.equal((await api('GET',record.main,undefined,'')).status,401);checks.push('actual_session_required');
    assert.equal((await api('POST',undefined,{},ownerCookie,'https://invalid.example')).status,403);checks.push('origin_rejected');
@@ -56,13 +56,16 @@ try{
     const crash=await store.create(record.users[0],[page],'smoke-crash-'+run);record.crash=crash.id;record.jobs.push(crash.id);await save();await store.claim(crash.id);await runtime.pool.query("UPDATE pagesignal_document_jobs SET lease_until=now()-interval '1 second' WHERE id=$1",[crash.id]);await deps.enqueue(crash.id,{idempotencyKey:'smoke-crash-'+run});
     const expired=await store.create(record.users[0],[page],'smoke-expiry-'+run);record.jobs.push(expired.id);await save();await runtime.pool.query("UPDATE pagesignal_document_jobs SET expires_at=now()-interval '1 second' WHERE id=$1",[expired.id]);
     assert.equal((await retention.fetch(new Request(runtime.origin+'/api/internal/job-retention'))).status,401);assert.equal((await retention.fetch(new Request(runtime.origin+'/api/internal/job-retention',{headers:{Authorization:'Bearer '+process.env.CRON_SECRET}}))).status,204);assert.equal(await store.read(expired.id,record.users[0]),null);checks.push('authenticated_retention_deletes_expired_rows');
+   }else if(stage==='retry'){
+    const job=await store.read(record.main,record.users[0]);assert.ok(job&&job.pages.some(p=>p.status==='failed'&&p.attempts===1)&&!record.retryRequested,'Only one explicit failed-page retry is allowed');
+    const response=await api('POST',record.main,{action:'retry'});assert.equal(response.status,200);assert.equal((await response.json()).status,'queued');record.retryRequested=true;await save();checks.push('explicit_failed_page_retry_requested');
    }else{
     const job=await store.read(record.main,record.users[0]);assert.ok(job&&job.pages.every(p=>p.status==='complete'),'Real queue pages have not completed: '+JSON.stringify(job?.pages.map(p=>({status:p.status,attempts:p.attempts,error:p.error}))));checks.push('real_queue_two_page_completion');
     assert.equal((await api('GET',record.main,undefined,strangerCookie)).status,404);assert.equal((await api('POST',record.main,{action:'approve'},strangerCookie)).status,404);checks.push('real_session_owner_isolation');
     const crash=await store.read(record.crash,record.users[0]);assert.equal(crash.pages[0].error?.code,'interrupted_attempt_requires_review');assert.equal(crash.pages[0].attempts,1);checks.push('separate_worker_crash_requires_explicit_retry');
     assert.equal((await store.read(record.cancelled,record.users[0])).status,'cancelled');checks.push('queue_preserves_cancellation');
     const approval=await api('POST',record.main,{action:'approve'});assert.equal(approval.status,200);assert.equal((await approval.json()).status,'approved');checks.push('authenticated_approval');
-    const usage=(await runtime.pool.query('SELECT SUM(requests)::int AS count FROM pagesignal_usage WHERE subject=$1',['account:'+record.users[0]])).rows[0].count;assert.equal(usage,2);checks.push('two_provider_attempts_charged_to_synthetic_owner');
+    const usage=(await runtime.pool.query('SELECT SUM(requests)::int AS count FROM pagesignal_usage WHERE subject=$1',['account:'+record.users[0]])).rows[0].count;assert.equal(usage,job.pages.reduce((n,p)=>n+p.attempts,0));assert.ok(usage<=3);checks.push('provider_attempts_match_synthetic_owner_usage');if(record.retryRequested)checks.push('explicit_failed_page_retry_completed');
     assert.equal((await api('DELETE',record.main)).status,200);assert.equal((await api('GET',record.main)).status,404);checks.push('authenticated_deletion');await cleanup();checks.push('synthetic_users_sessions_jobs_removed');
    }
   }
