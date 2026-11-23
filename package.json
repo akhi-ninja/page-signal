@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "start": "node server.mjs",
-    "test": "node scripts/build-document-contract.mjs --check && node scripts/build-workspace-style.mjs --check && node --test test/*.test.mjs",
+    "test": "node scripts/build-result-contracts.mjs --check && node scripts/build-document-contract.mjs --check && node scripts/build-workspace-style.mjs --check && node --test test/*.test.mjs",
     "pack:packages": "npm run build:packages && npm pack --workspace @pagesignal/core --workspace @pagesignal/sdk --workspace @pagesignal/react --workspace @pagesignal/vue && npm pack ./packages/angular/dist",
     "docs:build": "node scripts/build-docs.mjs",
     "docs:check": "node scripts/build-docs.mjs --check",
@@ -54,6 +54,6 @@
     "vue": "3.5.45"
   },
   "engines": {
-    "node": ">=22.14.0"
+    "node": "24.x"
   }
 }

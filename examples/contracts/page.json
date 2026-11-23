@@ -1,0 +1,33 @@
+{
+  "schema_version": "pagesignal.page.v1",
+  "page": 1,
+  "result": {
+    "document_type": "invoice",
+    "classification_status": "identified",
+    "page_role": "standalone",
+    "form_number": null,
+    "fields": [
+      {
+        "section": null,
+        "label": "Total",
+        "value": "10.00",
+        "state": "filled",
+        "evidence": "Total: 10.00",
+        "id": "p1:%5Bnull%2C%22Total%22%5D:0",
+        "original_value": "10.00",
+        "normalized_value": "10.00",
+        "review_state": "needs_review",
+        "source": {
+          "page": 1,
+          "excerpt": "Total: 10.00"
+        }
+      }
+    ],
+    "tables": [],
+    "review_notes": []
+  },
+  "metadata": {
+    "model": "fixture",
+    "prompt_version": "example-v1"
+  }
+}

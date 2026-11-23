@@ -1,3 +1,4 @@
+import {validateQueryResult} from './contracts.mjs';
 import {providerFailure,applyUsageHeaders,providerException,providerIncomplete} from './provider-errors.mjs';
 const string={type:'string'};
 const nullable={type:['string','null']};
@@ -66,7 +67,7 @@ async function queryDocument(input,env,signal){
   const content=result.output?.flatMap(message=>message.content||[]).find(item=>item.type==='output_text');
   if(result.status!=='completed'||!content)return providerIncomplete();
   const data=JSON.parse(content.text);
-  if(!data||typeof data.answer!=='string'||!Array.isArray(data.citations)||!Array.isArray(data.fields))return providerIncomplete();
+  try{validateQueryResult(data);}catch{return providerIncomplete();}
   const pageText=new Map(pages.map(p=>[p.page,normalizeEvidence(p.text)]));
   const supported=source=>Boolean(source?.excerpt?.trim()&&pageText.get(source.page)?.includes(normalizeEvidence(source.excerpt)));
   const citations=data.citations.filter(supported);

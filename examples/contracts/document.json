@@ -1,0 +1,78 @@
+{
+  "schema_version": "pagesignal.document.v1",
+  "status": "needs_review",
+  "pages": [
+    {
+      "page": 1,
+      "result": {
+        "document_type": "invoice",
+        "classification_status": "identified",
+        "page_role": "standalone",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Total",
+            "value": "10.00",
+            "state": "filled",
+            "evidence": "Total: 10.00"
+          }
+        ],
+        "tables": [],
+        "review_notes": []
+      }
+    },
+    {
+      "page": 2,
+      "error": {
+        "code": "provider_timeout"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "document-p1",
+      "pages": [
+        1
+      ],
+      "status": "needs_review",
+      "fields": [
+        {
+          "section": null,
+          "label": "Total",
+          "value": "10.00",
+          "state": "filled",
+          "evidence": "Total: 10.00",
+          "id": "document-p1:p1:%5B%22%22%2C%22Total%22%5D:0",
+          "original_value": "10.00",
+          "normalized_value": "10.00",
+          "source": {
+            "page": 1,
+            "excerpt": "Total: 10.00"
+          }
+        }
+      ],
+      "conflicts": [],
+      "table_continuations": [],
+      "errors": []
+    },
+    {
+      "id": "document-p2",
+      "pages": [
+        2
+      ],
+      "status": "needs_review",
+      "fields": [],
+      "conflicts": [],
+      "table_continuations": [],
+      "errors": [
+        {
+          "page": 2,
+          "code": "provider_timeout"
+        }
+      ]
+    }
+  ],
+  "note": "Source-grounded review required. Unknown page boundaries split documents; tables and conflicting values are never silently joined.",
+  "metadata": {}
+}

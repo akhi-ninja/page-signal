@@ -15,6 +15,8 @@ const assets = {
   '/robots.txt':['web/robots.txt','text/plain'], '/sitemap.xml':['web/sitemap.xml','application/xml'],
   '/community':['web/community.html','text/html'], '/admin':['web/community.html','text/html'],
   '/community.js':['web/community.js','text/javascript'],
+  '/reading-options.mjs':['web/reading-options.mjs','text/javascript'],
+  '/result-contracts.mjs':['web/result-contracts.mjs','text/javascript'],
   '/document-contract.mjs':['web/document-contract.mjs','text/javascript'],
   '/document-quality.mjs':['web/document-quality.mjs','text/javascript'],
   '/document-viewer.mjs': ['web/document-viewer.mjs','text/javascript'],

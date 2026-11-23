@@ -21,6 +21,10 @@
     "./jobs": {
       "types": "./jobs.d.ts",
       "import": "./jobs.mjs"
+    },
+    "./contracts": {
+      "types": "./contracts.d.ts",
+      "import": "./contracts.mjs"
     }
   },
   "files": [
@@ -34,7 +38,9 @@
     "document.mjs",
     "document.d.ts",
     "jobs.mjs",
-    "jobs.d.ts"
+    "jobs.d.ts",
+    "contracts.mjs",
+    "contracts.d.ts"
   ],
   "engines": {
     "node": ">=22"

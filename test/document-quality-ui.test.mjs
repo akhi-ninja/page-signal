@@ -2,12 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {JSDOM} from 'jsdom';
+import {readingOptions} from '../web/reading-options.mjs';
 import {reconcileDocument} from '../packages/sdk/document.mjs';
 import {assessScan,verifyFields,reconcilePages} from '../web/document-quality.mjs';
 test('workspace shows review hints, makes no automatic verification call, and requires explicit acceptance',async()=>{
  const html=await readFile(new URL('../web/index.html',import.meta.url),'utf8');
  const dom=new JSDOM(html,{url:'https://example.test',runScripts:'outside-only'});const w=dom.window;
- Object.assign(w,{reconcileDocument,assessScan,verifyFields,reconcilePages,loadOCR:async()=>{},pdfWordBoxes:()=>[],ocrWordBoxes:()=>[]});
+ Object.assign(w,{readingOptions,reconcileDocument,assessScan,verifyFields,reconcilePages,loadOCR:async()=>{},pdfWordBoxes:()=>[],ocrWordBoxes:()=>[]});
  w.PageSignalAccount={state:{configured:true,user:{name:'Test'},authRequired:true},ready:Promise.resolve(),ensureSignedIn:async()=>true,refresh:async()=>{}};
  w.DocumentViewer=class{constructor(host,job){this.job=job;}destroy(){}async cropSource(){return {image:'data:image/jpeg;base64,AA==',source:{page:1,region:{x:.1,y:.1,width:.1,height:.1}}};}};
  let calls=0;
@@ -23,5 +24,8 @@ test('workspace shows review hints, makes no automatic verification call, and re
   w.document.querySelector('[data-apply-recheck-page]').click();
   const job=w.qualityHarness.getJob();assert.equal(job.aiPages[0].fields[0].value,'new@example.test');
   assert.equal(w.qualityHarness.output(job).pages[0].fields[0].verification.status,'user_reviewed');
+  assert.equal(job.aiPages[0].fields[0].original_value,'old@example.test');
+  job.requestedFields={followup:{label:'Email',value:'followup@example.test',source:{page:1,excerpt:'followup@example.test'}}};
+  const exported=w.qualityHarness.output(job);assert.equal(exported.fields.email,'new@example.test');assert.equal(exported.fields.email_2,'followup@example.test');
  }finally{w.close();}
 });

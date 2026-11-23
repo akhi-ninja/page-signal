@@ -1,5 +1,6 @@
 // Operator-invoked preview integration test. No route, credentials or raw model output are exposed.
 import assert from 'node:assert/strict';
+import {QueueClient} from '@vercel/queue';
 import {createHmac,randomUUID} from 'node:crypto';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {getAuthRuntime} from '../lib/auth.mjs';
@@ -8,7 +9,7 @@ import {documentJobs} from '../lib/job-api.mjs';
 import {enqueueDocumentJob} from '../lib/job-queue.mjs';
 import retention from '../api/internal/job-retention.mjs';
 const stage=process.env.PAGESIGNAL_JOB_SMOKE,run=process.env.PAGESIGNAL_JOB_SMOKE_ID;
-if(process.env.VERCEL_ENV!=='preview'||process.env.VERCEL_GIT_COMMIT_REF!=='development'||!['migrate','seed','verify','cleanup'].includes(stage)||!/^[-a-f0-9]{36}$/.test(run||''))throw Error('Explicit development-preview smoke configuration required');
+if(process.env.VERCEL_ENV!=='preview'||process.env.VERCEL_GIT_COMMIT_REF!=='development'||!['migrate','seed','verify','cleanup','inspect','deliver'].includes(stage)||!/^[-a-f0-9]{36}$/.test(run||''))throw Error('Explicit development-preview smoke configuration required');
 if(process.env.PAGESIGNAL_DURABLE_JOBS!=='true'||!process.env.CRON_SECRET||process.env.CRON_SECRET.length<32)throw Error('Configure jobs and retention before verification');
 const runtime=getAuthRuntime(process.env);if(!runtime)throw Error('Account runtime required');
 const store=createJobStore(runtime.pool,process.env.BETTER_AUTH_SECRET),checks=[];
@@ -26,7 +27,14 @@ try{
  else{
   record=(await runtime.pool.query('SELECT record FROM pagesignal_job_smoke_runs WHERE id=$1',[run])).rows[0]?.record;
   if(stage==='cleanup'){await cleanup();checks.push('synthetic_records_removed');}
-  else{
+  else if(stage==='inspect'||stage==='deliver'){
+   assert.ok(record,'Smoke run not found');const states=[];
+   const deploymentId=process.env.PAGESIGNAL_JOB_SMOKE_CONSUMER;
+   if(stage==='deliver'&&!/^dpl_[a-zA-Z0-9]+$/.test(deploymentId||''))throw Error('A READY consumer deployment is required');
+   const client=stage==='deliver'?new QueueClient({region:'iad1',deploymentId}):null;
+   for(const id of record.jobs){const job=await store.read(id,record.users[0]);if(!job)continue;states.push({status:job.status,pages:job.pages.map(p=>({status:p.status,attempts:p.attempts,error:p.error}))});if(client&&['queued','processing'].includes(job.status)){const sent=await client.send('pagesignal-document-jobs',{jobId:id},{region:'iad1',retentionSeconds:600,idempotencyKey:'smoke-deliver-'+run+'-'+id});checks.push(sent.messageId?'ready_consumer_message_accepted':'ready_consumer_message_deferred');}}
+   console.log(JSON.stringify({syntheticJobStates:states}));checks.push('synthetic_job_states_inspected');
+  }else{
    const context=await runtime.auth.$context;
    const cookie=async user=>{const session=await context.internalAdapter.createSession(user,false,{expiresAt:new Date(Date.now()+600000)},true);return context.authCookies.sessionToken.name+'='+encodeURIComponent(session.token+'.'+createHmac('sha256',process.env.BETTER_AUTH_SECRET).update(session.token).digest('base64'));};
    if(stage==='seed'){
@@ -49,7 +57,7 @@ try{
     const expired=await store.create(record.users[0],[page],'smoke-expiry-'+run);record.jobs.push(expired.id);await save();await runtime.pool.query("UPDATE pagesignal_document_jobs SET expires_at=now()-interval '1 second' WHERE id=$1",[expired.id]);
     assert.equal((await retention.fetch(new Request(runtime.origin+'/api/internal/job-retention'))).status,401);assert.equal((await retention.fetch(new Request(runtime.origin+'/api/internal/job-retention',{headers:{Authorization:'Bearer '+process.env.CRON_SECRET}}))).status,204);assert.equal(await store.read(expired.id,record.users[0]),null);checks.push('authenticated_retention_deletes_expired_rows');
    }else{
-    const job=await store.read(record.main,record.users[0]);assert.ok(job&&job.pages.every(p=>p.status==='complete'),'Real queue pages have not completed');checks.push('real_queue_two_page_completion');
+    const job=await store.read(record.main,record.users[0]);assert.ok(job&&job.pages.every(p=>p.status==='complete'),'Real queue pages have not completed: '+JSON.stringify(job?.pages.map(p=>({status:p.status,attempts:p.attempts,error:p.error}))));checks.push('real_queue_two_page_completion');
     assert.equal((await api('GET',record.main,undefined,strangerCookie)).status,404);assert.equal((await api('POST',record.main,{action:'approve'},strangerCookie)).status,404);checks.push('real_session_owner_isolation');
     const crash=await store.read(record.crash,record.users[0]);assert.equal(crash.pages[0].error?.code,'interrupted_attempt_requires_review');assert.equal(crash.pages[0].attempts,1);checks.push('separate_worker_crash_requires_explicit_retry');
     assert.equal((await store.read(record.cancelled,record.users[0])).status,'cancelled');checks.push('queue_preserves_cancellation');
