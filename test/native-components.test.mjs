@@ -26,6 +26,7 @@ test('Vue mounts native upload, field review and preview without iframe',async()
  upload(container);await pause();await nextTick();
  assert.equal(container.querySelector('iframe'),null);assert.ok(container.querySelector('[aria-label="Document preview controls"]'));assert.ok([...container.querySelectorAll('button')].some(b=>b.textContent==='Show source'));assert.equal(container.querySelector('img').alt,'policy.png');
  assert.equal(container.querySelector('input:not([type=file])').value,'P-42');assert.ok(changes>0);
+ const preview=container.querySelector('.pagesignal-preview');const input=container.querySelector('input:not([type=file])');input.value='P-43';input.dispatchEvent(new Event('input',{bubbles:true}));await nextTick();await pause();assert.equal(container.querySelector('.pagesignal-preview'),preview,'field edits must not recreate Vue preview');
  await audit(container);app.unmount();container.remove();
 });
 test('React mounts native upload, field review and preview without iframe',async()=>{

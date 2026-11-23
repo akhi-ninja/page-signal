@@ -20,7 +20,7 @@ Minified ESM bundles measured with esbuild 0.27.7 (framework peers, PDF/OCR rend
 | UI | Raw bytes | Gzip bytes |
 | --- | ---: | ---: |
 | React | 11,390 | 4,760 |
-| Vue | 11,756 | 4,914 |
+| Vue | 11,764 | 4,917 |
 | Angular | 17,791 | 5,839 |
 
 The 50KB raw CI review budget is a packaging guard, not an accuracy or browser-performance promise. Example full-app builds additionally include framework dependencies; the Angular demo includes its JIT compiler. Optional PDF chunks/worker are lazy and substantially larger, outside these figures. Use your normal AOT Angular build in production.

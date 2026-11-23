@@ -12,7 +12,7 @@ export const PageSignalWorkspace=defineComponent({
   const previewHost=ref(null);let previewController;
   onBeforeUnmount(()=>{previewController?.dispose();unsubscribe();store.dispose();});
   const current=computed(()=>state.value.documents.find(d=>d.id===state.value.selectedId));
-  watch(()=>[current.value?.id,props.enhancedPreview,props.previewRenderer],async(_,__,onCleanup)=>{let cancelled=false;onCleanup(()=>{cancelled=true;previewController?.dispose();previewController=null;});await nextTick();if(cancelled||!props.enhancedPreview||!current.value||!previewHost.value)return;const d=current.value;previewController=mountPreview(previewHost.value,{file:d.file,url:d.previewUrl,renderer:props.previewRenderer,onSourceNavigate:s=>props.onSourceNavigate?.(s)});},{immediate:true});
+  watch([()=>current.value?.id,()=>props.enhancedPreview,()=>props.previewRenderer],async(_,__,onCleanup)=>{let cancelled=false;onCleanup(()=>{cancelled=true;previewController?.dispose();previewController=null;});await nextTick();if(cancelled||!props.enhancedPreview||!current.value||!previewHost.value)return;const d=current.value;previewController=mountPreview(previewHost.value,{file:d.file,url:d.previewUrl,renderer:props.previewRenderer,onSourceNavigate:s=>props.onSourceNavigate?.(s)});},{immediate:true});
   const button=(text,click,disabled=false)=>h('button',{type:'button',onClick:click,disabled},text);
   return ()=> {
    const d=current.value;
