@@ -19,7 +19,17 @@
    const data=await api('GET',undefined,admin?'?view=admin&page='+page:'');$('login-panel').hidden=true;
    if(admin){
     $('admin').hidden=false;$('admin-link').hidden=false;$('metrics').replaceChildren();
-    for(const [label,value] of [['Registered accounts',data.summary.accounts],['Voluntary registrations',data.summary.registrations],['AI attempts · 30 days',data.summary.requests_30d]]){const box=text('div',label);box.className='metric';box.append(text('strong',value));$('metrics').append(box);}
+    for(const [label,value] of [['Registered accounts',data.summary.accounts],['Accounts using AI · 30 days',data.summary.active_ai_accounts_30d],['Voluntary registrations',data.summary.registrations],['AI attempts · 30 days',data.summary.requests_30d]]){const box=text('div',label);box.className='metric';box.append(text('strong',value));$('metrics').append(box);}
+    $('traffic').replaceChildren();const traffic=data.traffic;
+    if(!traffic?.available)$('traffic').textContent='API metadata reporting is temporarily unavailable. AI usage counts remain separate.';
+    else{
+     const summary=traffic.summary;$('traffic').append(text('p',`${summary.active_accounts} active accounts · ${summary.requests} authenticated HTTP requests · ${summary.failed_requests} HTTP errors · ${traffic.environment} · First retained record: ${summary.first_recorded_day||'No requests recorded yet'}`));
+     for(const [title,headers,rows] of [
+      ['Approximate caller locations',['Country','Region','Requests','Accounts'],traffic.locations.map(r=>[r.country,r.region,r.requests,r.accounts])],
+      ['Reported source hosts (unverified)',['Host','Source','Requests','Accounts'],traffic.sources.map(r=>[r.source_host,r.source_kind,r.requests,r.accounts])],
+      ['Endpoints and outcomes',['Endpoint','Method','HTTP status','Requests','Average ms'],traffic.endpoints.map(r=>[r.endpoint,r.method,r.status,r.requests,r.average_ms])]
+     ]){const section=document.createElement('section');section.append(text('h3',title));const wrap=document.createElement('div');wrap.style.overflowX='auto';const table=document.createElement('table'),head=document.createElement('thead'),tr=document.createElement('tr');for(const label of headers){const th=text('th',label);th.scope='col';tr.append(th);}head.append(tr);table.append(head);const body=document.createElement('tbody');for(const values of rows){const row=document.createElement('tr');for(const value of values)row.append(text('td',value));body.append(row);}table.append(body);wrap.append(table);section.append(wrap);if(!rows.length)section.append(text('p','No requests recorded yet.'));$('traffic').append(section);}
+    }
     $('daily').replaceChildren();const maximum=Math.max(1,...data.daily.map(d=>d.requests));
     for(const day of data.daily){const row=document.createElement('div');row.className='chart-row';const meter=document.createElement('meter');meter.max=maximum;meter.value=day.requests;meter.setAttribute('aria-label',date(day.day)+': '+day.requests+' AI attempts');row.append(text('span',date(day.day)),meter,text('span',day.requests));$('daily').append(row);}
     if(!data.daily.length)$('daily').textContent='No hosted AI requests in this period.';
