@@ -14,3 +14,6 @@ else if(process.env.VERCEL_ENV==='preview'&&process.env.VERCEL_GIT_COMMIT_REF===
 if(process.env.VERCEL_ENV==='preview'&&process.env.VERCEL_GIT_COMMIT_REF==='development'&&['migrate','seed','verify','cleanup','inspect','deliver'].includes(process.env.PAGESIGNAL_JOB_SMOKE)){
  execFileSync(process.execPath,['scripts/job-smoke.mjs'],{stdio:'inherit'});
 }
+if(process.env.VERCEL_ENV==='preview'&&process.env.VERCEL_GIT_COMMIT_REF==='development'&&process.env.PAGESIGNAL_RUN_BENCHMARK==='crop-v1'){
+ execFileSync(process.execPath,['scripts/evaluate-crop.mjs'],{stdio:'inherit'});
+}

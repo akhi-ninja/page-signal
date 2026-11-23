@@ -1,9 +1,9 @@
+import {retryAfterSeconds} from './retry-policy.mjs';
 export function providerFailure(response){
  const status=response.status;
  const code=status===429?'provider_rate_limit':[401,403].includes(status)?'provider_authentication':status>=500?'provider_unavailable':'provider_invalid_request';
  const retryable=status===429||status>=500;
- const supplied=Number(response.headers.get('retry-after'));
- const retryAfter=retryable?Math.min(300,Math.max(1,Number.isFinite(supplied)&&supplied>0?Math.ceil(supplied):60)):null;
+ const retryAfter=retryable?retryAfterSeconds(response.headers.get('retry-after')):null;
  return Response.json({error:'The AI provider could not complete this request.',code,retryable,retry_after_seconds:retryAfter},{status:502,headers:{'Cache-Control':'no-store',...(retryAfter?{'Retry-After':String(retryAfter)}:{})}});
 }
 export function applyUsageHeaders(response,data){
