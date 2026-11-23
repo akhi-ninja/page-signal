@@ -4,7 +4,7 @@ import {QueueClient} from '@vercel/queue';
 import {createHmac,randomUUID} from 'node:crypto';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {getAuthRuntime} from '../lib/auth.mjs';
-import {createJobStore} from '../lib/document-jobs.mjs';
+import {createJobStore,jobScope} from '../lib/document-jobs.mjs';
 import {documentJobs} from '../lib/job-api.mjs';
 import {enqueueDocumentJob} from '../lib/job-queue.mjs';
 import retention from '../api/internal/job-retention.mjs';
@@ -12,7 +12,7 @@ const stage=process.env.PAGESIGNAL_JOB_SMOKE,run=process.env.PAGESIGNAL_JOB_SMOK
 if(process.env.VERCEL_ENV!=='preview'||process.env.VERCEL_GIT_COMMIT_REF!=='development'||!['migrate','seed','verify','cleanup','inspect','deliver'].includes(stage)||!/^[-a-f0-9]{36}$/.test(run||''))throw Error('Explicit development-preview smoke configuration required');
 if(process.env.PAGESIGNAL_DURABLE_JOBS!=='true'||!process.env.CRON_SECRET||process.env.CRON_SECRET.length<32)throw Error('Configure jobs and retention before verification');
 const runtime=getAuthRuntime(process.env);if(!runtime)throw Error('Account runtime required');
-const store=createJobStore(runtime.pool,process.env.BETTER_AUTH_SECRET),checks=[];
+const store=createJobStore(runtime.pool,process.env.BETTER_AUTH_SECRET,{scope:jobScope(process.env)}),checks=[];
 let record;
 async function save(){await runtime.pool.query('INSERT INTO pagesignal_job_smoke_runs(id,record) VALUES($1,$2::jsonb) ON CONFLICT(id) DO UPDATE SET record=EXCLUDED.record',[run,JSON.stringify(record)]);}
 async function cleanup(){
@@ -43,7 +43,7 @@ try{
    }else assert.ok(record,'Smoke run not found');
    const ownerCookie=await cookie(record.users[0]),strangerCookie=await cookie(record.users[1]);
    const request=(method,id,body,session=ownerCookie,origin=runtime.origin)=>new Request(runtime.origin+'/api/ai/jobs'+(id?'?id='+id:''),{method,headers:{Origin:origin,'Content-Type':'application/json',...(session?{Cookie:session}:{})},...(body?{body:JSON.stringify(body)}:{})});
-   const deps={enqueue:async(id,options)=>{if(!record.jobs.includes(id)){record.jobs.push(id);await save();}return enqueueDocumentJob(id,{...options,delaySeconds:stage==='seed'?90:0});}};
+   const deps={enqueue:async(id,options)=>{if(!record.jobs.includes(id)){record.jobs.push(id);await save();}const target=process.env.PAGESIGNAL_JOB_SMOKE_CONSUMER;if(stage==='seed'&&/^dpl_[a-zA-Z0-9]+$/.test(target||''))return new QueueClient({region:'iad1',deploymentId:target}).send('pagesignal-document-jobs',{jobId:id},{...options,retentionSeconds:600,delaySeconds:90});return enqueueDocumentJob(id,{...options,delaySeconds:stage==='seed'?90:0});}};
    const api=async(method,id,body,session,origin)=>documentJobs(request(method,id,body,session,origin),process.env,deps);
    assert.equal((await api('GET',record.main,undefined,'')).status,401);checks.push('actual_session_required');
    assert.equal((await api('POST',undefined,{},ownerCookie,'https://invalid.example')).status,403);checks.push('origin_rejected');
