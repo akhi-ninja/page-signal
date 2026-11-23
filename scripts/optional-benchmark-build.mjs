@@ -13,6 +13,6 @@ else if(process.env.VERCEL_ENV==='preview'&&process.env.VERCEL_GIT_COMMIT_REF===
  execFileSync(process.execPath,['scripts/evaluate-crop.mjs'],{stdio:'inherit'});
 }else console.log('Static app ready; paid benchmark is disabled.');
 
-if(process.env.VERCEL_ENV==='preview'&&process.env.VERCEL_GIT_COMMIT_REF==='development'&&['migrate','seed','verify','cleanup','inspect','deliver'].includes(process.env.PAGESIGNAL_JOB_SMOKE)){
+if(process.env.VERCEL_ENV==='preview'&&process.env.VERCEL_GIT_COMMIT_REF==='development'&&['migrate','seed','verify','cleanup','inspect','deliver','retry'].includes(process.env.PAGESIGNAL_JOB_SMOKE)){
  execFileSync(process.execPath,['scripts/job-smoke.mjs'],{stdio:'inherit'});
 }

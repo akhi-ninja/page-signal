@@ -84,3 +84,8 @@ test('real PostgresSaver SQL migrates, restores state across instances, isolates
 test('hosted graph exposes only numeric stage latency metadata',async()=>{
  const response=await orchestratedExtract(request(),{OPENAI_API_KEY:'test',PAGESIGNAL_ORCHESTRATOR:'langgraph'},{extractPage:async()=>result()});const stages=JSON.parse(response.headers.get('X-PageSignal-Stage-Ms'));assert.deepEqual(Object.keys(stages),['workflow_ms','extract_ms','field_validation_ms']);assert.ok(Object.values(stages).every(v=>Number.isFinite(v)&&v>=0));
 });
+test('graph preserves safe malformed-output codes and provider retry hints',async()=>{
+ const malformed=await orchestratedExtract(request(),{OPENAI_API_KEY:'test',PAGESIGNAL_ORCHESTRATOR:'langgraph'},{extractPage:async()=>({fields:[],tables:[]})});assert.equal(malformed.status,502);assert.equal((await malformed.json()).code,'provider_malformed_output');
+ const inconsistent=result();inconsistent.fields[0].value=null;const invalidState=await orchestratedExtract(request(),{OPENAI_API_KEY:'test',PAGESIGNAL_ORCHESTRATOR:'langgraph'},{extractPage:async()=>inconsistent});assert.equal(invalidState.status,502);assert.equal((await invalidState.json()).code,'provider_malformed_output');
+ const throttled=await orchestratedExtract(request(),{OPENAI_API_KEY:'test',PAGESIGNAL_ORCHESTRATOR:'langgraph'},{extractPage:async()=>{throw Object.assign(Error('private provider body'),{code:'provider_rate_limit',status:502,retryable:true,retryAfter:10});}});assert.equal(throttled.headers.get('Retry-After'),'10');const body=await throttled.json();assert.equal(body.code,'provider_rate_limit');assert.ok(!JSON.stringify(body).includes('private provider body'));
+});
