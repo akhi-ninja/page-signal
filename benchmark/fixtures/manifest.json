@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "license": "CC0-1.0",
   "fixtures": [
     {
@@ -525,6 +525,158 @@
             ]
           }
         ]
+      }
+    },
+    {
+      "id": "invoice-spanish",
+      "documentId": "invoice-spanish",
+      "page": 1,
+      "category": "invoice",
+      "quality": "multilingual_spanish",
+      "image": "invoice-spanish.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A REAL INVOICE\nFACTURA\nN\u00famero de factura: DEMO-ES-12\nCliente: Taller Ejemplo\nCorreo: compras@example.test\nTotal: 125,50 EUR",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "invoice",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "N\u00famero de factura",
+            "value": "DEMO-ES-12",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Cliente",
+            "value": "Taller Ejemplo",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Correo",
+            "value": "compras@example.test",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Total",
+            "value": "125,50 EUR",
+            "state": "filled"
+          }
+        ],
+        "tables": []
+      }
+    },
+    {
+      "id": "receipt-french",
+      "documentId": "receipt-french",
+      "page": 1,
+      "category": "receipt",
+      "quality": "multilingual_french",
+      "image": "receipt-french.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A REAL RECEIPT\nRE\u00c7U\nCommerce: Boutique Exemple\nNum\u00e9ro: DEMO-FR-09\nDate: 2026-11-03\nTotal: 18,20 EUR",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "receipt",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Commerce",
+            "value": "Boutique Exemple",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Num\u00e9ro",
+            "value": "DEMO-FR-09",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Date",
+            "value": "2026-11-03",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Total",
+            "value": "18,20 EUR",
+            "state": "filled"
+          }
+        ],
+        "tables": []
+      }
+    },
+    {
+      "id": "form-unreadable",
+      "documentId": "form-unreadable",
+      "page": 1,
+      "category": "custom_application_form",
+      "quality": "illegible",
+      "image": "form-unreadable.jpg",
+      "text": "SYNTHETIC BENCHMARK - DEMONSTRATION ONLY\nCUSTOM APPLICATION FORM\nForm: DEMO-U1\nName: Example Applicant\nReference: \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\nEmail:",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "custom_application_form",
+        "form_number": "DEMO-U1",
+        "fields": [
+          {
+            "section": null,
+            "label": "Name",
+            "value": "Example Applicant",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Reference",
+            "value": null,
+            "state": "illegible"
+          },
+          {
+            "section": null,
+            "label": "Email",
+            "value": null,
+            "state": "blank"
+          }
+        ],
+        "tables": []
+      }
+    },
+    {
+      "id": "agreement-conflict-page2",
+      "documentId": "agreement",
+      "page": 2,
+      "category": "contract",
+      "quality": "conflicting_continuation",
+      "image": "agreement-conflict-page2.jpg",
+      "text": "SYNTHETIC BENCHMARK - NOT A LEGAL AGREEMENT\nSERVICE AGREEMENT - CONTINUED\nAgreement number: DEMO-C9\nCustomer: Different Example Customer\nNotice period: 30 days\nPage 2 of 2",
+      "provenance": "Created for PageSignal benchmark; entirely synthetic; CC0-1.0.",
+      "expected": {
+        "document_type": "contract",
+        "form_number": null,
+        "fields": [
+          {
+            "section": null,
+            "label": "Agreement number",
+            "value": "DEMO-C9",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Customer",
+            "value": "Different Example Customer",
+            "state": "filled"
+          },
+          {
+            "section": null,
+            "label": "Notice period",
+            "value": "30 days",
+            "state": "filled"
+          }
+        ],
+        "tables": []
       }
     }
   ]

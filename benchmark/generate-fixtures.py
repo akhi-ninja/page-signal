@@ -30,4 +30,16 @@ for suffix,quality in [('rotated180','upside_down'),('lowcontrast','low_contrast
  if suffix=='lowcontrast':im=ImageEnhance.Contrast(im).enhance(.12)
  if suffix=='ocr-corrupt':c['text']=c['text'].replace('billing@example.test','billing example test').replace('45.00','4S.OO')
  im.save(root/c['image'],quality=80);cases.append(c)
-(root/'manifest.json').write_text(json.dumps(dict(version=2,license='CC0-1.0',fixtures=cases),indent=2)+'\n')
+extra=[
+ case('invoice-spanish','invoice','multilingual_spanish',['SYNTHETIC BENCHMARK - NOT A REAL INVOICE','FACTURA','Número de factura: DEMO-ES-12','Cliente: Taller Ejemplo','Correo: compras@example.test','Total: 125,50 EUR'],[field(None,'Número de factura','DEMO-ES-12'),field(None,'Cliente','Taller Ejemplo'),field(None,'Correo','compras@example.test'),field(None,'Total','125,50 EUR')]),
+ case('receipt-french','receipt','multilingual_french',['SYNTHETIC BENCHMARK - NOT A REAL RECEIPT','REÇU','Commerce: Boutique Exemple','Numéro: DEMO-FR-09','Date: 2026-11-03','Total: 18,20 EUR'],[field(None,'Commerce','Boutique Exemple'),field(None,'Numéro','DEMO-FR-09'),field(None,'Date','2026-11-03'),field(None,'Total','18,20 EUR')]),
+ case('form-unreadable','custom_application_form','illegible',['SYNTHETIC BENCHMARK - DEMONSTRATION ONLY','CUSTOM APPLICATION FORM','Form: DEMO-U1','Name: Example Applicant','Reference: ████████████','Email:'],[field(None,'Name','Example Applicant'),field(None,'Reference',None,'illegible'),field(None,'Email',None,'blank')],form='DEMO-U1'),
+ case('agreement-conflict-page2','contract','conflicting_continuation',['SYNTHETIC BENCHMARK - NOT A LEGAL AGREEMENT','SERVICE AGREEMENT - CONTINUED','Agreement number: DEMO-C9','Customer: Different Example Customer','Notice period: 30 days','Page 2 of 2'],[field(None,'Agreement number','DEMO-C9'),field(None,'Customer','Different Example Customer'),field(None,'Notice period','30 days')])
+]
+extra[-1]['documentId']='agreement'
+for c in extra:
+ im=Image.new('RGB',(1050,750),'white');d=ImageDraw.Draw(im)
+ for n,line in enumerate(c['text'].splitlines()):d.text((35,35+n*47),line,font=font,fill='black')
+ im.save(root/c['image'],quality=80)
+cases.extend(extra)
+(root/'manifest.json').write_text(json.dumps(dict(version=3,license='CC0-1.0',fixtures=cases),indent=2)+'\n')

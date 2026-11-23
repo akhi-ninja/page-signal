@@ -1,11 +1,13 @@
 {
   "schemaVersion": 1,
-  "status": "measured_starter_corpus",
-  "corpusVersion": 2,
-  "syntheticPageCount": 9,
+  "status": "expanded_corpus_unmeasured",
+  "corpusVersion": 3,
+  "syntheticPageCount": 13,
   "liveModelRuns": 1,
   "accuracy": null,
   "costUsd": null,
-  "note": "A nine-page synthetic OCR-assisted extractor baseline is measured. General production accuracy, browser OCR/PDF ingestion, handwriting and multilingual performance remain unmeasured. See the report and analysis for strict field/label scoring limitations.",
-  "report": "baseline-2026-11-22-v2.json"
+  "note": "Thirteen synthetic fixtures are available. Only the historical nine-page v2 corpus has a live baseline. New multilingual, illegible and conflicting-page cases, general accuracy, PDF ingestion and recheck benefit remain unmeasured.",
+  "report": "baseline-2026-11-22-v2.json",
+  "measuredCorpusVersion": 2,
+  "measuredSyntheticPageCount": 9
 }
