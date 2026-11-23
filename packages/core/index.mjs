@@ -1,10 +1,13 @@
 import { extract } from './extraction.mjs';
 
 export class PageSignalError extends Error {
-  constructor(message, status) {
+  constructor(message, status, details = {}) {
     super(message);
     this.name = 'PageSignalError';
     this.status = status;
+    if(typeof details.code==='string')this.code=details.code;
+    if(typeof details.retryable==='boolean')this.retryable=details.retryable;
+    if(Number.isFinite(details.retry_after_seconds))this.retryAfterSeconds=details.retry_after_seconds;
   }
 }
 
@@ -25,7 +28,7 @@ async function invoke(payload, { apiKey, model, signal } = {}) {
     OPENAI_DOCUMENT_MODEL: model
   });
   const result = await response.json();
-  if (!response.ok) throw new PageSignalError(result.error, response.status);
+  if (!response.ok) throw new PageSignalError(result.error, response.status, result);
   return result;
 }
 
