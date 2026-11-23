@@ -10,6 +10,8 @@ test('API location trusts only Vercel deployments and source reporting strips pr
  assert.equal(trafficMetadata(request,{}).country,'Unknown');
  assert.equal(trafficMetadata(req({'x-vercel-ip-country':'<script>','x-vercel-ip-country-region':'x'.repeat(100)}),env).region,'Unknown');
  assert.deepEqual(trafficMetadata(req({origin:'null',referer:'https://docs.example.org/a?email=private@example.com'}),env),{country:'Unknown',region:'Unknown',source_host:'docs.example.org',source_kind:'reported_referrer'});
+ assert.equal(trafficMetadata(req({origin:'https://192.0.2.123'}),env).source_host,'Unknown');
+ assert.equal(trafficMetadata(req({origin:'https://[2001:db8::1]'}),env).source_host,'Unknown');
  assert.equal(trafficMetadata(req({origin:'https://user:secret@example.com',referer:'file:///private'}),env).source_host,'Unknown');
 });
 test('real SQL aggregates distinct accounts, HTTP outcomes, environments and 30-date retention without request contents',async()=>{
