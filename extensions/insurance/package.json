@@ -9,7 +9,8 @@
     "./domain": "./domain.mjs",
     "./acord": "./acord.mjs",
     "./acord-mapping": "./acord-mapping.mjs",
-    "./loss-runs": "./loss-runs.mjs"
+    "./loss-runs": "./loss-runs.mjs",
+    "./unified": "./unified.mjs"
   },
   "scripts": {
     "test": "node --test"
