@@ -408,6 +408,7 @@ The view lists registered accounts, optional registrations and hosted AI attempt
 The account-mode Node runner and Vercel expose GET /api/community for your own registration and admin availability, PUT for saving explicit consent, and DELETE for withdrawal. GET /api/community?view=admin&page=1 requires allowlisted admin access. Mutations require the canonical Origin, a verified account session, and an 8 KiB body limit. Rapid duplicate saves are throttled. The small pagesignal_community table is created idempotently on first authorized use; the existing auth and usage migrations must already be complete, and the database role must permit table creation. Shared service-key mode does not expose this account feature.
 
 ## Development and license
+See the [contributor guide](https://github.com/akhi-ninja/page-signal/blob/development/CONTRIBUTING.md) for setup, pull requests, and bug reports.
 
 ```sh
 npm test
