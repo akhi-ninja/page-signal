@@ -1,0 +1,5 @@
+# Loss run reconciliation (PS-05 foundation)
+
+`reconcileLossRuns({currency,rows})` accepts adopter-normalized claim rows with carrier, policyNumber, claimNumber, lossDate, valuationDate, status, currency, paidMinor, reserveMinor, incurredMinor, id, documentId, page and evidence. Optional coverage and description are preserved. Amounts are integer minor units; no currency conversion. Currency format is checked, not ISO membership.
+
+Groups by exact trimmed carrier/policy/claim identity, retains historical valuations and counts only the latest consistent snapshot. Conflicts, missing evidence, unknown status, negative amounts and reconciliation errors exclude affected latest claims from provisional totals. Findings are review-only; totalsComplete is a data-quality indicator, not proof of complete loss history. Paid + reserve = incurred is a configurable future accounting convention; expenses/recoveries may require different mappings. Invalid rows are reported by ID; callers retain originals. No OCR, table adapter, real loss-run benchmark, UI or persistence yet. Synthetic data only until security gates are met.

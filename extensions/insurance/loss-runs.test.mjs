@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {reconcileLossRuns} from './loss-runs.mjs';
+const row=(overrides={})=>({id:'r1',documentId:'d1',page:1,carrier:'Example Carrier',policyNumber:'P1',claimNumber:'C1',currency:'USD',lossDate:'2024-01-01',valuationDate:'2025-01-01',status:'open',paidMinor:100,reserveMinor:200,incurredMinor:300,evidence:'synthetic row',...overrides});
+const run=(...rows)=>reconcileLossRuns({currency:'USD',rows});
+test('reconciles amounts and preserves source evidence',()=>{const x=run(row());assert.equal(x.provisionalTotals.incurredMinor,300);assert.equal(x.claims[0].latest.documentId,'d1');assert.equal(x.status,'needs_review');});
+test('latest valuation replaces older snapshot without double counting',()=>{const x=run(row(),row({id:'r2',valuationDate:'2026-01-01',paidMinor:200,reserveMinor:200,incurredMinor:400}));assert.equal(x.provisionalTotals.incurredMinor,400);assert.equal(x.claims[0].snapshots.length,2);});
+test('duplicate latest snapshots counted once',()=>{const x=run(row(),row({id:'r2'}));assert.equal(x.provisionalTotals.incurredMinor,300);assert.equal(x.findings[0].reason,'duplicate_snapshot');});
+test('conflicting latest snapshots excluded',()=>{const x=run(row(),row({id:'r2',paidMinor:200,incurredMinor:400}));assert.equal(x.claims[0].latest,null);assert.equal(x.provisionalTotals.incurredMinor,0);assert.equal(x.totalsComplete,false);});
+test('invalid dates, currency, evidence and reconciliation are flagged',()=>{const x=run(row({lossDate:'2024-02-30'}),row({id:'r2',currency:'EUR'}),row({id:'r3',evidence:'',incurredMinor:999}));assert.deepEqual(x.findings.map(f=>f.reason),['invalid_dates','currency_mismatch','incurred_mismatch','missing_evidence']);assert.equal(x.provisionalTotals.incurredMinor,0);});
+test('same claim number across policies is distinct',()=>{assert.equal(run(row(),row({id:'r2',policyNumber:'P2'})).provisionalTotals.incurredMinor,600);});
+test('rejects duplicate row ids and unsafe aggregate',()=>{assert.throws(()=>run(row(),row()),/duplicate/);assert.throws(()=>run(row({paidMinor:Number.MAX_SAFE_INTEGER,reserveMinor:0,incurredMinor:Number.MAX_SAFE_INTEGER}),row({id:'r2',policyNumber:'P2'})),/safe integer/);});
