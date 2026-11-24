@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "PageSignal \u2014 Document Workspace",
+  "version": "0.2.0",
+  "minimum_chrome_version": "119",
+  "description": "Extract fields from PDFs and images in the PageSignal side panel.",
+  "permissions": [
+    "sidePanel",
+    "contextMenus",
+    "storage"
+  ],
+  "action": {
+    "default_title": "Open PageSignal"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src 'self' https://www.pagesignal.studio"
+  },
+  "host_permissions": [
+    "https://www.pagesignal.studio/*"
+  ]
+}

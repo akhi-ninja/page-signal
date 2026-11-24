@@ -12,3 +12,5 @@ benchmark/reports/*.json
 benchmark/predictions*.json
 
 !benchmark/reports/baseline-2026-11-22-v2.json
+
+/dist/chrome-extension/
