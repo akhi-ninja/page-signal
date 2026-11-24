@@ -1,0 +1,2 @@
+# Connector Hub foundation
+Industry-independent synthetic connector catalog, execution contract, evidence validation and explicit field mapping. Preview at /connectors/. No credentials, network access, custom endpoint execution, persistence or AI. Next: declarative connector definitions, canonical schema registry, deterministic triangulation and rules, then authorized server-side execution with tenant isolation, SSRF protection, secrets and audit. Synthetic marker is not a privacy control. Package is not published.
