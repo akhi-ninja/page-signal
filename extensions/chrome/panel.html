@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PageSignal Document Extraction</title><link rel="stylesheet" href="panel.css">
+</head>
+<body>
+<header><h1>PageSignal</h1><span>Document extraction</span></header>
+<main>
+  <div class="actions">
+    <button id="sign-in" hidden>Sign in to PageSignal</button>
+    <button id="check-account">Check sign-in</button>
+  </div>
+  <p id="account" role="status">Checking your PageSignal session…</p>
+  <label class="drop" id="drop">Choose or drop one PDF or image
+    <input id="file" type="file" accept="application/pdf,image/png,image/jpeg,image/webp,image/bmp">
+  </label>
+  <img id="preview" alt="Selected image preview" hidden>
+  <label for="text">Selected webpage text</label>
+  <textarea id="text" rows="4" maxlength="20000"></textarea>
+  <p>Extraction sends the selected document pages or text to PageSignal. Your account’s extraction limits apply.</p>
+  <div class="actions">
+    <button id="extract" disabled>Extract in side panel</button>
+    <button id="export" disabled>Export extracted JSON</button>
+    <button id="clear">Clear</button>
+  </div>
+  <p id="status" role="status" aria-live="polite"></p>
+  <section id="results" aria-label="Extraction results"></section>
+</main>
+<script type="module" src="panel.js"></script>
+</body>
+</html>
