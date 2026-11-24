@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {reviewSubmission} from '../extensions/insurance/unified.mjs';
+test('unified engine browser parity',()=>assert.equal(readFileSync('web/insurance/engine/unified.mjs','utf8'),readFileSync('extensions/insurance/unified.mjs','utf8')));
+test('reject mismatched submission reference',()=>assert.throws(()=>reviewSubmission({id:'A',broker:'B',application:{input:{id:'C'}}}),/mismatch/));
+test('combines independent review findings without approving risk',()=>{const r=reviewSubmission({id:'A',broker:'B',application:{input:{id:'A',lineOfBusiness:'commercial-property',documents:[]},profiles:[]},lossHistory:{currency:'USD',rows:[]}});assert.equal(r.status,'needs_review');assert.equal(r.lossAssociation,'review_required');assert(r.findings.some(f=>f.module==='application'));});
