@@ -7,7 +7,8 @@
     ".": "./index.mjs",
     "./commercial": "./commercial.mjs",
     "./domain": "./domain.mjs",
-    "./acord": "./acord.mjs"
+    "./acord": "./acord.mjs",
+    "./acord-mapping": "./acord-mapping.mjs"
   },
   "scripts": {
     "test": "node --test"
