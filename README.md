@@ -4,6 +4,8 @@ Version 2.0.0 provides native Angular, Vue and React workspaces. React users upg
 
 Identify any type of document and turn PDFs and scanned images into document identities, editable fields, tables, and structured JSON. Use the web workspace, run your own API, or integrate the MIT-licensed packages.
 
+[Guides](https://www.pagesignal.studio/guides) · [PDF to JSON](https://www.pagesignal.studio/guides/pdf-to-json) · [Integrations](https://www.pagesignal.studio/integrations)
+
 [Open the app](https://www.pagesignal.studio/) · [Documentation](https://www.pagesignal.studio/docs) · [What’s New](https://www.pagesignal.studio/releases) · [OpenAPI JSON](https://www.pagesignal.studio/openapi.json) · [Source](https://github.com/akhi-ninja/page-signal)
 
 ## Quick start

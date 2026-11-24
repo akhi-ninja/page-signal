@@ -62,9 +62,51 @@
     {
       "source": "/admin",
       "destination": "/community.html"
+    },
+    {
+      "source": "/guides",
+      "destination": "/guides.html"
+    },
+    {
+      "source": "/guides/pdf-to-json",
+      "destination": "/guide-pdf-to-json.html"
+    },
+    {
+      "source": "/integrations",
+      "destination": "/integrations.html"
     }
   ],
   "redirects": [
+    {
+      "source": "/integrations.html",
+      "destination": "/integrations",
+      "permanent": true
+    },
+    {
+      "source": "/integrations/",
+      "destination": "/integrations",
+      "permanent": true
+    },
+    {
+      "source": "/guide-pdf-to-json.html",
+      "destination": "/guides/pdf-to-json",
+      "permanent": true
+    },
+    {
+      "source": "/guides/pdf-to-json/",
+      "destination": "/guides/pdf-to-json",
+      "permanent": true
+    },
+    {
+      "source": "/guides.html",
+      "destination": "/guides",
+      "permanent": true
+    },
+    {
+      "source": "/guides/",
+      "destination": "/guides",
+      "permanent": true
+    },
     {
       "source": "/:path*",
       "has": [
