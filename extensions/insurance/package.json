@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "type": "module",
   "license": "MIT",
-  "exports": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./commercial": "./commercial.mjs"
+  },
   "scripts": {
     "test": "node --test"
   },
