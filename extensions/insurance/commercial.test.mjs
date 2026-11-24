@@ -1,0 +1,9 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {commercialProfile,prepareCommercialSubmission} from './commercial.mjs';
+const make = (fields=[],lineOfBusiness='commercial-property')=>({id:'s1',lineOfBusiness,documents:[{id:'d1',pages:[{page:1,result:{fields:fields.map(([label,value])=>({label,value,state:'filled',evidence:label+' '+value}))}}]}]});
+test('maps aliases and preserves source',()=>{const r=prepareCommercialSubmission(make([['Applicant name','Example LLC']]));assert.equal(r.fields.namedInsured.value,'Example LLC');assert.equal(r.fields.namedInsured.sources[0].page,1);assert.ok(r.findings.some(f=>f.field==='propertyAddress'&&f.reason==='missing'));});
+test('conflicting aliases are not resolved automatically',()=>{const r=prepareCommercialSubmission(make([['Applicant name','A'],['Named insured','B']]));assert.equal(r.fields.namedInsured.value,null);assert.ok(r.findings.some(f=>f.reason==='conflict'));});
+test('profiles are isolated and unsupported lines fail',()=>{commercialProfile('commercial-auto').fields.length=0;assert.ok(commercialProfile('commercial-auto').fields.some(f=>f.key==='fleetSize'));assert.throws(()=>commercialProfile('health'),RangeError);});
+test('customer profile supports custom fields',()=>{const r=prepareCommercialSubmission(make([['Broker code','123']]),{version:'customer-1',lineOfBusiness:'commercial-property',fields:[{key:'brokerCode',aliases:['Broker code'],required:true}]});assert.equal(r.fields.brokerCode.value,'123');assert.equal(r.status,'needs_review');assert.deepEqual(r.findings,[]);});
+test('ambiguous profile is rejected',()=>assert.throws(()=>prepareCommercialSubmission(make(),{version:'1',lineOfBusiness:'commercial-property',fields:[{key:'a',aliases:['Name'],required:true},{key:'b',aliases:['name'],required:true}]}),TypeError));
