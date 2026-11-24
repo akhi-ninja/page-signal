@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {defineSchema,validateRecord,reconcileField,evaluateRules} from '../extensions/connectors/intelligence.mjs';
+const schema=defineSchema({id:'demo',version:1,fields:[{key:'revenue',type:'number',description:'Synthetic annual revenue',required:true}]});
+test('schema validation',()=>{assert.equal(validateRecord(schema,{} )[0].reason,'missing');assert.equal(validateRecord(schema,{revenue:'1'})[0].reason,'type_mismatch');assert.deepEqual(validateRecord(schema,{revenue:1}),[])});
+test('source priority preserves conflicts',()=>{const r=reconcileField({field:schema.fields[0],sourcePriority:['audit','broker'],candidates:[{field:'revenue',value:5,source:'broker',evidence:'fixture'},{field:'revenue',value:4,source:'audit',evidence:'fixture'}]});assert.equal(r.status,'conflict');assert.equal(r.recommended.value,4);assert.equal(r.eligible.length,2)});
+test('rules deterministic',()=>assert.equal(evaluateRules({schema,record:{revenue:5},rules:[{id:'review',all:[{field:'revenue',op:'gt',value:4}],action:'refer'}]})[0].matched,true));
+test('reject unknown operators',()=>assert.throws(()=>evaluateRules({schema,record:{revenue:5},rules:[{id:'review',all:[{field:'revenue',op:'eval'}],action:'refer'}]})));
