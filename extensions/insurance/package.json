@@ -5,7 +5,8 @@
   "license": "MIT",
   "exports": {
     ".": "./index.mjs",
-    "./commercial": "./commercial.mjs"
+    "./commercial": "./commercial.mjs",
+    "./domain": "./domain.mjs"
   },
   "scripts": {
     "test": "node --test"
