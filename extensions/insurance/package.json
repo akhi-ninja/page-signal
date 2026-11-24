@@ -11,7 +11,8 @@
     "./acord-mapping": "./acord-mapping.mjs",
     "./loss-runs": "./loss-runs.mjs",
     "./enrichment": "./enrichment.mjs",
-    "./entity-resolution": "./entity-resolution.mjs"
+    "./entity-resolution": "./entity-resolution.mjs",
+    "./clearance": "./clearance.mjs"
   },
   "scripts": {
     "test": "node --test"
