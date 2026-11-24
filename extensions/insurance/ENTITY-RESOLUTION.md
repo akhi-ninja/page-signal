@@ -1,0 +1,3 @@
+# Business entity resolution (PS-30)
+
+Offline candidate matching using supplied records and evidence. Exact normalized legal name, address, jurisdiction, registration number and nine-digit D-U-N-S signals. Conflicting supplied values block candidate status; multiple plausible candidates are ambiguous. Name alone is insufficient. No automatic verification, fuzzy matching, registry access, address standardization, D-U-N-S issuance or credit lookup. Registration numbers are only strong with matching jurisdiction. Human review is mandatory. Use synthetic data until security and licensing gates are complete.
