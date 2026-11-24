@@ -14,6 +14,12 @@ test('the panel accepts bounded PDF and image inputs', () => {
 test('manifest grants network access only to PageSignal', async () => {
   const manifest = JSON.parse(await readFile(new URL('../extensions/chrome/manifest.json', import.meta.url)));
   assert.equal(manifest.manifest_version, 3);
+  assert.deepEqual(manifest.action.default_icon, manifest.icons);
+  for (const size of [16, 32, 48, 128]) {
+    const icon = await readFile(new URL("../extensions/chrome/" + manifest.icons[size], import.meta.url));
+    assert.equal(icon.readUInt32BE(16), size);
+    assert.equal(icon.readUInt32BE(20), size);
+  }
   assert.deepEqual(manifest.host_permissions, ['https://www.pagesignal.studio/*']);
   assert.deepEqual(manifest.permissions, ['sidePanel', 'contextMenus', 'storage']);
   assert.match(manifest.content_security_policy.extension_pages, /connect-src 'self' https:\/\/www\.pagesignal\.studio$/);

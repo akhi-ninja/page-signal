@@ -9,6 +9,8 @@ for (const file of ['manifest.json', 'background.js', 'panel.html', 'panel.css',
   await copyFile(new URL(file, import.meta.url), new URL(file, output));
 }
 
+await cp(new URL("icons/", import.meta.url), new URL("icons/", output), { recursive: true });
+
 const pdf = new URL('../../node_modules/pdfjs-dist/', import.meta.url);
 for (const file of ['pdf.min.mjs', 'pdf.worker.min.mjs']) {
   await copyFile(new URL('legacy/build/' + file, pdf), new URL(file, vendor));
