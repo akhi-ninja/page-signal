@@ -1,0 +1,3 @@
+# Account clearance (PS-10)
+
+Offline synthetic candidate review reuses PS-30 identity resolution. Flags other open or bound submissions for the same candidate account and line of business, and identity conflicts with matching signals. Excludes the current submission ID. No automatic clearance or blocking, no policy effective-date overlap logic, broker-of-record rules, fuzzy matching, persistence, tenant access enforcement or external lookup. Caller must provide synthetic account records. An empty inventory is not proof of clearance. Before live use implement PS-09/28 and tenant-scoped authorized inventory queries.

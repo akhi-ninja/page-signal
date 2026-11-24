@@ -1,0 +1,5 @@
+# Risk intelligence roadmap
+
+PS-29 connector contract; PS-30 entity resolution; PS-31 registration; PS-32 D-U-N-S; PS-33 commercial credit; PS-34 geocoding; PS-35 property hazards; PS-36 VIN; PS-37 fleet; PS-38 public records; PS-39 compliance; PS-40 AI research; PS-41 discrepancy detection; PS-42 dashboard; PS-43 provider budgets; PS-44 provenance audit.
+
+First increment: synthetic-only injected adapters, candidate evidence, call-count budget, cooperative timeout and exact-value conflict detection. No network adapters or credential storage. Callers must supply synthetic data; markers do not detect personal data. Timeouts cannot forcibly stop an adapter that ignores cancellation. Before live use require tenant isolation, authorization, provider licensing and retention controls, secure secrets, rate limits, cost accounting, source identity, freshness, audit and human review. Public VIN decoding is a candidate first adapter, not ownership or title history. AI research must cite evidence and never invent scores or make binding decisions.

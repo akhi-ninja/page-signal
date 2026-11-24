@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {enrichSynthetic} from '../extensions/insurance/enrichment.mjs';
+const q={provider:'a',field:'legalName',subject:'demo',synthetic:true};const p=(id,value)=>({id,synthetic:true,lookup:async()=>({value,evidence:'fictional record'})});
+test('candidate provenance and conflict',async()=>{const r=await enrichSynthetic({requests:[q,{...q,provider:'b'}],providers:[p('a','A'),p('b','B')]});assert.equal(r.findings.length,1);assert.equal(r.results[0].status,'candidate');assert.equal(r.status,'needs_review');assert.ok(r.results[0].retrievedAt)});
+test('budget and missing provider',async()=>{const r=await enrichSynthetic({requests:[q,q,{...q,provider:'missing'}],providers:[p('a','A')],maxCalls:1});assert.deepEqual(r.results.map(x=>x.status),['candidate','budget_exhausted','unavailable'])});
+test('reject live provider',async()=>assert.rejects(enrichSynthetic({requests:[q],providers:[{...p('a','A'),synthetic:false}]})));
+test('timeout and missing evidence',async()=>{const r=await enrichSynthetic({requests:[q,{...q,provider:'b'}],providers:[{...p('a','A'),lookup:()=>new Promise(()=>{})},{...p('b','B'),lookup:()=>({value:'B'})}],timeoutMs:5});assert.deepEqual(r.results.map(x=>x.status),['unavailable','unavailable'])});
