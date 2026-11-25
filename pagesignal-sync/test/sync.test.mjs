@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { PGlite } from '@electric-sql/pglite';
 import { SyncDatabase } from '../src/index.ts';
-import { applyMutation, pull, schema } from '../server/store.mjs';
+import { applyMutation, demoScope, pull, schema } from '../server/store.mjs';
 
 Object.defineProperty(navigator, 'locks', {
   value: { request: (_name, run) => run() },
@@ -14,8 +14,8 @@ test('offline reload, retry, conflict recovery, and tombstones across clients', 
   await postgres.exec(schema);
   t.after(() => postgres.close());
   const transport = {
-    push: (mutation) => postgres.transaction((tx) => applyMutation(tx, mutation)),
-    pull: (cursor) => pull(postgres, cursor),
+    push: (mutation) => postgres.transaction((tx) => applyMutation(tx, demoScope, mutation)),
+    pull: (cursor) => pull(postgres, demoScope, cursor),
   };
   const open = (name) => {
     const db = new SyncDatabase(name);

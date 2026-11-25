@@ -17,7 +17,7 @@ Open [React](http://localhost:4173/demo/react.html), [Angular](http://localhost:
 
 ## Run sync against your own PostgreSQL instance
 
-Run `docker compose up --build` in this folder. The sample server binds to localhost, uses its own PostgreSQL volume, and defaults to the sample token `local-demo`. Alternatively, provision a separate PostgreSQL database, set `DATABASE_URL` and `SYNC_TOKEN`, then run `npm run server`. The server creates its own tables on startup. Set `SYNC_ORIGIN` if your demo runs on a different origin. Set `VITE_SYNC_URL` before building to point the demo at a different server.
+Run `docker compose up --build` in this folder. The sample server binds to localhost, uses its own PostgreSQL volume, and defaults to the sample token `local-demo`. Alternatively, provision a separate PostgreSQL database, set `DATABASE_URL`, `SYNC_MODE=demo`, and `SYNC_TOKEN`, then run `npm run server`. The server creates its own tables on startup. Set `SYNC_ORIGIN` if your demo runs on a different origin. Set `VITE_SYNC_URL` before building to point the demo at a different server.
 
 1. Open the demo in two separate browser profiles. Framework demos in the same profile share the local database.
 2. Create a Widget in one profile and select **Sync now**. Use the same token to sync the second profile.
@@ -47,10 +47,20 @@ db.close();
 
 Use a distinct database name for each local account and remote dataset. The SDK uses browser Web Locks for cross-tab sync, and requires localhost or HTTPS. Use JSON-compatible values. The SDK type-checks collection records in TypeScript. Runtime application schema validation belongs in the app and its backend.
 
+## Authenticated self-hosting
+
+The server defaults to JWT authentication. Set `DATABASE_URL`, `SYNC_JWT_ISSUER`, `SYNC_JWT_AUDIENCE`, `SYNC_JWKS_URL`, and `SYNC_ORIGIN`. The keys URL must use HTTPS. Run `npm run server` behind your HTTPS reverse proxy. Set `HOST` explicitly if your container runtime needs the API to listen on a different interface.
+
+Configure a trusted issuer to sign RS256 access tokens with the configured issuer and audience, an expiration, a stable subject (`sub`), and a server-assigned tenant identifier (`tenant_id`). Use a dedicated audience for this service. The issuer determines tenant membership. Each tenant and subject pair owns a separate dataset. The same signed-in user can sync across devices, and each user's records, revisions, and checkpoints are isolated. Shared datasets and cross-user collaboration require a separate authorization model.
+
+Use a database name derived from your authenticated account, tenant and deployment identity. Keep the token supplier bound to that same session. On logout or account switch, cancel your app's sync triggers, unsubscribe, and close the old database before opening a new one. IndexedDB data persists on the device after logout unless the application explicitly deletes it.
+
+When upgrading the local demo from the prototype, stop all old server instances before starting this version. The first startup copies the demo's existing records, history, and checkpoint into the dedicated demo scope. Authenticated accounts start with separate datasets.
+
 ## HTTP protocol
 
 - `POST /push` accepts `{collection, id, value, revision, expected}`. A null value represents a deletion. The UUID revision doubles as the write receipt. The expected revision is null for an unseen record. A stale write returns `{ok: false, remote}` so the client can preserve the intended edit while displaying the latest server record.
 - `GET /pull?cursor=0` returns `{cursor, changes}`. Cursors are opaque decimal strings. Pull again with the returned cursor until the server returns an empty page. Keep deletion entries in the feed.
-- Both routes accept a bearer token. Use the same protocol to connect the SDK to your own backend.
+- Both routes require a bearer token. Use the same protocol to connect the SDK to your own backend.
 
-This is a single-dataset reference deployment for local evaluation. The sample bearer token grants access to every record. Replace it with application authentication and record authorization before exposing it to untrusted clients. The reference server retains the full change log for replay and write receipts. Automatic reconnect sync, log compaction, migrations between deployments, and public npm publication are pending. The package uses the repository’s MIT license.
+Use demo mode for local evaluation. Its shared token grants access to the demo dataset. Use JWT mode for authenticated deployments. The reference server retains the full change log for replay and write receipts. Automatic reconnect sync, log compaction, migrations between deployments, and public npm publication are pending. The package uses the repository’s MIT license.

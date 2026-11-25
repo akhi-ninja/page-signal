@@ -16,6 +16,8 @@ services:
     build: .
     environment:
       DATABASE_URL: postgres://sync:sync@db:5432/sync
+      HOST: 0.0.0.0
+      SYNC_MODE: demo
       SYNC_TOKEN: ${SYNC_TOKEN:-local-demo}
     ports:
       - "127.0.0.1:8787:8787"
