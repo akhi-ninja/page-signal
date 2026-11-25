@@ -5,12 +5,12 @@ const challenge=params.get('challenge')||'';
 const valid=/^[a-p]{32}$/.test(extensionId)&&/^[a-f0-9]{64}$/.test(challenge);
 let connectedAccount=false;
 const message=value=>{$('message').textContent=value;};
-function deliverGrant(token,expiresAt) {
+function deliverGrant(token,expiresAt,refreshToken,refreshExpiresAt) {
  return new Promise((resolve,reject)=>{
   if(!globalThis.chrome?.runtime?.sendMessage) {
    reject(new Error('The Chrome extension is not installed or cannot receive the connection.'));return;
   }
-  chrome.runtime.sendMessage(extensionId,{type:'pagesignal:pair',challenge,token,expiresAt},response=>{
+  chrome.runtime.sendMessage(extensionId,{type:'pagesignal:pair',challenge,token,expiresAt,refreshToken,refreshExpiresAt},response=>{
    const error=chrome.runtime.lastError;
    if(error||!response?.ok)reject(new Error(response?.error||'The Chrome extension could not accept the connection. Reopen Connect from the extension.'));
    else resolve();
@@ -44,7 +44,7 @@ $('approve').addEventListener('click',async()=>{
   });
   const data=await response.json();
   if(!response.ok)throw new Error(data.error||'Could not authorize the extension.');
-  await deliverGrant(data.token,Date.parse(data.expiresAt));
+  await deliverGrant(data.token,Date.parse(data.expiresAt),data.refreshToken,Date.parse(data.refreshExpiresAt));
   message('Connected successfully. Return to the PageSignal side panel and extract your document.');
  }catch(error){message(error.message||'Connection failed.');$('approve').disabled=false}
 });
