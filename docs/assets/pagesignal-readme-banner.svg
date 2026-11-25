@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 420" width="1120" height="420" role="img" aria-labelledby="title desc">
+  <title id="title">PageSignal</title>
+  <desc id="desc">An open-source document workspace that turns PDFs and scans into reviewable fields and structured JSON.</desc>
+  <defs>
+    <linearGradient id="background" x1="0%" y1="0%" x2="100%" y2="100%" gradientUnits="objectBoundingBox">
+      <stop stop-color="#141d36"/>
+      <stop offset=".52" stop-color="#0d1526"/>
+      <stop offset="1" stop-color="#113335"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#a8b9dc" stroke-opacity=".1"/>
+    </pattern>
+    <clipPath id="frame"><rect width="1120" height="420" rx="26"/></clipPath>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="m1 1 7 4-7 4" fill="none" stroke="#8fbfc7" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <g clip-path="url(#frame)">
+    <rect width="1120" height="420" fill="url(#background)"/>
+    <rect width="1120" height="420" fill="url(#grid)"/>
+    <rect x="1" y="1" width="1118" height="418" rx="25" fill="none" stroke="#526681" stroke-opacity=".6"/>
+  </g>
+  <g text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">
+    <text x="560" y="101" fill="#f4f8ff" font-size="72" font-weight="750" letter-spacing="-3">PageSignal</text>
+    <text x="560" y="144" fill="#c4d4e9" font-size="26">Open-source document extraction and review</text>
+    <g fill="#d9e6f7" font-size="21" font-weight="600">
+      <text x="316" y="354">PDFs and scans</text>
+      <text x="560" y="354">Reviewable fields</text>
+      <text x="804" y="354">Structured JSON</text>
+    </g>
+  </g>
+  <g fill="#17233a" stroke="#425674" stroke-width="2">
+    <rect x="254" y="194" width="124" height="122" rx="22"/>
+    <rect x="498" y="194" width="124" height="122" rx="22"/>
+    <rect x="742" y="194" width="124" height="122" rx="22"/>
+  </g>
+  <g fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M399 255h78 M643 255h78" stroke="#8fbfc7" marker-end="url(#arrow)"/>
+    <path d="M293 223h29l16 16v47h-45z m29 0v16h16 m-34 13h23m-23 11h23m-23 11h15" stroke="#9bb7ff"/>
+    <path d="M531 238l4 4 8-9m-12 22 4 4 8-9m-12 22 4 4 8-9m10-28h31m-31 17h31m-31 17h22" stroke="#a8dfeb"/>
+    <path d="M790 231h-5c-4 0-6 2-6 6v12l-6 6 6 6v12c0 4 2 6 6 6h5m28-48h5c4 0 6 2 6 6v12l6 6-6 6v12c0 4-2 6-6 6h-5m-21-31h14m-14 14h14" stroke="#7fe5c8"/>
+  </g>
+</svg>

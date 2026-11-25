@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {discoverField} from '../extensions/connectors/discovery.mjs';import {providerCatalog} from '../extensions/connectors/catalog.mjs';
+test('unique catalog ids and no invented endpoints',()=>{assert.equal(new Set(providerCatalog.map(p=>p.id)).size,providerCatalog.length);assert.ok(providerCatalog.length>80);assert.ok(providerCatalog.filter(p=>p.status==='catalog_only').every(p=>p.operations.length===0))});
+const target={definition:'Annual revenue',type:'number'},sources=[{id:'a',response:{financial:{sales:42}}},{id:'b',response:{revenue:43}}];
+test('semantic proposer selects raw paths with conflicting values',async()=>{const r=await discoverField({target,sources,propose:({evidence})=>evidence.map(e=>({id:e.id,relevance:'match',reason:'Revenue candidate'}))});assert.equal(r.status,'conflict');assert.equal(r.recommended,null);assert.equal(r.candidates[0].value,42)});
+test('reject fabricated evidence',async()=>assert.rejects(discoverField({target,sources,propose:()=>[{id:'invented',relevance:'match',reason:'fake'}]})));

@@ -3,6 +3,12 @@ const escape = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt
 const inline = s => escape(s).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2">$1</a>');
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const lines = readFileSync('README.md','utf8').split('\n');
+// The opening banner and badges are displayed on GitHub.
+if (lines[0] === '<!-- github-readme-header:start -->') {
+  const headerEnd = lines.indexOf('<!-- github-readme-header:end -->');
+  if (headerEnd === -1) throw new Error('Missing GitHub README header closing marker');
+  lines.splice(0, headerEnd + 1);
+}
 const sections = [];
 let body='', section=null;
 for(let i=0;i<lines.length;) {

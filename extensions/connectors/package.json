@@ -1,0 +1,16 @@
+{
+  "name": "@pagesignal/connectors",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./index.mjs",
+    "./intelligence": "./intelligence.mjs",
+    "./custom": "./custom.mjs",
+    "./catalog": "./catalog.mjs",
+    "./discovery": "./discovery.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
