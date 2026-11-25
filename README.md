@@ -1,4 +1,34 @@
-# PageSignal
+<!-- github-readme-header:start -->
+
+<p align="center">
+  <a href="https://www.pagesignal.studio/">
+    <img src="docs/assets/pagesignal-readme-banner.svg" alt="PageSignal workflow from PDFs and scans to reviewable fields and structured JSON" width="1000">
+  </a>
+</p>
+
+<h1 align="center">PageSignal</h1>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@pagesignal/core"><img src="https://img.shields.io/npm/dw/@pagesignal/core?label=downloads" alt="Weekly downloads of @pagesignal/core"></a>
+  <a href="https://npmx.dev/package/@pagesignal/core"><img src="https://img.shields.io/npm/v/@pagesignal/core?label=.%2Fnpmx" alt="Latest @pagesignal/core version on npmx"></a>
+  <a href="https://github.com/akhi-ninja/page-signal/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/akhi-ninja/page-signal/ci.yml?branch=main&amp;label=tests" alt="Package checks and tests on main"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
+</p>
+
+<p align="center">
+  <a href="https://www.pagesignal.studio/">Open the app</a> ·
+  <a href="https://www.pagesignal.studio/docs">Documentation</a> ·
+  <a href="https://www.pagesignal.studio/releases">What’s New</a> ·
+  <a href="https://www.pagesignal.studio/openapi.json">OpenAPI JSON</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/akhi-ninja/page-signal/issues/new?labels=bug">Report a bug</a> ·
+  <a href="https://github.com/akhi-ninja/page-signal/issues/new?labels=enhancement">Request a feature</a> ·
+  <a href="CONTRIBUTING.md">Contribute</a>
+</p>
+
+<!-- github-readme-header:end -->
 
 Version 2.0.0 provides native Angular, Vue and React workspaces. React users upgrading from version 1 must migrate from iframe props to the adapter API.
 
