@@ -2,3 +2,8 @@
 
 /* Readable release content and controls at every viewport. */
 .summary,.release-notes li,.migration p,.migration li{font-size:16px}.release-notes p{font-size:14px}.filters button,.install-tabs button,.migration .text-link,.release-links{font-size:14px}.sidebar-card nav a{font-size:15px}.sidebar-card nav small,.install-card>a,.sidebar-note a{font-size:13px}.install-card p,.sidebar-note p{font-size:14px}.hero .release-highlight p{font-size:16px}.migration .note{font-size:13px!important}
+
+.product-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px;padding:6px;width:fit-content;border:1px solid var(--line);border-radius:12px;background:#f0ebfb}
+.product-tabs a{padding:8px 16px;border-radius:8px;color:#4e4266;font-size:14px;font-weight:700;text-decoration:none}
+.product-tabs a[aria-selected="true"]{background:#fff;color:#6022ab;box-shadow:0 1px 5px #29145020}
+.product-tabs+.product-releases .hero,.product-tabs~#sync-releases .hero{padding-top:42px}
