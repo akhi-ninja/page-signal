@@ -24,6 +24,10 @@
   },
   "rewrites": [
     {
+      "source": "/extension-connect",
+      "destination": "/extension-connect.html"
+    },
+    {
       "source": "/api/auth/:path*",
       "destination": "/api/auth"
     },
