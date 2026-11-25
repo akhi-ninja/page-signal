@@ -386,46 +386,6 @@ const onResults = documents => console.log(documents);
 </template>
 ```
 
-## PageSignal Sync
-
-PageSignal Sync is an open-source TypeScript SDK for offline-first web apps. It stores records in IndexedDB, lets the app subscribe to changes, and queues edits for an explicit sync with a developer-run backend. It can be used with React, Angular, Vue, or a browser app that uses TypeScript directly.
-
-Run the inventory demos from the repository with Node.js 24.
-
-```bash
-git clone https://github.com/akhi-ninja/page-signal.git
-cd page-signal/pagesignal-sync
-npm ci
-npm run build
-npm run preview
-```
-
-Open [React](http://localhost:4173/demo/react.html), [Angular](http://localhost:4173/demo/angular.html), or [Vue](http://localhost:4173/demo/vue.html). Set Widget to 1, wait for the app shell to finish caching, then go offline, increment the quantity, and reload. The edit stays in the browser.
-
-The npm package is planned as `@pagesignal/sync`. Once the preview release is published, install it with `npm install @pagesignal/sync@next`. To try the same SDK import today, run `npm pack` in `pagesignal-sync/` and install the resulting `.tgz` in your application with `npm install /path/to/pagesignal-sync-0.1.0.tgz`.
-
-```ts
-import { SyncDatabase } from '@pagesignal/sync';
-
-const db = new SyncDatabase<{ tasks: { title: string; done: boolean } }>('my-app');
-const tasks = db.collection('tasks');
-const subscription = tasks.watch().subscribe(({ records, conflicts }) => {
-  console.log(records, conflicts);
-});
-
-await tasks.put('task-1', { title: 'Count inventory', done: false });
-
-// When the app no longer needs the database:
-subscription.unsubscribe();
-db.close();
-```
-
-Create the database in browser code on localhost or HTTPS. Connect the subscription to your React state, Angular signal, or Vue ref, then unsubscribe when the consuming component is destroyed. Use a distinct database name per local account and dataset.
-
-To try replication, run `docker compose up --build` from `pagesignal-sync/`. Open the inventory demo in two separate browser profiles and click Sync now using the local demo token `local-demo`. If both profiles edit the same record before syncing, the second profile can choose which value to keep and sync again.
-
-For your own application, call `db.sync(httpTransport(serverUrl, getToken))` while connected. Import `httpTransport` alongside `SyncDatabase`. The reference server uses one shared token for local evaluation. Configure application authentication and record-level authorization before exposing a backend to untrusted users. See the [Sync source and HTTP protocol](https://github.com/akhi-ninja/page-signal/tree/development/pagesignal-sync) for configuration and integration details.
-
 ## Version 1.1.1 package queries
 
 Both core and SDK now expose queryDocument for source-supported field lookup and document questions. Core uses your OpenAI credential; SDK uses your self-hosted Community service credential. Neither library uploads PDF binaries or persists documents. Render pages and provide numbered text in your application.
@@ -524,3 +484,43 @@ CI checks packed consumer installs, strict TypeScript exports, DOM-free imports,
 Optional same-origin document jobs support encrypted persistent state, per-page outcomes, bounded retries, cancellation, explicit review and deletion using Vercel Queues and Neon. Jobs are disabled until configured and migrated. See [job API and operational limits](https://github.com/akhi-ninja/page-signal/blob/development/docs/document-jobs.md). New browser-safe SDK source entry points `@pagesignal/sdk/document` and `@pagesignal/sdk/jobs` expose versioned reconciliation and job-client contracts without model credentials. These source additions are not yet an npm release.
 
 Targeted crop rechecks remain opt-in and produce proposals requiring human acceptance. Conflicts, uncertain document boundaries and cross-page table joins remain reviewable rather than silently repaired.
+
+## PageSignal Sync
+
+[PageSignal Sync](https://www.pagesignal.studio/sync) is a standalone open-source product for offline-first web apps. It stores records in IndexedDB, lets the app subscribe to changes, and queues edits for a developer-run backend. Enable automatic sync to resume when the browser reconnects, or trigger sync explicitly. It can be used with React, Angular, Vue, or a browser app that uses TypeScript directly.
+
+Run the inventory demos from the repository with Node.js 24.
+
+```bash
+git clone https://github.com/akhi-ninja/page-signal.git
+cd page-signal/pagesignal-sync
+npm ci
+npm run build
+npm run preview
+```
+
+Open [React](http://localhost:4173/demo/react.html), [Angular](http://localhost:4173/demo/angular.html), or [Vue](http://localhost:4173/demo/vue.html). Set Widget to 1, wait for the app shell to finish caching, then go offline, increment the quantity, and reload. The edit stays in the browser.
+
+The npm package is planned as `@pagesignal/sync`. Once the preview release is published, install it with `npm install @pagesignal/sync@next`. To try the same SDK import today, run `npm pack` in `pagesignal-sync/` and install the resulting `.tgz` in your application with `npm install /path/to/pagesignal-sync-0.1.0.tgz`.
+
+```ts
+import { SyncDatabase } from '@pagesignal/sync';
+
+const db = new SyncDatabase<{ tasks: { title: string; done: boolean } }>('my-app');
+const tasks = db.collection('tasks');
+const subscription = tasks.watch().subscribe(({ records, conflicts }) => {
+  console.log(records, conflicts);
+});
+
+await tasks.put('task-1', { title: 'Count inventory', done: false });
+
+// When the app no longer needs the database:
+subscription.unsubscribe();
+db.close();
+```
+
+Create the database in browser code on localhost or HTTPS. Connect the subscription to your React state, Angular signal, or Vue ref, then unsubscribe when the consuming component is destroyed. Use a distinct database name per local account and dataset.
+
+To try replication, run `docker compose up --build` from `pagesignal-sync/`. Open the inventory demo in two separate browser profiles and click Sync now using the local demo token `local-demo`. If both profiles edit the same record before syncing, the second profile can choose which value to keep and sync again.
+
+For your own application, call `db.sync(httpTransport(serverUrl, getToken))` while connected. Import `httpTransport` alongside `SyncDatabase`. The reference server uses one shared token for local evaluation. Configure application authentication and record-level authorization before exposing a backend to untrusted users. See the [Sync source and HTTP protocol](https://github.com/akhi-ninja/page-signal/tree/development/pagesignal-sync) for configuration and integration details.

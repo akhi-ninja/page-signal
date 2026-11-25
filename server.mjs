@@ -12,6 +12,7 @@ if (!accounts && (!token || token.length < 24)) throw new Error('Set PAGESIGNAL_
 const assets = {
   '/guides':['web/guides.html','text/html'], '/guides/':['web/guides.html','text/html'], '/guides.html':['web/guides.html','text/html'],
   '/guides/pdf-to-json':['web/guide-pdf-to-json.html','text/html'], '/guides/pdf-to-json/':['web/guide-pdf-to-json.html','text/html'], '/guide-pdf-to-json.html':['web/guide-pdf-to-json.html','text/html'],
+  '/sync': ['web/sync.html','text/html'], '/sync/': ['web/sync.html','text/html'],
   '/integrations':['web/integrations.html','text/html'], '/integrations/':['web/integrations.html','text/html'], '/integrations.html':['web/integrations.html','text/html'],
   '/releases':['web/releases.html','text/html'], '/releases/':['web/releases.html','text/html'],
   '/releases.html':['web/releases.html','text/html'], '/releases.css':['web/releases.css','text/css'], '/releases.js':['web/releases.js','text/javascript'],

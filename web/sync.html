@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PageSignal Sync | Offline-first TypeScript SDK</title>
+  <meta name="description" content="Build offline-first React, Angular and Vue apps with PageSignal Sync. Persist changes in IndexedDB and sync to a server you control.">
+  <meta name="theme-color" content="#10122d">
+  <link rel="canonical" href="https://www.pagesignal.studio/sync">
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root{--ink:#191b3b;--muted:#575e7d;--brand:#5b21b6;--line:#e1e1f0;--paper:#f7f7fd}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 system-ui,sans-serif}
+    a{color:var(--brand);text-underline-offset:4px}a:focus-visible{outline:3px solid #8b5cf6;outline-offset:4px}
+    .wrap{width:min(1130px,calc(100% - 48px));margin:auto}
+    header{background:linear-gradient(110deg,#10122d,#211341 65%,#101d3d);color:white}
+    header .wrap,footer .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    header .wrap{min-height:76px;padding:10px 0}header a{color:#f4efff;text-decoration:none}
+    .brand{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:750}
+    nav,.actions{display:flex;flex-wrap:wrap;align-items:center;gap:18px}nav{font-size:14px}
+    .hero{padding:clamp(42px,8vw,92px) 0;background:radial-gradient(ellipse at 80% 35%,#e8e0ff,transparent 65%),#f8f7ff;border-bottom:1px solid var(--line)}
+    .hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:clamp(24px,5vw,64px)}
+    .eyebrow{font-size:13px;font-weight:750;color:var(--brand);letter-spacing:.06em;margin:0}
+    h1{font-size:clamp(39px,6vw,69px);line-height:1.05;letter-spacing:-.055em;margin:12px 0 20px}
+    h2{font-size:clamp(25px,4vw,36px);line-height:1.15;letter-spacing:-.03em;margin:0 0 16px}
+    h3{font-size:18px;margin:0 0 8px}p{margin:0 0 14px;color:var(--muted)}
+    .lead{font-size:18px;max-width:48ch}.actions{margin-top:26px}
+    .button{display:inline-block;padding:10px 17px;font-size:14px;font-weight:700;border:1px solid var(--line);border-radius:8px;background:white;text-decoration:none}
+    .primary{color:white;border-color:transparent;background:linear-gradient(115deg,#7920c7,#4338ca 65%,#0369a1)}
+    .flow{background:#151633;color:white;border:1px solid #3d3466;border-radius:18px;padding:24px;box-shadow:0 14px 42px #21134122}
+    .flow h2{font-size:18px;margin-bottom:16px}.flow ol{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+    .flow li{display:grid;gap:2px;padding:10px 14px;border-radius:9px;background:#222046;border:1px solid #514477}
+    .flow strong{color:#e6dbff}.flow span{color:#d1cce8;font-size:14px}
+    .details{padding:48px 0}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .card{background:white;border:1px solid var(--line);border-radius:12px;padding:22px}.card p{margin:0}
+    .start{margin-bottom:48px;padding:clamp(18px,4vw,32px);background:#f0eaff;border:1px solid #ded3fa;border-radius:14px}
+    .start p{max-width:70ch}footer{border-top:1px solid var(--line);padding:20px 0;font-size:14px}
+    @media(max-width:750px){.hero .wrap,.cards{grid-template-columns:1fr}.wrap{width:calc(100% - 32px)}.hero .wrap{gap:30px}}
+  </style>
+</head>
+<body>
+  <header><div class="wrap">
+    <a class="brand" href="/sync" aria-current="page"><img src="/pagesignal-icon-84.webp" width="40" height="40" alt="">PageSignal Sync</a>
+    <nav aria-label="Product navigation"><a href="/docs#pagesignal-sync">Documentation</a><a href="/">Document extraction workspace</a></nav>
+  </div></header>
+  <main>
+    <section class="hero" aria-labelledby="sync-title"><div class="wrap">
+      <div>
+        <p class="eyebrow">PageSignal Sync · Open-source developer preview</p>
+        <h1 id="sync-title">Keep your web app working offline.</h1>
+        <p class="lead">A standalone TypeScript SDK for React, Angular, and Vue. Save edits in the browser and sync them to your own server when the connection returns.</p>
+        <div class="actions"><a class="button primary" href="/docs#pagesignal-sync">Read the quickstart</a><a class="button" href="https://github.com/akhi-ninja/page-signal/pull/77">View preview source on GitHub</a></div>
+      </div>
+      <div class="flow">
+        <h2>From offline edit to server</h2>
+        <ol>
+          <li><strong>Edit in your app</strong><span>Record an inventory change or complete a field inspection.</span></li>
+          <li><strong>Persist locally</strong><span>IndexedDB keeps queued edits available after a reload.</span></li>
+          <li><strong>Sync when connected</strong><span>Send changes to your API and pull updates from its change feed.</span></li>
+        </ol>
+      </div>
+    </div></section>
+    <section class="details wrap" aria-labelledby="features-title">
+      <h2 id="features-title">Build around your app’s data</h2>
+      <div class="cards">
+        <article class="card"><h3>Reactive local data</h3><p>Subscribe to typed collections and update your UI as records change.</p></article>
+        <article class="card"><h3>Reconnect and resolve conflicts</h3><p>Resume queued writes when the connection returns. Show conflicting values so users can choose what to keep.</p></article>
+        <article class="card"><h3>Self-hosted sync</h3><p>Connect your own backend or run the Node.js and PostgreSQL reference server with tenant and user isolation.</p></article>
+      </div>
+    </section>
+    <section class="start wrap" aria-labelledby="start-title">
+      <h2 id="start-title">Try an offline inventory edit</h2>
+      <p>Run the React, Angular, or Vue example locally. Change a quantity while offline and reload to see it persist. Use two browser profiles with the reference server to try a sync conflict.</p>
+      <a class="button" href="/docs#pagesignal-sync">Run the inventory demo</a>
+    </section>
+  </main>
+  <footer><div class="wrap"><span>PageSignal Sync · MIT licensed</span><a href="/">PageSignal Document Intake</a></div></footer>
+</body>
+</html>
