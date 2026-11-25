@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Connect Chrome extension | PageSignal</title>
+<style>
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f7f7fd;color:#191b3b}
+*{box-sizing:border-box}body{margin:0}header{background:#10122d;color:white;padding:20px max(20px,5vw);font-size:22px;font-weight:800}
+main{max-width:640px;margin:50px auto;padding:0 20px}.card{padding:34px;background:#fff;border:1px solid #e1e1f0;border-radius:16px;box-shadow:0 14px 44px #10122d10}
+h1{font-size:26px;letter-spacing:-.035em;margin:0 0 12px}p{line-height:1.65;color:#5d6380}
+button,.button{display:inline-block;border-radius:9px;font:700 14px system-ui;border:1px solid #d9d6f2;padding:12px 18px;text-decoration:none;background:#fff;color:#37215a;cursor:pointer}
+.primary{background:#5b21b6;border-color:#5b21b6;color:white}button:disabled{opacity:.5;cursor:default}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}#message{padding:12px 14px;background:#f2effe;border-radius:8px;overflow-wrap:anywhere}
+small{color:#606581}
+</style>
+</head>
+<body>
+<header>PageSignal <small style="color:#c5bee5;font-weight:400">/ Chrome extension</small></header>
+<main><section class="card">
+<h1>Connect your PageSignal account</h1>
+<p>This connection allows the installed PageSignal Chrome extension to send only the PDF pages, images or selected text you explicitly choose to PageSignal for AI extraction. Your account's existing usage limits apply.</p>
+<p>Approve this connection only if you opened this page from the PageSignal extension. You can disconnect by signing out of PageSignal or removing the extension.</p>
+<p id="message" role="status">Checking your PageSignal sign-in…</p>
+<div class="actions">
+<button type="button" class="primary" id="approve" disabled>Approve &amp; connect extension</button>
+<button type="button" id="check">Check sign-in</button>
+<a class="button" href="/">Open PageSignal to sign in</a>
+</div>
+</section></main>
+<script type="module" src="/extension-connect.js"></script>
+</body></html>
