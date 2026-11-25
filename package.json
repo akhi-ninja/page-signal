@@ -1,59 +1,59 @@
 {
-  "name": "pagesignal-community",
-  "version": "2.0.0",
-  "private": true,
-  "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "start": "node server.mjs",
-    "test": "node scripts/build-result-contracts.mjs --check && node scripts/build-document-contract.mjs --check && node scripts/build-workspace-style.mjs --check && node --test test/*.test.mjs",
-    "pack:packages": "npm run build:packages && npm pack --workspace @pagesignal/core --workspace @pagesignal/sdk --workspace @pagesignal/react --workspace @pagesignal/vue && npm pack ./packages/angular/dist",
-    "docs:build": "node scripts/build-docs.mjs",
-    "docs:check": "node scripts/build-docs.mjs --check",
-    "auth:migrate": "node --env-file-if-exists=.env scripts/migrate-auth.mjs",
-    "build:packages": "npm run build --workspace @pagesignal/angular",
-    "releases:build": "node scripts/build-releases.mjs",
-    "releases:check": "node scripts/build-releases.mjs --check",
-    "styles:build": "node scripts/build-workspace-style.mjs",
-    "styles:check": "node scripts/build-workspace-style.mjs --check",
-    "benchmark": "node scripts/evaluate-extraction.mjs",
-    "benchmark:compare": "node scripts/compare-extraction.mjs",
-    "workflow:migrate": "node --env-file-if-exists=.env scripts/migrate-workflows.mjs",
-    "jobs:migrate": "node --env-file-if-exists=.env scripts/migrate-document-jobs.mjs"
-  },
-  "dependencies": {
-    "@langchain/langgraph": "1.7.5",
-    "@langchain/langgraph-checkpoint-postgres": "1.1.4",
-    "@vercel/queue": "0.11.0",
-    "better-auth": "1.7.25",
-    "pg": "8.16.3",
-    "sharp": "0.34.5"
-  },
-  "devDependencies": {
-    "@angular/common": "21.2.26",
-    "@angular/compiler": "21.2.26",
-    "@angular/compiler-cli": "21.2.26",
-    "@angular/core": "21.2.26",
-    "@angular/platform-browser": "21.2.26",
-    "@electric-sql/pglite": "0.3.14",
-    "@testing-library/user-event": "14.6.1",
-    "@types/react": "19.2.14",
-    "@types/react-dom": "19.2.3",
-    "axe-core": "4.11.0",
-    "esbuild": "0.27.7",
-    "jsdom": "26.1.0",
-    "ng-packagr": "21.2.5",
-    "pdfjs-dist": "6.5.438",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "rxjs": "7.8.2",
-    "typescript": "5.9.3",
-    "vite": "7.3.1",
-    "vue": "3.5.45"
-  },
-  "engines": {
-    "node": "24.x"
-  }
+    "name": "pagesignal-community",
+    "version": "2.0.0",
+    "private": true,
+    "type": "module",
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "start": "node server.mjs",
+        "test": "node scripts/build-result-contracts.mjs --check && node scripts/build-document-contract.mjs --check && node scripts/build-workspace-style.mjs --check && node --test test/*.test.mjs",
+        "pack:packages": "npm run build:packages && npm pack --workspace @pagesignal/core --workspace @pagesignal/sdk --workspace @pagesignal/react --workspace @pagesignal/vue && npm pack ./packages/angular/dist",
+        "docs:build": "node scripts/build-docs.mjs",
+        "docs:check": "node scripts/build-docs.mjs --check",
+        "auth:migrate": "node --env-file-if-exists=.env scripts/migrate-auth.mjs",
+        "build:packages": "npm run build --workspace @pagesignal/angular",
+        "releases:build": "node scripts/build-releases.mjs",
+        "releases:check": "node scripts/build-releases.mjs --check",
+        "styles:build": "node scripts/build-workspace-style.mjs",
+        "styles:check": "node scripts/build-workspace-style.mjs --check",
+        "benchmark": "node scripts/evaluate-extraction.mjs",
+        "benchmark:compare": "node scripts/compare-extraction.mjs",
+        "workflow:migrate": "node --env-file-if-exists=.env scripts/migrate-workflows.mjs",
+        "jobs:migrate": "node --env-file-if-exists=.env scripts/migrate-document-jobs.mjs"
+    },
+    "dependencies": {
+        "@langchain/langgraph": "1.7.5",
+        "@langchain/langgraph-checkpoint-postgres": "1.1.4",
+        "@vercel/queue": "0.11.0",
+        "better-auth": "1.7.25",
+        "pg": "8.16.3",
+        "sharp": "0.34.5"
+    },
+    "devDependencies": {
+        "@angular/common": "21.2.26",
+        "@angular/compiler": "21.2.26",
+        "@angular/compiler-cli": "21.2.26",
+        "@angular/core": "21.2.26",
+        "@angular/platform-browser": "21.2.26",
+        "@electric-sql/pglite": "0.3.14",
+        "@testing-library/user-event": "14.6.1",
+        "@types/react": "19.2.14",
+        "@types/react-dom": "19.2.3",
+        "axe-core": "4.11.0",
+        "esbuild": "0.27.7",
+        "jsdom": "26.1.0",
+        "ng-packagr": "21.2.5",
+        "pdfjs-dist": "6.5.438",
+        "react": "19.2.4",
+        "react-dom": "19.2.4",
+        "rxjs": "7.8.2",
+        "typescript": "5.9.3",
+        "vite": "7.3.1",
+        "vue": "3.5.45"
+    },
+    "engines": {
+        "node": "26.x"
+    }
 }
