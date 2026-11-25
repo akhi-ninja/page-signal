@@ -5,22 +5,37 @@ export type Change = { collection: string; id: string; revision: string; value: 
 export type Mutation = Change & { expected: string | null };
 export type Conflict = { local: Mutation; remote: Change | null };
 export type Transport = {
-  push(mutation: Mutation): Promise<{ ok: true } | { ok: false; remote: Change | null }>;
-  pull(cursor: string): Promise<{ cursor: string; changes: Change[] }>;
+  push(mutation: Mutation, signal?: AbortSignal): Promise<{ ok: true } | { ok: false; remote: Change | null }>;
+  pull(cursor: string, signal?: AbortSignal): Promise<{ cursor: string; changes: Change[] }>;
 };
 
+export class SyncRequestError extends Error {
+  constructor(status: number) {
+    super(`Sync request failed (${status})`);
+    this.status = status;
+  }
+
+  readonly status: number;
+}
+
+export type SyncStatus =
+  | { state: 'idle' | 'offline' | 'syncing' }
+  | { state: 'retrying'; delayMs: number; error: unknown }
+  | { state: 'blocked'; error: unknown };
+
 export function httpTransport(url: string, token: () => string): Transport {
-  async function request(path: string, body?: Mutation) {
+  async function request(path: string, signal?: AbortSignal, body?: Mutation) {
     const response = await fetch(new URL(path, url), {
+      signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(30_000)]) : AbortSignal.timeout(30_000),
       headers: { Authorization: `Bearer ${token()}`, 'Content-Type': 'application/json' },
       ...(body ? { method: 'POST', body: JSON.stringify(body) } : {}),
     });
-    if (!response.ok) throw new Error(`Sync request failed (${response.status})`);
+    if (!response.ok) throw new SyncRequestError(response.status);
     return response.json();
   }
   return {
-    push: (mutation) => request('/push', mutation),
-    pull: (cursor) => request(`/pull?cursor=${encodeURIComponent(cursor)}`),
+    push: (mutation, signal) => request('/push', signal, mutation),
+    pull: (cursor, signal) => request(`/pull?cursor=${encodeURIComponent(cursor)}`, signal),
   };
 }
 
@@ -36,6 +51,7 @@ export class SyncDatabase<Schema extends Record<string, Value>> {
   private state: Table<State, string>;
 
   private name: string;
+  private stopAutoSync?: () => void;
 
   constructor(name: string) {
     this.name = name;
@@ -53,6 +69,7 @@ export class SyncDatabase<Schema extends Record<string, Value>> {
   }
 
   close() {
+    this.stopAutoSync?.();
     this.db.close();
   }
 
@@ -99,13 +116,107 @@ export class SyncDatabase<Schema extends Record<string, Value>> {
     });
   }
 
-  sync(transport: Transport) {
-    return navigator.locks.request(`pagesignal-sync:${this.name}`, async () => {
+  startAutoSync(transport: Transport, onStatus: (status: SyncStatus) => void = () => {}) {
+    if (this.stopAutoSync) throw new Error('Automatic sync is already running for this database instance.');
+    const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let active = false;
+    let blocked = false;
+    let requested = false;
+    let failures = 0;
+
+    const schedule = (delay = 0) => {
+      clearTimeout(timer);
+      if (controller.signal.aborted || blocked || active) return;
+      if (!navigator.onLine) {
+        onStatus({ state: 'offline' });
+        return;
+      }
+      timer = setTimeout(() => void run(), delay);
+    };
+
+    const run = async () => {
+      if (controller.signal.aborted || blocked || active || !navigator.onLine) return;
+      active = true;
+      requested = false;
+      let retryDelay: number | undefined;
+      try {
+        onStatus({ state: 'syncing' });
+        await this.sync(transport, controller.signal);
+        failures = 0;
+        if (!controller.signal.aborted) onStatus({ state: navigator.onLine ? 'idle' : 'offline' });
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        const transient = error instanceof TypeError ||
+          (error instanceof DOMException && error.name === 'TimeoutError') ||
+          (error instanceof SyncRequestError && (error.status === 408 || error.status === 429 || error.status >= 500));
+        if (transient) {
+          const ceiling = Math.min(30_000, 1000 * 2 ** Math.min(failures++, 5));
+          retryDelay = Math.round(ceiling * (0.5 + Math.random() * 0.5));
+          onStatus(navigator.onLine ? { state: 'retrying', delayMs: retryDelay, error } : { state: 'offline' });
+        } else {
+          blocked = true;
+          onStatus({ state: 'blocked', error });
+        }
+      } finally {
+        active = false;
+        if (retryDelay !== undefined || requested) schedule(retryDelay);
+      }
+    };
+
+    const request = () => {
+      requested = true;
+      if (failures === 0) schedule();
+    };
+    const offline = () => {
+      clearTimeout(timer);
+      if (!blocked) onStatus({ state: 'offline' });
+    };
+    const online = () => {
+      failures = 0;
+      request();
+    };
+    const pending = liveQuery(() => this.pending.orderBy('order').last()).subscribe({
+      next: (edit) => { if (edit) request(); },
+      error: (error) => {
+        blocked = true;
+        clearTimeout(timer);
+        onStatus({ state: 'blocked', error });
+      },
+    });
+    window.addEventListener('online', online);
+    window.addEventListener('offline', offline);
+    const stop = () => {
+      if (controller.signal.aborted) return;
+      controller.abort();
+      clearTimeout(timer);
+      pending.unsubscribe();
+      window.removeEventListener('online', online);
+      window.removeEventListener('offline', offline);
+      this.stopAutoSync = undefined;
+    };
+    this.stopAutoSync = stop;
+    request();
+    return {
+      stop,
+      retry: () => {
+        if (controller.signal.aborted) return;
+        blocked = false;
+        online();
+      },
+    };
+  }
+
+  sync(transport: Transport, signal?: AbortSignal) {
+    return navigator.locks.request(`pagesignal-sync:${this.name}`, { signal }, async () => {
+      signal?.throwIfAborted();
       // Drain the edits present at the start of this pass. Later writes remain queued.
       for (const { order, ...mutation } of await this.pending.toArray()) {
         const key: [string, string] = [mutation.collection, mutation.id];
         if (!(await this.pending.get(order!))) continue;
-        const result = await transport.push(mutation);
+        signal?.throwIfAborted();
+        const result = await transport.push(mutation, signal);
+        signal?.throwIfAborted();
         await this.db.transaction('rw', [this.remote, this.pending, this.conflicts], async () => {
           if (result.ok) {
             await this.remote.put({ collection: mutation.collection, id: mutation.id, revision: mutation.revision, value: mutation.value });
@@ -124,7 +235,9 @@ export class SyncDatabase<Schema extends Record<string, Value>> {
 
       let cursor = (await this.state.get('pull'))?.cursor ?? '0';
       while (true) {
-        const page = await transport.pull(cursor);
+        signal?.throwIfAborted();
+        const page = await transport.pull(cursor, signal);
+        signal?.throwIfAborted();
         if (page.changes.length === 0) return;
         if (page.cursor === cursor) throw new Error('Sync checkpoint failed to advance.');
         await this.db.transaction('rw', [this.remote, this.state], async () => {

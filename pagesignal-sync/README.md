@@ -53,9 +53,26 @@ The server defaults to JWT authentication. Set `DATABASE_URL`, `SYNC_JWT_ISSUER`
 
 Configure a trusted issuer to sign RS256 access tokens with the configured issuer and audience, an expiration, a stable subject (`sub`), and a server-assigned tenant identifier (`tenant_id`). Use a dedicated audience for this service. The issuer determines tenant membership. Each tenant and subject pair owns a separate dataset. The same signed-in user can sync across devices, and each user's records, revisions, and checkpoints are isolated. Shared datasets and cross-user collaboration require a separate authorization model.
 
-Use a database name derived from your authenticated account, tenant and deployment identity. Keep the token supplier bound to that same session. On logout or account switch, cancel your app's sync triggers, unsubscribe, and close the old database before opening a new one. IndexedDB data persists on the device after logout unless the application explicitly deletes it.
+Use a database name derived from your authenticated account, tenant and deployment identity. Keep the token supplier bound to that same session. On logout or account switch, stop automatic sync, unsubscribe, and close the old database before opening a new one. IndexedDB data persists on the device after logout unless the application explicitly deletes it.
 
 When upgrading the local demo from the prototype, stop all old server instances before starting this version. The first startup copies the demo's existing records, history, and checkpoint into the dedicated demo scope. Authenticated accounts start with separate datasets.
+
+## Recover automatically after reconnecting
+
+Pass a session-bound transport to the SDK after the app signs in. Automatic sync runs at startup, when local edits are queued, and when the browser reconnects.
+
+```ts
+const transport = httpTransport(serverUrl, getTokenForCurrentSession);
+const sync = db.startAutoSync(transport, (status) => console.log(status.state));
+
+// After repairing credentials or another blocking error:
+sync.retry();
+
+// On logout or component teardown:
+sync.stop();
+```
+
+The SDK reports offline, syncing, idle, retrying, and blocked states. Network errors, timeouts, HTTP 408/429, and server errors are retried with capped exponential backoff and jitter. Other failures pause until the app calls `retry()`. Pending edits remain in IndexedDB. The SDK coordinates sync passes across tabs through Web Locks. Automatic sync is opt-in, and the inventory examples retain their manual Sync now control for reproducing conflicts. Remote changes are pulled during sync passes.
 
 ## HTTP protocol
 
@@ -63,4 +80,4 @@ When upgrading the local demo from the prototype, stop all old server instances 
 - `GET /pull?cursor=0` returns `{cursor, changes}`. Cursors are opaque decimal strings. Pull again with the returned cursor until the server returns an empty page. Keep deletion entries in the feed.
 - Both routes require a bearer token. Use the same protocol to connect the SDK to your own backend.
 
-Use demo mode for local evaluation. Its shared token grants access to the demo dataset. Use JWT mode for authenticated deployments. The reference server retains the full change log for replay and write receipts. Automatic reconnect sync, log compaction, migrations between deployments, and public npm publication are pending. The package uses the repository’s MIT license.
+Use demo mode for local evaluation. Its shared token grants access to the demo dataset. Use JWT mode for authenticated deployments. The reference server retains the full change log for replay and write receipts. Log compaction, migrations between deployments, and public npm publication are pending. The package uses the repository’s MIT license.

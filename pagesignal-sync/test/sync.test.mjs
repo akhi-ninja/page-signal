@@ -2,11 +2,11 @@ import 'fake-indexeddb/auto';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { PGlite } from '@electric-sql/pglite';
-import { SyncDatabase } from '../src/index.ts';
+import { SyncDatabase, SyncRequestError } from '../src/index.ts';
 import { applyMutation, demoScope, pull, schema } from '../server/store.mjs';
 
 Object.defineProperty(navigator, 'locks', {
-  value: { request: (_name, run) => run() },
+  value: { request: (_name, _options, run) => run() },
 });
 
 test('offline reload, retry, conflict recovery, and tombstones across clients', async (t) => {
@@ -100,4 +100,86 @@ test('writes made during a push remain queued for the next pass', async (t) => {
   assert.equal(sent.length, 1);
   await db.sync(transport);
   assert.equal(sent[1].expected, sent[0].revision);
+});
+
+test('automatic sync recovers an offline queue, retries transient errors, and pauses for credentials', async (t) => {
+  let online = false;
+  Object.defineProperty(navigator, 'onLine', { configurable: true, get: () => online });
+  const browser = new EventTarget();
+  globalThis.window = browser;
+  const db = new SyncDatabase('automatic');
+  t.after(() => db.close());
+  const notes = db.collection('notes');
+  const statuses = [];
+  let allowed = false;
+  let pushes = 0;
+  let pulls = 0;
+  const control = db.startAutoSync({
+    push: async () => {
+      pushes++;
+      if (pushes === 1) throw new SyncRequestError(503);
+      if (!allowed) throw new SyncRequestError(401);
+      return { ok: true };
+    },
+    pull: async (cursor) => {
+      pulls++;
+      return { cursor, changes: [] };
+    },
+  }, (status) => statuses.push(status.state));
+  const waitFor = async (predicate) => {
+    for (let attempt = 0; attempt < 300; attempt++) {
+      if (predicate()) return;
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+    assert.fail(`Unexpected sync states: ${statuses.join(', ')}`);
+  };
+
+  await notes.put('a', { text: 'queued offline' });
+  assert.equal(statuses.at(-1), 'offline');
+  assert.equal(pushes, 0);
+  online = true;
+  browser.dispatchEvent(new Event('online'));
+  await waitFor(() => statuses.includes('blocked'));
+  assert.equal(pushes, 2);
+  assert.ok(statuses.includes('retrying'));
+  assert.equal((await notes.list()).records[0].value.text, 'queued offline');
+
+  allowed = true;
+  browser.dispatchEvent(new Event('online'));
+  assert.equal(pushes, 2);
+  control.retry();
+  await waitFor(() => statuses.at(-1) === 'idle');
+  assert.equal(pushes, 3);
+  assert.equal(pulls, 1);
+  control.stop();
+  await db.sync({ push: async () => assert.fail('Acknowledged mutation was sent again'),
+    pull: async (cursor) => ({ cursor, changes: [] }) });
+});
+
+test('stopping during a push keeps the mutation available for a later session', async (t) => {
+  Object.defineProperty(navigator, 'onLine', { configurable: true, value: true });
+  globalThis.window = new EventTarget();
+  const db = new SyncDatabase('stop-automatic');
+  t.after(() => db.close());
+  await db.collection('notes').put('a', { text: 'pending' });
+  let started;
+  const pushing = new Promise((resolve) => { started = resolve; });
+  let revision;
+  const control = db.startAutoSync({
+    push: (mutation, signal) => {
+      revision = mutation.revision;
+      started();
+      return new Promise((_, reject) => signal.addEventListener('abort', () => reject(signal.reason), { once: true }));
+    },
+    pull: async () => assert.fail('Stopped pass should not pull'),
+  });
+  await pushing;
+  control.stop();
+  await db.sync({
+    push: async (mutation) => {
+      assert.equal(mutation.revision, revision);
+      return { ok: true };
+    },
+    pull: async (cursor) => ({ cursor, changes: [] }),
+  });
 });
