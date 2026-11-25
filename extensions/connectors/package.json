@@ -5,7 +5,8 @@
   "license": "MIT",
   "exports": {
     ".": "./index.mjs",
-    "./intelligence": "./intelligence.mjs"
+    "./intelligence": "./intelligence.mjs",
+    "./custom": "./custom.mjs"
   },
   "engines": {
     "node": ">=22"
