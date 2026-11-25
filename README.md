@@ -1,12 +1,35 @@
-# PageSignal
+<p align="center">
+  <a href="https://www.pagesignal.studio/">
+    <img src="docs/assets/pagesignal-readme-banner.svg" alt="PageSignal workflow from PDFs and scans to reviewable fields and structured JSON" width="1000">
+  </a>
+</p>
 
-Version 2.0.0 provides native Angular, Vue and React workspaces. React users upgrading from version 1 must migrate from iframe props to the adapter API.
+<h1 align="center">PageSignal</h1>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@pagesignal/core"><img src="https://img.shields.io/npm/v/@pagesignal/core?label=%40pagesignal%2Fcore&amp;logo=npm" alt="Latest @pagesignal/core version"></a>
+  <a href="https://www.npmjs.com/package/@pagesignal/core"><img src="https://img.shields.io/npm/dw/@pagesignal/core?label=core%20downloads" alt="Weekly @pagesignal/core downloads"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
+</p>
+
+<p align="center">
+  <a href="https://www.pagesignal.studio/">Open the app</a> ·
+  <a href="https://www.pagesignal.studio/docs">Documentation</a> ·
+  <a href="https://www.pagesignal.studio/releases">What’s New</a> ·
+  <a href="https://www.pagesignal.studio/openapi.json">OpenAPI JSON</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/akhi-ninja/page-signal/issues/new?labels=bug">Report a bug</a> ·
+  <a href="https://github.com/akhi-ninja/page-signal/issues/new?labels=enhancement">Request a feature</a> ·
+  <a href="CONTRIBUTING.md">Contribute</a>
+</p>
 
 Identify any type of document and turn PDFs and scanned images into document identities, editable fields, tables, and structured JSON. Use the web workspace, run your own API, or integrate the MIT-licensed packages.
 
-[Guides](https://www.pagesignal.studio/guides) · [PDF to JSON](https://www.pagesignal.studio/guides/pdf-to-json) · [Integrations](https://www.pagesignal.studio/integrations)
+Version 2.0.0 provides native Angular, Vue and React workspaces. React users upgrading from version 1 must migrate from iframe props to the adapter API.
 
-[Open the app](https://www.pagesignal.studio/) · [Documentation](https://www.pagesignal.studio/docs) · [What’s New](https://www.pagesignal.studio/releases) · [OpenAPI JSON](https://www.pagesignal.studio/openapi.json) · [Source](https://github.com/akhi-ninja/page-signal)
+[Guides](https://www.pagesignal.studio/guides) · [PDF to JSON](https://www.pagesignal.studio/guides/pdf-to-json) · [Integrations](https://www.pagesignal.studio/integrations)
 
 ## Quick start
 
