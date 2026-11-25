@@ -27,8 +27,10 @@ export default defineConfig({
         source: `
           const prefix = 'pagesignal-sync-inventory:';
           const name = prefix + '${version.digest('hex')}';
+          const files = ${JSON.stringify([...files])};
+          const urls = new Set(files.map((file) => new URL(file, self.location.href).href));
           self.addEventListener('install', (event) => {
-            event.waitUntil(caches.open(name).then((cache) => cache.addAll(${JSON.stringify([...files])}))
+            event.waitUntil(caches.open(name).then((cache) => cache.addAll(files))
               .then(() => self.skipWaiting()));
           });
           self.addEventListener('activate', (event) => {
@@ -37,8 +39,8 @@ export default defineConfig({
               .then(() => self.clients.claim()));
           });
           self.addEventListener('fetch', (event) => {
-            if (event.request.method !== 'GET' || new URL(event.request.url).origin !== self.location.origin) return;
-            event.respondWith(caches.open(name).then((cache) => cache.match(event.request))
+            if (event.request.method !== 'GET' || !urls.has(event.request.url)) return;
+            event.respondWith(caches.open(name).then((cache) => cache.match(event.request.url, { ignoreVary: true }))
               .then((response) => response ?? fetch(event.request)));
           });
         `,
