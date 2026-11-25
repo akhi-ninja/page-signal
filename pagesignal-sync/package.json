@@ -1,0 +1,55 @@
+{
+  "name": "@pagesignal/sync",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist-sdk/index.d.ts",
+      "import": "./dist-sdk/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite --config vite.config.mjs",
+    "build": "tsc --noEmit && vite build --config vite.config.mjs",
+    "preview": "vite preview --config vite.config.mjs",
+    "server": "node server/index.mjs",
+    "test": "node --test test/*.test.mjs",
+    "build:sdk": "tsc -p tsconfig.sdk.json",
+    "prepack": "npm run build:sdk"
+  },
+  "dependencies": {
+    "dexie": "4.4.7",
+    "jose": "6.2.18",
+    "pg": "8.16.3"
+  },
+  "devDependencies": {
+    "@angular/compiler": "21.2.26",
+    "@angular/core": "21.2.26",
+    "@angular/platform-browser": "21.2.26",
+    "@electric-sql/pglite": "0.3.14",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "fake-indexeddb": "6.2.5",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "rxjs": "7.8.2",
+    "typescript": "5.9.3",
+    "vite": "7.3.1",
+    "vue": "3.5.45"
+  },
+  "description": "Offline-first TypeScript SDK with IndexedDB persistence and self-hosted sync",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akhi-ninja/page-signal.git",
+    "directory": "pagesignal-sync"
+  },
+  "files": [
+    "dist-sdk",
+    "server"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
+  }
+}

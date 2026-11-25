@@ -459,7 +459,7 @@ MIT licensed. Preserve the license and copyright notices when distributing copie
 
 ## Release history
 
-Visit [What’s New](https://www.pagesignal.studio/releases) for all published product versions, package links and the React v2 migration guide. CHANGELOG.md is the source for release notes. docs/releases.json supplies verified publication dates, summaries, package names and GitHub-tag availability; add metadata there when releasing a new version. npm staging placeholders are not product releases.
+Visit [What’s New](https://www.pagesignal.studio/releases) for all published product versions, package links and the React v2 migration guide. CHANGELOG.md is the source for release notes. docs/releases.json supplies verified publication dates, summaries, package names and GitHub-tag availability; add metadata there when releasing a new version. PageSignal Sync has its own release entries under the `sync` key. npm staging placeholders are not product releases.
 
 After updating the changelog or release metadata, run npm run releases:build and npm run releases:check. The page is static and does not make runtime GitHub or npm API calls.
 
@@ -484,3 +484,65 @@ CI checks packed consumer installs, strict TypeScript exports, DOM-free imports,
 Optional same-origin document jobs support encrypted persistent state, per-page outcomes, bounded retries, cancellation, explicit review and deletion using Vercel Queues and Neon. Jobs are disabled until configured and migrated. See [job API and operational limits](https://github.com/akhi-ninja/page-signal/blob/development/docs/document-jobs.md). New browser-safe SDK source entry points `@pagesignal/sdk/document` and `@pagesignal/sdk/jobs` expose versioned reconciliation and job-client contracts without model credentials. These source additions are not yet an npm release.
 
 Targeted crop rechecks remain opt-in and produce proposals requiring human acceptance. Conflicts, uncertain document boundaries and cross-page table joins remain reviewable rather than silently repaired.
+
+## PageSignal Sync
+
+[PageSignal Sync](https://www.pagesignal.studio/sync) is a standalone open-source product for offline-first web apps. It stores records in IndexedDB, lets the app subscribe to changes, and queues edits for a developer-run backend. Enable automatic sync to resume when the browser reconnects, or trigger sync explicitly. It can be used with React, Angular, Vue, or a browser app that uses TypeScript directly.
+
+Run the inventory demos from the repository with Node.js 24.
+
+```bash
+git clone https://github.com/akhi-ninja/page-signal.git
+cd page-signal/pagesignal-sync
+npm ci
+npm run build
+npm run preview
+```
+
+Open [React](http://localhost:4173/demo/react.html), [Angular](http://localhost:4173/demo/angular.html), or [Vue](http://localhost:4173/demo/vue.html). Set Widget to 1, wait for the app shell to finish caching, then go offline, increment the quantity, and reload. The edit stays in the browser.
+
+Install the public [PageSignal Sync developer preview](https://www.npmjs.com/package/@pagesignal/sync) with:
+
+```bash
+npm install @pagesignal/sync@next
+```
+
+```ts
+import { SyncDatabase } from '@pagesignal/sync';
+
+const db = new SyncDatabase<{ tasks: { title: string; done: boolean } }>('my-app');
+const tasks = db.collection('tasks');
+const subscription = tasks.watch().subscribe(({ records, conflicts }) => {
+  console.log(records, conflicts);
+});
+
+await tasks.put('task-1', { title: 'Count inventory', done: false });
+
+// When the app no longer needs the database:
+subscription.unsubscribe();
+db.close();
+```
+
+Create the database in browser code on localhost or HTTPS. Connect the subscription to your React state, Angular signal, or Vue ref, then unsubscribe when the consuming component is destroyed. Use a distinct database name per local account and dataset.
+
+To try replication, run `docker compose up --build` from `pagesignal-sync/`. Open the inventory demo in two separate browser profiles and click Sync now using the local demo token `local-demo`. If both profiles edit the same record before syncing, the second profile can choose which value to keep and sync again.
+
+To sync automatically, start a controller after sign-in. Supply a token getter bound to the current session.
+
+```ts
+import { httpTransport } from '@pagesignal/sync';
+
+const transport = httpTransport(serverUrl, getTokenForCurrentSession);
+const controller = db.startAutoSync(transport, ({ state }) => {
+  console.log(state);
+});
+
+// On sign-out or account switch:
+controller.stop();
+subscription.unsubscribe();
+db.close();
+```
+
+The controller resumes queued edits on reconnect. If credentials expire, refresh them and call `controller.retry()`. For manual sync, call `await db.sync(transport)` while connected.
+
+The reference server uses one shared token for local evaluation. Configure application authentication and record-level authorization before exposing a backend to untrusted users. See the [Sync source and HTTP protocol](https://github.com/akhi-ninja/page-signal/tree/development/pagesignal-sync) for configuration and integration details.
