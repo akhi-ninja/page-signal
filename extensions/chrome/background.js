@@ -19,13 +19,18 @@ chrome.runtime.onMessageExternal.addListener((message,sender,reply)=>{
     message?.type!=='pagesignal:pair' || typeof message.challenge!=='string' ||
     !/^[a-f0-9]{64}$/.test(message.challenge) ||
     typeof message.token!=='string'||message.token.length>2048 ||
-    !Number.isFinite(message.expiresAt))return false;
+    typeof message.refreshToken!=='string'||message.refreshToken.length>2048 ||
+    !Number.isFinite(message.expiresAt)||!Number.isFinite(message.refreshExpiresAt))return false;
  (async()=>{
   const {pagesignalPair}=await chrome.storage.session.get('pagesignalPair');
   if(!pagesignalPair||pagesignalPair.challenge!==message.challenge||
      pagesignalPair.expiresAt<Date.now()||message.expiresAt<=Date.now()||
-     message.expiresAt>Date.now()+3660000)return {ok:false,error:'Pairing expired. Start again from PageSignal.'};
-  await chrome.storage.local.set({pagesignalAuth:{token:message.token,expiresAt:message.expiresAt}});
+     message.expiresAt>Date.now()+960000||message.refreshExpiresAt<=Date.now()||
+     message.refreshExpiresAt>Date.now()+605000000)return {ok:false,error:'Pairing expired. Start again from PageSignal.'};
+  await chrome.storage.local.set({pagesignalAuth:{
+   token:message.token,expiresAt:message.expiresAt,
+   refreshToken:message.refreshToken,refreshExpiresAt:message.refreshExpiresAt
+  }});
   await chrome.storage.session.remove('pagesignalPair');
   return {ok:true};
  })().then(reply).catch(()=>reply({ok:false,error:'Could not save the connection.'}));
