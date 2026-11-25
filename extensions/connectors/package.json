@@ -6,7 +6,9 @@
   "exports": {
     ".": "./index.mjs",
     "./intelligence": "./intelligence.mjs",
-    "./custom": "./custom.mjs"
+    "./custom": "./custom.mjs",
+    "./catalog": "./catalog.mjs",
+    "./discovery": "./discovery.mjs"
   },
   "engines": {
     "node": ">=22"
