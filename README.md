@@ -7,8 +7,9 @@
 <h1 align="center">PageSignal</h1>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@pagesignal/core"><img src="https://img.shields.io/npm/v/@pagesignal/core?label=%40pagesignal%2Fcore&amp;logo=npm" alt="Latest @pagesignal/core version"></a>
-  <a href="https://www.npmjs.com/package/@pagesignal/core"><img src="https://img.shields.io/npm/dw/@pagesignal/core?label=core%20downloads" alt="Weekly @pagesignal/core downloads"></a>
+  <a href="https://www.npmjs.com/package/@pagesignal/core"><img src="https://img.shields.io/npm/dw/@pagesignal/core?label=downloads" alt="Weekly downloads of @pagesignal/core"></a>
+  <a href="https://npmx.dev/package/@pagesignal/core"><img src="https://img.shields.io/npm/v/@pagesignal/core?label=.%2Fnpmx" alt="Latest @pagesignal/core version on npmx"></a>
+  <a href="https://github.com/akhi-ninja/page-signal/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/akhi-ninja/page-signal/ci.yml?branch=main&amp;label=tests" alt="Package checks and tests on main"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
 </p>
 
