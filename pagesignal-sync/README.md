@@ -26,8 +26,10 @@ Run `docker compose up --build` in this folder. The sample server binds to local
 
 ## Use the TypeScript API
 
+The first npm release is planned under the `next` tag. To try the package from source, run `npm pack` here and install the tarball in your app with `npm install /path/to/pagesignal-sync-0.1.0.tgz`.
+
 ```ts
-import { SyncDatabase, httpTransport } from './src/index.ts';
+import { SyncDatabase, httpTransport } from '@pagesignal/sync';
 
 const db = new SyncDatabase<{ tasks: { title: string; done: boolean } }>('my-app');
 const tasks = db.collection('tasks');
@@ -51,4 +53,4 @@ Use a distinct database name for each local account and remote dataset. The SDK 
 - `GET /pull?cursor=0` returns `{cursor, changes}`. Cursors are opaque decimal strings. Pull again with the returned cursor until the server returns an empty page. Keep deletion entries in the feed.
 - Both routes accept a bearer token. Use the same protocol to connect the SDK to your own backend.
 
-This is a single-dataset reference deployment for local evaluation. The sample bearer token grants access to every record. Replace it with application authentication and record authorization before exposing it to untrusted clients. The reference server retains the full change log for replay and write receipts. Automatic reconnect sync, log compaction, migrations between deployments, and npm publication are outside this prototype. The package uses the repository’s MIT license.
+This is a single-dataset reference deployment for local evaluation. The sample bearer token grants access to every record. Replace it with application authentication and record authorization before exposing it to untrusted clients. The reference server retains the full change log for replay and write receipts. Automatic reconnect sync, log compaction, migrations between deployments, and public npm publication are pending. The package uses the repository’s MIT license.

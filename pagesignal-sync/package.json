@@ -1,16 +1,22 @@
 {
   "name": "@pagesignal/sync",
   "version": "0.1.0",
-  "private": true,
   "license": "MIT",
   "type": "module",
-  "exports": { ".": "./src/index.ts" },
+  "exports": {
+    ".": {
+      "types": "./dist-sdk/index.d.ts",
+      "import": "./dist-sdk/index.js"
+    }
+  },
   "scripts": {
     "dev": "vite --config vite.config.mjs",
     "build": "tsc --noEmit && vite build --config vite.config.mjs",
     "preview": "vite preview --config vite.config.mjs",
     "server": "node server/index.mjs",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "build:sdk": "tsc -p tsconfig.sdk.json",
+    "prepack": "npm run build:sdk"
   },
   "dependencies": {
     "dexie": "4.4.7",
@@ -30,5 +36,19 @@
     "typescript": "5.9.3",
     "vite": "7.3.1",
     "vue": "3.5.45"
+  },
+  "description": "Offline-first TypeScript SDK with IndexedDB persistence and self-hosted sync",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akhi-ninja/page-signal.git",
+    "directory": "pagesignal-sync"
+  },
+  "files": [
+    "dist-sdk",
+    "server"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
   }
 }
