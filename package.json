@@ -21,7 +21,8 @@
         "benchmark": "node scripts/evaluate-extraction.mjs",
         "benchmark:compare": "node scripts/compare-extraction.mjs",
         "workflow:migrate": "node --env-file-if-exists=.env scripts/migrate-workflows.mjs",
-        "jobs:migrate": "node --env-file-if-exists=.env scripts/migrate-document-jobs.mjs"
+        "jobs:migrate": "node --env-file-if-exists=.env scripts/migrate-document-jobs.mjs",
+        "connectors:migrate": "node --env-file-if-exists=.env scripts/migrate-connectors.mjs"
     },
     "dependencies": {
         "@langchain/langgraph": "1.7.5",
