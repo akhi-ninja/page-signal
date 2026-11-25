@@ -20,13 +20,37 @@ function controls() {
 
 async function credential() {
   const { pagesignalAuth } = await chrome.storage.local.get('pagesignalAuth');
-  if (!pagesignalAuth || typeof pagesignalAuth.token !== 'string' ||
-      !Number.isFinite(pagesignalAuth.expiresAt) || pagesignalAuth.expiresAt <= Date.now()) {
+  if (!pagesignalAuth || typeof pagesignalAuth.refreshToken !== 'string' ||
+      !Number.isFinite(pagesignalAuth.refreshExpiresAt) ||
+      pagesignalAuth.refreshExpiresAt <= Date.now()) {
     if (pagesignalAuth) await chrome.storage.local.remove('pagesignalAuth');
     return null;
   }
-  return pagesignalAuth.token;
+  if (typeof pagesignalAuth.token === 'string' &&
+      Number.isFinite(pagesignalAuth.expiresAt) &&
+      pagesignalAuth.expiresAt > Date.now() + 30000) return pagesignalAuth.token;
+  // Renew the 15-minute access capability using an extension-only grant.
+  // The server checks that the original PageSignal session remains active.
+  const response = await fetch(new URL('/api/extension/refresh', SITE), {
+    method: 'POST', credentials: 'omit', redirect: 'error', cache: 'no-store',
+    headers: { Authorization: 'Bearer ' + pagesignalAuth.refreshToken }
+  });
+  if (response.status === 401) {
+    await chrome.storage.local.remove('pagesignalAuth');
+    return null;
+  }
+  let data;
+  try { data = await response.json(); } catch { throw new Error('Could not renew your PageSignal connection.'); }
+  if (!response.ok) throw new Error(data.error || 'Could not renew your PageSignal connection.');
+  const expiresAt = Date.parse(data.expiresAt);
+  if (typeof data.token !== 'string' || !Number.isFinite(expiresAt) ||
+      expiresAt <= Date.now() || expiresAt > Date.now() + 960000) {
+    throw new Error('PageSignal returned an invalid extension connection.');
+  }
+  await chrome.storage.local.set({ pagesignalAuth: { ...pagesignalAuth, token: data.token, expiresAt } });
+  return data.token;
 }
+
 async function request(path, options = {}) {
   const token = await credential();
   if (!token) throw new Error('Connect your PageSignal account to use document extraction.');
