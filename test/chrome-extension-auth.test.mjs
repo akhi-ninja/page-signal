@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
  configuredExtensionOrigin, issueExtensionToken, inspectExtensionToken,
  authorizeExtensionConnection, authorizedExtensionSession,
- extensionConnectionStatus, extensionPreflight
+ extensionConnectionStatus, extensionPreflight, refreshExtensionConnection
 } from '../lib/extension-auth.mjs';
 
 const site='https://www.pagesignal.studio';
@@ -30,7 +30,7 @@ test('exact published extension ID must be configured, never wildcards or other 
 test('signed extension capability is integrity-protected, scoped, expires, and is not an OAuth token',()=>{
  const now=Date.UTC(2026,10,25,18,0,0);
  const {token,expiresAt}=issueExtensionToken(claims,env,now);
- assert.equal(Date.parse(expiresAt),now+3600000);
+ assert.equal(Date.parse(expiresAt),now+900000);
  assert.equal(inspectExtensionToken(token,origin,env,now+1000).sub,claims.userId);
  assert.equal(inspectExtensionToken(token+'x',origin,env,now),null);
  assert.equal(inspectExtensionToken(token,origin,env,now+3600000),null);
@@ -75,4 +75,21 @@ test('CORS preflight is exact-origin only with no wildcard',async()=>{
   Origin:'chrome-extension://'+'c'.repeat(32),'Access-Control-Request-Method':'POST'
  }}),env);
  assert.equal(bad.status,403);
+});
+
+test('short-lived access tokens renew through a session-verified grant, never through cookies',async()=>{
+ const grant=issueExtensionToken(claims,env,Date.now(),'refresh');
+ const refresh=()=>new Request(site+'/api/extension/refresh',{
+  method:'POST',headers:header(grant.token)
+ });
+ const success=await refreshExtensionConnection(refresh(),env,{getRuntime:()=>runtime()});
+ assert.equal(success.status,200);
+ assert.equal(inspectExtensionToken((await success.json()).token,origin,env).sub,claims.userId);
+ assert.equal((await refreshExtensionConnection(refresh(),env,{getRuntime:()=>runtime({active:false})})).status,401);
+ assert.equal((await extensionConnectionStatus(new Request(site+'/api/extension/status',{
+  headers:header(grant.token)
+ }),env,{getRuntime:()=>runtime()})).status,401);
+ assert.equal((await refreshExtensionConnection(new Request(site+'/api/extension/refresh',{
+  method:'POST',headers:header(issueExtensionToken(claims,env).token)
+ }),env,{getRuntime:()=>runtime()})).status,401);
 });
