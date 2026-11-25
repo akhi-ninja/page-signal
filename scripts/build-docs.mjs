@@ -18,7 +18,9 @@ for(let i=0;i<lines.length;) {
     if(section) body+='</section>';
     const title=line.slice(3), id=slug(title);
     sections.push({title,id});section=id;
-    body+=`<section id="${id}" class="doc-section"><h2><a href="#${id}">${escape(title)}</a></h2>`;i++;continue;
+    body+=`<section id="${id}" class="doc-section"><h2><a href="#${id}">${escape(title)}</a></h2>`;
+    if(id==='pagesignal-sync') body+='<p><a href="/releases#sync-releases">PageSignal Sync release notes</a></p>';
+    i++;continue;
   }
   if(line.startsWith('```')){
     const language=line.slice(3)||'text';let code='';i++;

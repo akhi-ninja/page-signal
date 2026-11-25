@@ -527,4 +527,22 @@ Create the database in browser code on localhost or HTTPS. Connect the subscript
 
 To try replication, run `docker compose up --build` from `pagesignal-sync/`. Open the inventory demo in two separate browser profiles and click Sync now using the local demo token `local-demo`. If both profiles edit the same record before syncing, the second profile can choose which value to keep and sync again.
 
-For your own application, call `db.sync(httpTransport(serverUrl, getToken))` while connected. Import `httpTransport` alongside `SyncDatabase`. The reference server uses one shared token for local evaluation. Configure application authentication and record-level authorization before exposing a backend to untrusted users. See the [Sync source and HTTP protocol](https://github.com/akhi-ninja/page-signal/tree/development/pagesignal-sync) for configuration and integration details.
+To sync automatically, start a controller after sign-in. Supply a token getter bound to the current session.
+
+```ts
+import { httpTransport } from '@pagesignal/sync';
+
+const transport = httpTransport(serverUrl, getTokenForCurrentSession);
+const controller = db.startAutoSync(transport, ({ state }) => {
+  console.log(state);
+});
+
+// On sign-out or account switch:
+controller.stop();
+subscription.unsubscribe();
+db.close();
+```
+
+The controller resumes queued edits on reconnect. If credentials expire, refresh them and call `controller.retry()`. For manual sync, call `await db.sync(transport)` while connected.
+
+The reference server uses one shared token for local evaluation. Configure application authentication and record-level authorization before exposing a backend to untrusted users. See the [Sync source and HTTP protocol](https://github.com/akhi-ninja/page-signal/tree/development/pagesignal-sync) for configuration and integration details.
