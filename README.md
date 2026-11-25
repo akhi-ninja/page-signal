@@ -459,7 +459,7 @@ MIT licensed. Preserve the license and copyright notices when distributing copie
 
 ## Release history
 
-Visit [What’s New](https://www.pagesignal.studio/releases) for all published product versions, package links and the React v2 migration guide. CHANGELOG.md is the source for release notes. docs/releases.json supplies verified publication dates, summaries, package names and GitHub-tag availability; add metadata there when releasing a new version. npm staging placeholders are not product releases.
+Visit [What’s New](https://www.pagesignal.studio/releases) for all published product versions, package links and the React v2 migration guide. CHANGELOG.md is the source for release notes. docs/releases.json supplies verified publication dates, summaries, package names and GitHub-tag availability; add metadata there when releasing a new version. PageSignal Sync has its own release entries under the `sync` key. npm staging placeholders are not product releases.
 
 After updating the changelog or release metadata, run npm run releases:build and npm run releases:check. The page is static and does not make runtime GitHub or npm API calls.
 
@@ -501,7 +501,11 @@ npm run preview
 
 Open [React](http://localhost:4173/demo/react.html), [Angular](http://localhost:4173/demo/angular.html), or [Vue](http://localhost:4173/demo/vue.html). Set Widget to 1, wait for the app shell to finish caching, then go offline, increment the quantity, and reload. The edit stays in the browser.
 
-The npm package is planned as `@pagesignal/sync`. Once the preview release is published, install it with `npm install @pagesignal/sync@next`. To try the same SDK import today, run `npm pack` in `pagesignal-sync/` and install the resulting `.tgz` in your application with `npm install /path/to/pagesignal-sync-0.1.0.tgz`.
+Install the public [PageSignal Sync developer preview](https://www.npmjs.com/package/@pagesignal/sync) with:
+
+```bash
+npm install @pagesignal/sync@next
+```
 
 ```ts
 import { SyncDatabase } from '@pagesignal/sync';

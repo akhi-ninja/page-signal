@@ -1,4 +1,4 @@
-const cards=[...document.querySelectorAll('.release')];
+const cards=[...document.querySelectorAll('.history > .release')];
 const filterButtons=[...document.querySelectorAll('[data-filter]')];
 function filter(mode){let count=0;for(const card of cards){card.hidden=mode==='breaking'&&card.dataset.breaking!=='true';if(!card.hidden)count++;}for(const button of filterButtons)button.setAttribute('aria-pressed',String(button.dataset.filter===mode));document.getElementById('filter-status').textContent=`${count} ${mode==='breaking'?'releases with breaking changes':'releases'} shown.`;}
 if(filterButtons.length){document.querySelector('.filters').hidden=false;for(const button of filterButtons)button.addEventListener('click',()=>filter(button.dataset.filter));}
