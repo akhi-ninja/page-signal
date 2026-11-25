@@ -36,6 +36,14 @@
       "destination": "/releases.html"
     },
     {
+      "source": "/sync",
+      "destination": "/sync.html"
+    },
+    {
+      "source": "/sync/",
+      "destination": "/sync.html"
+    },
+    {
       "source": "/docs",
       "destination": "/docs.html"
     },

@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: sync
+      POSTGRES_USER: sync
+      POSTGRES_PASSWORD: sync
+    volumes:
+      - sync-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sync"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgres://sync:sync@db:5432/sync
+      HOST: 0.0.0.0
+      SYNC_MODE: demo
+      SYNC_TOKEN: ${SYNC_TOKEN:-local-demo}
+    ports:
+      - "127.0.0.1:8787:8787"
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  sync-data:
