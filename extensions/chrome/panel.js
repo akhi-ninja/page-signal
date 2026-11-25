@@ -18,16 +18,30 @@ function controls() {
   $('clear').textContent = work ? 'Cancel' : 'Clear';
 }
 
+async function credential() {
+  const { pagesignalAuth } = await chrome.storage.local.get('pagesignalAuth');
+  if (!pagesignalAuth || typeof pagesignalAuth.token !== 'string' ||
+      !Number.isFinite(pagesignalAuth.expiresAt) || pagesignalAuth.expiresAt <= Date.now()) {
+    if (pagesignalAuth) await chrome.storage.local.remove('pagesignalAuth');
+    return null;
+  }
+  return pagesignalAuth.token;
+}
 async function request(path, options = {}) {
+  const token = await credential();
+  if (!token) throw new Error('Connect your PageSignal account to use document extraction.');
   const response = await fetch(new URL(path, SITE), {
-    credentials: 'include', redirect: 'error', cache: 'no-store', ...options,
+    credentials: 'omit', redirect: 'error', cache: 'no-store', ...options,
+    headers: { ...options.headers, Authorization: 'Bearer ' + token },
   });
-  const data = await response.json();
+  let data;
+  try { data = await response.json(); } catch { throw new Error('PageSignal returned an unexpected response.'); }
   if (response.ok) return data;
   if (response.status === 401) {
     signedIn = false;
+    await chrome.storage.local.remove('pagesignalAuth');
     $('sign-in').hidden = false;
-    $('account').textContent = 'Your PageSignal session expired. Sign in to continue.';
+    $('account').textContent = 'Your PageSignal connection expired. Connect again to continue.';
   }
   throw new Error(data.error || 'PageSignal could not complete the request.');
 }
@@ -35,13 +49,14 @@ async function request(path, options = {}) {
 async function checkAccount() {
   $('check-account').disabled = true;
   try {
-    const { user } = await request('/api/ai/status');
+    const { user } = await request('/api/extension/status');
     signedIn = Boolean(user);
     $('sign-in').hidden = signedIn;
-    $('account').textContent = signedIn ? 'Signed in to PageSignal.' : 'Sign in once, then return here to extract.';
-  } catch {
+    $('account').textContent = signedIn ? 'Connected securely to PageSignal.' : 'Connect your PageSignal account to extract.';
+  } catch (error) {
     signedIn = false;
-    $('account').textContent = 'Could not verify your PageSignal session. Check your connection and try again.';
+    $('sign-in').hidden = false;
+    $('account').textContent = error.message || 'Could not verify your PageSignal connection.';
   } finally {
     $('check-account').disabled = false;
     controls();
@@ -165,7 +180,16 @@ $('drop').addEventListener('drop', event => {
   else $('status').textContent = 'Drop one document at a time.';
 });
 $('text').addEventListener('input', resetResult);
-$('sign-in').addEventListener('click', () => chrome.tabs.create({ url: SITE }));
+$('sign-in').addEventListener('click', async () => {
+  const challenge = Array.from(crypto.getRandomValues(new Uint8Array(32)),
+    value => value.toString(16).padStart(2, '0')).join('');
+  await chrome.storage.session.set({ pagesignalPair: { challenge, expiresAt: Date.now() + 300000 } });
+  const url = new URL('/extension-connect', SITE);
+  url.searchParams.set('extensionId', chrome.runtime.id);
+  url.searchParams.set('challenge', challenge);
+  await chrome.tabs.create({ url: url.href });
+  $('account').textContent = 'Approve the connection in the PageSignal tab, then return here.';
+});
 $('check-account').addEventListener('click', checkAccount);
 window.addEventListener('focus', () => { if (!work && !$('check-account').disabled) void checkAccount(); });
 $('extract').addEventListener('click', extract);
@@ -192,6 +216,7 @@ $('export').addEventListener('click', () => {
 chrome.storage.session.get('selection').then(data => selection(data.selection));
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'session' && changes.selection) selection(changes.selection.newValue);
+  if (area === 'local' && changes.pagesignalAuth) void checkAccount();
 });
 window.addEventListener('pagehide', () => { work?.abort(); releasePreview(); });
 void checkAccount();
