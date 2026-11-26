@@ -76,6 +76,16 @@
   ],
   "orchestrator": [
     {
+      "version": "0.1.1",
+      "date": "2026-11-26",
+      "title": "PageSignal Orchestrator — documentation update",
+      "summary": "Public npm installation instructions and corrected integration documentation for the standalone LangGraph workflow SDK.",
+      "notes": [
+        "Corrected outdated unpublished-preview wording and clarified the caller-owned extraction adapter.",
+        "No runtime changes or migration required."
+      ]
+    },
+    {
       "version": "0.1.0",
       "date": "2026-11-26",
       "title": "PageSignal Orchestrator — public developer preview",
