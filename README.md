@@ -1,4 +1,34 @@
-# PageSignal
+<!-- github-readme-header:start -->
+
+<p align="center">
+  <a href="https://www.pagesignal.studio/">
+    <img src="docs/assets/pagesignal-readme-banner.svg" alt="PageSignal workflow from PDFs and scans to reviewable fields and structured JSON" width="1000">
+  </a>
+</p>
+
+<h1 align="center">PageSignal</h1>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@pagesignal/core"><img src="https://img.shields.io/npm/dw/@pagesignal/core?label=downloads" alt="Weekly downloads of @pagesignal/core"></a>
+  <a href="https://npmx.dev/package/@pagesignal/core"><img src="https://img.shields.io/npm/v/@pagesignal/core?label=.%2Fnpmx" alt="Latest @pagesignal/core version on npmx"></a>
+  <a href="https://github.com/akhi-ninja/page-signal/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/akhi-ninja/page-signal/ci.yml?branch=main&amp;label=tests" alt="Package checks and tests on main"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
+</p>
+
+<p align="center">
+  <a href="https://www.pagesignal.studio/">Open the app</a> ·
+  <a href="https://www.pagesignal.studio/docs">Documentation</a> ·
+  <a href="https://www.pagesignal.studio/releases">What’s New</a> ·
+  <a href="https://www.pagesignal.studio/openapi.json">OpenAPI JSON</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/akhi-ninja/page-signal/issues/new?labels=bug">Report a bug</a> ·
+  <a href="https://github.com/akhi-ninja/page-signal/issues/new?labels=enhancement">Request a feature</a> ·
+  <a href="CONTRIBUTING.md">Contribute</a>
+</p>
+
+<!-- github-readme-header:end -->
 
 Version 2.0.0 provides native Angular, Vue and React workspaces. React users upgrading from version 1 must migrate from iframe props to the adapter API.
 
@@ -452,7 +482,47 @@ Optional same-origin document jobs support encrypted persistent state, per-page 
 
 Targeted crop rechecks remain opt-in and produce proposals requiring human acceptance. Conflicts, uncertain document boundaries and cross-page table joins remain reviewable rather than silently repaired.
 
+## PageSignal Orchestrator
+
+LangGraph-powered server-side document workflows for Node.js 22+. Public developer preview, MIT licensed.
+
+[Documentation](https://www.pagesignal.studio/docs#pagesignal-orchestrator) · [Releases](https://www.pagesignal.studio/releases) · [npm](https://www.npmjs.com/package/@pagesignal/orchestrator)
+
+```bash
+npm install @pagesignal/orchestrator
+```
+
+Supply your own server extraction adapter and rendered page in this integration example.
+
+```js
+import { createPageWorkflow } from '@pagesignal/orchestrator';
+const workflow = createPageWorkflow({
+  page: { image: jpegDataUrl, text: ocrText },
+  extractPage: page => myServerExtractionAdapter(page)
+});
+const state = await workflow.start({ recursionLimit: 16 });
+console.log(state.status, state.result, state.issues);
+```
+
+The application supplies rendered JPEG pages, OCR, credentials, authentication, quotas and storage. Default is one model call; a second requires maxCalls: 2 and an explicit reserveAdditional callback returning true. Optional prepareRecheck is caller-owned. Evidence checks are review hints, not proof of accuracy.
+
+For human approval, provide a caller-owned LangGraph checkpointer and requireApproval: true. Use workflowConfig with authenticated tenantId and unique page/document workflow ID; reuse the same configuration and original page on resume. Authorize each resume server-side. Do not run concurrent invocations on the same thread. Checkpoints contain sensitive extracted results; enforce access controls, encryption, retention and deletion. External tracing is blocked unless explicitly authorized. No database is created by this package.
+
+Migration and deployment:
+
+Existing core, SDK, framework and Sync consumers need no changes. This preview is opt-in and does not replace the hosted server engine. Self-hosted server operators should follow [LangGraph configuration](https://github.com/akhi-ninja/page-signal/blob/main/docs/langgraph.md) and [durable jobs](https://github.com/akhi-ninja/page-signal/blob/main/docs/document-jobs.md) for server configuration and applicable database migrations. Do not enable durable jobs until infrastructure and migrations are ready. No browser imports or provider secrets in client code.
+
 ## PageSignal Sync
+
+<!-- github-readme-header:start -->
+<p align="center"><a href="https://www.pagesignal.studio/sync"><img src="docs/assets/pagesignal-sync-readme-banner.svg" width="1000" alt="PageSignal Sync offline-first workflow"></a></p>
+<p align="center">
+<a href="https://www.npmjs.com/package/@pagesignal/sync"><img src="https://img.shields.io/npm/dw/@pagesignal/sync?label=downloads" alt="Sync weekly downloads"></a>
+<a href="https://npmx.dev/package/@pagesignal/sync"><img src="https://img.shields.io/npm/v/@pagesignal/sync?label=.%2Fnpmx" alt="Sync version"></a>
+<a href="https://github.com/akhi-ninja/page-signal/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/akhi-ninja/page-signal/ci.yml?branch=main&amp;label=tests" alt="Repository tests"></a>
+<a href="pagesignal-sync/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
+</p>
+<!-- github-readme-header:end -->
 
 [PageSignal Sync](https://www.pagesignal.studio/sync) is a standalone open-source product for offline-first web apps. It stores records in IndexedDB, lets the app subscribe to changes, and queues edits for a developer-run backend. Enable automatic sync to resume when the browser reconnects, or trigger sync explicitly. It can be used with React, Angular, Vue, or a browser app that uses TypeScript directly.
 
