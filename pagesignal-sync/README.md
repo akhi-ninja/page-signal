@@ -74,10 +74,26 @@ sync.stop();
 
 The SDK reports offline, syncing, idle, retrying, and blocked states. Network errors, timeouts, HTTP 408/429, and server errors are retried with capped exponential backoff and jitter. Other failures pause until the app calls `retry()`. Pending edits remain in IndexedDB. The SDK coordinates sync passes across tabs through Web Locks. Automatic sync is opt-in, and the inventory examples retain their manual Sync now control for reproducing conflicts. Remote changes are pulled during sync passes.
 
+## Recover after a PostgreSQL restore
+
+1. Stop all sync API instances and restore the backup into your target database. Keep writes paused until the restored database is ready.
+2. If the backup predates checkpoint recovery, initialize the database with the updated server and stop it before allowing clients to connect.
+3. Rotate the restored database’s history ID before reopening traffic.
+
+```sql
+UPDATE sync_history SET id = gen_random_uuid() WHERE singleton = true;
+```
+
+4. Start the updated API and reconnect clients with the updated SDK. A recovery-aware client discards its cached server records, pulls from the start of the restored change feed, and retains queued writes and local conflict drafts. Edits based on a revision missing from the backup surface as conflicts.
+
+The backup defines the restored state, including deletions recorded in that backup. Recover changes and deletions made after the backup through PostgreSQL point-in-time recovery or a separate audit trail. The SDK can replay unsent edits still on a device. Acknowledged edits beyond the backup may require database recovery.
+
+To rehearse locally, sync two inventory browser profiles, delete a record, take a PostgreSQL backup, then let one profile go offline. Edit an existing record and add a new one in that profile. Restore the backup to a disposable database, rotate its history ID, and reconnect to the restored server. Check that the deleted record remains absent, the queued new record reaches both profiles, and any edit based on a missing revision is offered for conflict resolution. Run `npm test` for the automated rewind and replay scenario.
+
 ## HTTP protocol
 
 - `POST /push` accepts `{collection, id, value, revision, expected}`. A null value represents a deletion. The UUID revision doubles as the write receipt. The expected revision is null for an unseen record. A stale write returns `{ok: false, remote}` so the client can preserve the intended edit while displaying the latest server record.
-- `GET /pull?cursor=0` returns `{cursor, changes}`. Cursors are opaque decimal strings. Pull again with the returned cursor until the server returns an empty page. Keep deletion entries in the feed.
+- `GET /pull?cursor=0` returns `{cursor, changes}`. Cursors are opaque decimal strings. Pull again with the returned cursor until the server returns an empty page. Keep deletion entries in the feed. Recovery-aware clients include `checkpoint=1` plus their last `history` and `revision` when available. The server returns its history ID and a `reset` flag. A cursor beyond the restored head, a different history ID, or a mismatched revision at the same cursor requires replay from zero. Existing custom transports can opt into pull-before-push by setting `checkpointRecovery: true` and returning this metadata.
 - Both routes require a bearer token. Use the same protocol to connect the SDK to your own backend.
 
 Use demo mode for local evaluation. Its shared token grants access to the demo dataset. Use JWT mode for authenticated deployments. The reference server retains the full change log for replay and write receipts. Log compaction, migrations between deployments, and public npm publication are pending. The package uses the repository’s MIT license.

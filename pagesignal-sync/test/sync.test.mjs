@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { PGlite } from '@electric-sql/pglite';
 import { SyncDatabase, SyncRequestError } from '../src/index.ts';
-import { applyMutation, demoScope, pull, schema } from '../server/store.mjs';
+import { applyMutation, demoScope, pull, pullWithCheckpoint, schema } from '../server/store.mjs';
 
 Object.defineProperty(navigator, 'locks', {
   value: { request: (_name, _options, run) => run() },
@@ -182,4 +182,69 @@ test('stopping during a push keeps the mutation available for a later session', 
     },
     pull: async (cursor) => ({ cursor, changes: [] }),
   });
+});
+
+test('rewound and reused checkpoints rebuild the cache while retaining queued edits and tombstones', async (t) => {
+  delete globalThis.window;
+  const original = new PGlite();
+  await original.exec(schema);
+  const restored = new PGlite();
+  t.after(async () => {
+    await original.close();
+    await restored.close();
+  });
+  await restored.exec(schema);
+  const { id: history } = (await original.query('SELECT id FROM sync_history')).rows[0];
+  await restored.query('UPDATE sync_history SET id = $1', [history]);
+  let postgres = original;
+  const transport = {
+    checkpointRecovery: true,
+    push: (mutation) => postgres.transaction((tx) => applyMutation(tx, demoScope, mutation)),
+    pull: (cursor, _signal, proof) => pullWithCheckpoint(postgres, demoScope, cursor, proof?.history, proof?.revision),
+  };
+  const db = new SyncDatabase('restore-recovery');
+  const second = new SyncDatabase('restore-recovery-second');
+  t.after(() => { db.close(); second.close(); });
+  const items = db.collection('items');
+  const otherItems = second.collection('items');
+  const mutation = (id, value, expected = null) => ({ collection: 'items', id, value, expected, revision: crypto.randomUUID() });
+  const put = (db, edit) => db.transaction((tx) => applyMutation(tx, demoScope, edit));
+  const base = mutation('a', { quantity: 1 });
+  const present = mutation('gone', { quantity: 1 });
+  const deleted = mutation('gone', null, present.revision);
+  for (const database of [original, restored]) {
+    await put(database, base);
+    await put(database, present);
+    await put(database, deleted);
+  }
+  const old = mutation('a', { quantity: 2 }, base.revision);
+  await put(original, old);
+  await put(original, mutation('post-backup', { quantity: 1 }));
+  await db.sync(transport);
+  await second.sync(transport);
+  await items.put('a', { quantity: 3 });
+  await items.put('queued', { quantity: 4 });
+
+  postgres = restored;
+  await put(restored, mutation('unrelated-1', { quantity: 1 }));
+  await put(restored, mutation('unrelated-2', { quantity: 2 }));
+  const stale = (await original.query('SELECT revision FROM scoped_sync_changes WHERE cursor = 5')).rows[0];
+  const result = await pullWithCheckpoint(restored, demoScope, '5', history, stale.revision);
+  assert.equal(result.reset, true);
+  assert.equal((await pullWithCheckpoint(restored, demoScope, '6', history)).reset, true);
+  await db.sync(transport);
+  await second.sync(transport);
+  const recovered = await items.list();
+  assert.equal(recovered.records.some(({ id }) => id === 'post-backup' || id === 'gone'), false);
+  assert.equal(recovered.records.find(({ id }) => id === 'queued').value.quantity, 4);
+  assert.equal(recovered.records.find(({ id }) => id === 'a').value.quantity, 1);
+  assert.equal(recovered.conflicts[0].local.value.quantity, 3);
+  assert.equal(recovered.conflicts[0].remote.revision, base.revision);
+  assert.equal((await otherItems.list()).records.find(({ id }) => id === 'queued').value.quantity, 4);
+
+  await restored.query('UPDATE sync_history SET id = gen_random_uuid()');
+  await items.resolve('a', { quantity: 3 });
+  await db.sync(transport);
+  assert.equal((await items.list()).records.find(({ id }) => id === 'a').value.quantity, 3);
+  assert.deepEqual((await items.list()).conflicts, []);
 });
