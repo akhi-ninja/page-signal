@@ -1,7 +1,45 @@
 {
-  "2.0.0": {"date":"2026-11-19","title":"Native components. A shared foundation.","summary":"Bring document workflows directly into Angular, Vue and React applications, with a shared browser-safe workspace controller.","kind":"major","breaking":true,"packages":["core","sdk","react","angular","vue"],"github":true},
-  "1.1.1": {"date":"2026-11-19","title":"From extraction to answers.","summary":"Find specific fields, ask document questions and review structured results alongside the source. Includes the expanded hosted workspace.","kind":"improvement","breaking":false,"packages":["core","sdk","react"],"github":true},
-  "0.1.0": {"date":"2026-11-17","title":"The first building blocks.","summary":"The initial public npm release introduced the core extraction library, service SDK and React workspace embed.","kind":"initial","breaking":false,"packages":["core","sdk","react"],"github":false},
+  "2.0.0": {
+    "date": "2026-11-19",
+    "title": "Native components. A shared foundation.",
+    "summary": "Bring document workflows directly into Angular, Vue and React applications, with a shared browser-safe workspace controller.",
+    "kind": "major",
+    "breaking": true,
+    "packages": [
+      "core",
+      "sdk",
+      "react",
+      "angular",
+      "vue"
+    ],
+    "github": true
+  },
+  "1.1.1": {
+    "date": "2026-11-19",
+    "title": "From extraction to answers.",
+    "summary": "Find specific fields, ask document questions and review structured results alongside the source. Includes the expanded hosted workspace.",
+    "kind": "improvement",
+    "breaking": false,
+    "packages": [
+      "core",
+      "sdk",
+      "react"
+    ],
+    "github": true
+  },
+  "0.1.0": {
+    "date": "2026-11-17",
+    "title": "The first building blocks.",
+    "summary": "The initial public npm release introduced the core extraction library, service SDK and React workspace embed.",
+    "kind": "initial",
+    "breaking": false,
+    "packages": [
+      "core",
+      "sdk",
+      "react"
+    ],
+    "github": false
+  },
   "sync": [
     {
       "version": "0.1.2",
@@ -33,6 +71,19 @@
         "Persist local edits in IndexedDB and subscribe to changes.",
         "Resume queued writes on reconnect and recover from conflicting edits.",
         "Run the React, Angular and Vue inventory examples with an optional Node.js and PostgreSQL sync server."
+      ]
+    }
+  ],
+  "orchestrator": [
+    {
+      "version": "0.1.0",
+      "date": "2026-11-26",
+      "title": "PageSignal Orchestrator — public developer preview",
+      "summary": "Standalone LangGraph workflows for server-side document extraction, evidence review, conditional rechecks and human approval.",
+      "notes": [
+        "Node.js 22+ ESM package with TypeScript declarations.",
+        "Caller-owned extraction, quota reservation and checkpoint adapters.",
+        "Existing SDK and Sync users need no migration. Self-hosted server configuration is independent."
       ]
     }
   ]
