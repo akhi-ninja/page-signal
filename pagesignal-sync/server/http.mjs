@@ -1,5 +1,5 @@
 import { createServer } from 'node:http';
-import { applyMutation, pull } from './store.mjs';
+import { applyMutation, pull, pullWithCheckpoint } from './store.mjs';
 
 const isUuid = (value) => typeof value === 'string' && /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/.test(value);
 
@@ -32,6 +32,14 @@ export function createSyncServer({ pool, authenticate, origin }) {
         const cursor = url.searchParams.get('cursor') ?? '0';
         if (!/^\d{1,19}$/.test(cursor) || BigInt(cursor) > 9223372036854775807n) {
           return send(400, { error: 'Invalid checkpoint' });
+        }
+        if (url.searchParams.get('checkpoint') === '1') {
+          const history = url.searchParams.get('history');
+          const revision = url.searchParams.get('revision');
+          if ((history !== null && !isUuid(history)) || (revision !== null && !isUuid(revision))) {
+            return send(400, { error: 'Invalid checkpoint proof' });
+          }
+          return send(200, await pullWithCheckpoint(pool, scope, cursor, history, revision));
         }
         return send(200, await pull(pool, scope, cursor));
       }

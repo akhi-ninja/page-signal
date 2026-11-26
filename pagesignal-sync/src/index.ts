@@ -4,9 +4,12 @@ export type Value = Record<string, unknown>;
 export type Change = { collection: string; id: string; revision: string; value: Value | null };
 export type Mutation = Change & { expected: string | null };
 export type Conflict = { local: Mutation; remote: Change | null };
+type CheckpointProof = { history?: string; revision?: string };
+
 export type Transport = {
+  checkpointRecovery?: boolean;
   push(mutation: Mutation, signal?: AbortSignal): Promise<{ ok: true } | { ok: false; remote: Change | null }>;
-  pull(cursor: string, signal?: AbortSignal): Promise<{ cursor: string; changes: Change[] }>;
+  pull(cursor: string, signal?: AbortSignal, proof?: CheckpointProof): Promise<{ cursor: string; changes: Change[]; history?: string; reset?: boolean }>;
 };
 
 export class SyncRequestError extends Error {
@@ -34,13 +37,19 @@ export function httpTransport(url: string, token: () => string): Transport {
     return response.json();
   }
   return {
+    checkpointRecovery: true,
     push: (mutation, signal) => request('/push', signal, mutation),
-    pull: (cursor, signal) => request(`/pull?cursor=${encodeURIComponent(cursor)}`, signal),
+    pull: (cursor, signal, proof) => {
+      const query = new URLSearchParams({ cursor, checkpoint: '1' });
+      if (proof?.history) query.set('history', proof.history);
+      if (proof?.revision) query.set('revision', proof.revision);
+      return request(`/pull?${query}`, signal);
+    },
   };
 }
 
 type Pending = Mutation & { order?: number };
-type State = { key: string; cursor: string };
+type State = CheckpointProof & { key: string; cursor: string };
 type ConflictEntry = Conflict & { collection: string; id: string };
 
 export class SyncDatabase<Schema extends Record<string, Value>> {
@@ -210,6 +219,8 @@ export class SyncDatabase<Schema extends Record<string, Value>> {
   sync(transport: Transport, signal?: AbortSignal) {
     return navigator.locks.request(`pagesignal-sync:${this.name}`, { signal }, async () => {
       signal?.throwIfAborted();
+      if (transport.checkpointRecovery) await this.pullChanges(transport, signal);
+
       // Drain the edits present at the start of this pass. Later writes remain queued.
       for (const { order, ...mutation } of await this.pending.toArray()) {
         const key: [string, string] = [mutation.collection, mutation.id];
@@ -233,19 +244,44 @@ export class SyncDatabase<Schema extends Record<string, Value>> {
         });
       }
 
-      let cursor = (await this.state.get('pull'))?.cursor ?? '0';
-      while (true) {
-        signal?.throwIfAborted();
-        const page = await transport.pull(cursor, signal);
-        signal?.throwIfAborted();
-        if (page.changes.length === 0) return;
-        if (page.cursor === cursor) throw new Error('Sync checkpoint failed to advance.');
-        await this.db.transaction('rw', [this.remote, this.state], async () => {
-          await this.remote.bulkPut(page.changes);
-          await this.state.put({ key: 'pull', cursor: page.cursor });
-        });
-        cursor = page.cursor;
-      }
+      await this.pullChanges(transport, signal);
     });
+  }
+
+  private async pullChanges(transport: Transport, signal?: AbortSignal) {
+    let checkpoint: State = await this.state.get('pull') ?? { key: 'pull', cursor: '0' };
+    let restarted = false;
+    while (true) {
+      signal?.throwIfAborted();
+      const page = await transport.pull(checkpoint.cursor, signal, {
+        history: checkpoint.history, revision: checkpoint.revision,
+      });
+      signal?.throwIfAborted();
+      if (page.reset || (page.history && page.history !== checkpoint.history)) {
+        if (restarted || !page.history) throw new Error('Sync history could not be refreshed.');
+        restarted = true;
+        checkpoint = { key: 'pull', cursor: '0', history: page.history };
+        await this.db.transaction('rw', [this.remote, this.state, this.conflicts], async () => {
+          await this.remote.clear();
+          await this.conflicts.toCollection().modify({ remote: null });
+          await this.state.put(checkpoint);
+        });
+        continue;
+      }
+
+      if (page.changes.length === 0) return;
+      if (page.cursor === checkpoint.cursor) throw new Error('Sync checkpoint failed to advance.');
+      checkpoint = {
+        key: 'pull', cursor: page.cursor, history: page.history,
+        revision: page.history ? page.changes.at(-1)?.revision : undefined,
+      };
+      await this.db.transaction('rw', [this.remote, this.state, this.conflicts], async () => {
+        await this.remote.bulkPut(page.changes);
+        for (const change of page.changes) {
+          await this.conflicts.update([change.collection, change.id], { remote: change });
+        }
+        await this.state.put(checkpoint);
+      });
+    }
   }
 }

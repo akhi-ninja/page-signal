@@ -1,6 +1,11 @@
 export const demoScope = 'demo';
 
 export const schema = `
+  CREATE TABLE IF NOT EXISTS sync_history (
+    singleton boolean PRIMARY KEY DEFAULT true CHECK (singleton),
+    id uuid NOT NULL DEFAULT gen_random_uuid()
+  );
+  INSERT INTO sync_history (singleton) VALUES (true) ON CONFLICT DO NOTHING;
   CREATE TABLE IF NOT EXISTS sync_counter (
     singleton boolean PRIMARY KEY DEFAULT true CHECK (singleton),
     cursor bigint NOT NULL DEFAULT 0
@@ -95,4 +100,32 @@ export async function pull(db, scope, cursor) {
     cursor: rows.at(-1)?.cursor ?? cursor,
     changes: rows.map(({ cursor: _cursor, ...change }) => change),
   };
+}
+
+// Validate the checkpoint and read the page from one PostgreSQL statement snapshot.
+export async function pullWithCheckpoint(db, scope, cursor, history, revision) {
+  const { rows } = await db.query(`
+    WITH checkpoint AS (
+      SELECT sync_history.id AS history,
+        COALESCE(sync_scopes.cursor, 0) < $2::bigint
+          OR ($3::uuid IS NOT NULL AND sync_history.id <> $3::uuid)
+          OR ($4::uuid IS NOT NULL AND witness.revision IS DISTINCT FROM $4::uuid) AS reset
+      FROM sync_history
+      LEFT JOIN sync_scopes ON scope = $1
+      LEFT JOIN scoped_sync_changes AS witness ON witness.scope = $1 AND witness.cursor = $2
+    )
+    SELECT checkpoint.*, page.cursor::text, page.collection, page.id, page.revision, page.value
+    FROM checkpoint
+    LEFT JOIN LATERAL (
+      SELECT cursor, collection, id, revision, value
+      FROM scoped_sync_changes
+      WHERE scope = $1 AND cursor > $2 AND NOT checkpoint.reset
+      ORDER BY cursor LIMIT 100
+    ) AS page ON true
+    ORDER BY page.cursor
+  `, [scope, cursor, history ?? null, revision ?? null]);
+  const { history: currentHistory, reset } = rows[0];
+  const changes = rows.filter((row) => row.cursor !== null)
+    .map(({ collection, id, revision, value }) => ({ collection, id, revision, value }));
+  return { history: currentHistory, reset, cursor: rows.at(-1).cursor ?? cursor, changes };
 }
