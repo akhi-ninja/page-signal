@@ -471,7 +471,7 @@ Open [React](http://localhost:4173/demo/react.html), [Angular](http://localhost:
 Install the public [PageSignal Sync developer preview](https://www.npmjs.com/package/@pagesignal/sync) with:
 
 ```bash
-npm install @pagesignal/sync@next
+npm install @pagesignal/sync@0.1.1
 ```
 
 ```ts
@@ -513,3 +513,5 @@ db.close();
 The controller resumes queued edits on reconnect. If credentials expire, refresh them and call `controller.retry()`. For manual sync, call `await db.sync(transport)` while connected.
 
 The reference server uses one shared token for local evaluation. Configure application authentication and record-level authorization before exposing a backend to untrusted users. See the [Sync source and HTTP protocol](https://github.com/akhi-ninja/page-signal/tree/development/pagesignal-sync) for configuration and integration details.
+
+PostgreSQL restore recovery is available on the development branch. The npm preview does not include it yet. See the [development restore guide](https://github.com/akhi-ninja/page-signal/blob/development/pagesignal-sync/README.md#recover-after-a-postgresql-restore).

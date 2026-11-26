@@ -4,6 +4,16 @@
   "0.1.0": {"date":"2026-11-17","title":"The first building blocks.","summary":"The initial public npm release introduced the core extraction library, service SDK and React workspace embed.","kind":"initial","breaking":false,"packages":["core","sdk","react"],"github":false},
   "sync": [
     {
+      "version": "0.1.1",
+      "date": "2026-11-25",
+      "title": "A refreshed npm listing",
+      "summary": "A documentation-only update to the PageSignal Sync developer preview.",
+      "notes": [
+        "Add the PageSignal Sync cover to the npm README.",
+        "Update the README installation instructions for the public package."
+      ]
+    },
+    {
       "version": "0.1.0",
       "date": "2026-11-25",
       "title": "Offline-first sync developer preview",
