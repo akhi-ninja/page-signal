@@ -37,14 +37,14 @@ jobs:
           mkdir "$RUNNER_TEMP/consumer"
           cd "$RUNNER_TEMP/consumer"
           npm init -y
-          npm install --ignore-scripts "$RUNNER_TEMP/pagesignal-orchestrator-0.1.0.tgz" typescript@5.9.3 @types/node
+          npm install --ignore-scripts "$RUNNER_TEMP/pagesignal-orchestrator-0.1.1.tgz" typescript@5.9.3 @types/node
           node --input-type=module -e "import {createPageWorkflow,workflowConfig} from '@pagesignal/orchestrator'; if(typeof createPageWorkflow !== 'function') process.exit(1); workflowConfig({tenantId:'test',documentId:'test'});"
           printf '%s\n' "import { workflowConfig, createPageWorkflow } from '@pagesignal/orchestrator';" "const config = workflowConfig({tenantId:'test',documentId:'test'}); void config; void createPageWorkflow;" > consumer.mts
           npx tsc --noEmit --strict --skipLibCheck --module nodenext consumer.mts
       - uses: actions/upload-artifact@v4
         with:
           name: orchestrator-package
-          path: ${{ runner.temp }}/pagesignal-orchestrator-0.1.0.tgz
+          path: ${{ runner.temp }}/pagesignal-orchestrator-0.1.1.tgz
   publish:
     needs: validate
     if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
@@ -61,4 +61,4 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: orchestrator-package
-      - run: npm publish ./pagesignal-orchestrator-0.1.0.tgz --access public --provenance
+      - run: npm publish ./pagesignal-orchestrator-0.1.1.tgz --access public --provenance

@@ -1,13 +1,20 @@
-# PageSignal Orchestrator (unpublished developer preview)
+# PageSignal Orchestrator
 
-Server-only Node.js 22+ workflow engine. Install from a local checkout with `npm install ./extensions/orchestrator` after installing repository dependencies. No public npm release yet.
+LangGraph-powered server-side document workflows for Node.js 22+. Public developer preview, MIT licensed.
+
+[Documentation](https://www.pagesignal.studio/docs#pagesignal-orchestrator) · [Releases](https://www.pagesignal.studio/releases) · [npm](https://www.npmjs.com/package/@pagesignal/orchestrator)
+
+```bash
+npm install @pagesignal/orchestrator
+```
+
+Supply your own server extraction adapter and rendered page in this integration example.
 
 ```js
 import { createPageWorkflow } from '@pagesignal/orchestrator';
-import { extractPage } from '@pagesignal/core';
 const workflow = createPageWorkflow({
   page: { image: jpegDataUrl, text: ocrText },
-  extractPage: page => extractPage(page, { apiKey: process.env.OPENAI_API_KEY })
+  extractPage: page => myServerExtractionAdapter(page)
 });
 const state = await workflow.start({ recursionLimit: 16 });
 console.log(state.status, state.result, state.issues);
