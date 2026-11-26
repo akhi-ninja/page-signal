@@ -32,8 +32,8 @@ test('release filters, migration links, keyboard tabs and copy work together',as
  assert.equal(window.document.activeElement,syncTab);
  assert.equal(window.location.hash,'#sync-releases');
  assert.equal(syncPanel.hidden,false);
- assert.match(syncPanel.querySelector('.hero-version').textContent,/v0\.1\.1/);
- assert.ok(syncPanel.querySelector('a[href="#sync-v0.1.1"]'));
+ assert.match(syncPanel.querySelector('.hero-version').textContent,/v0\.1\.2/);
+ assert.ok(syncPanel.querySelector('a[href="#sync-v0.1.2"]'));
  assert.equal(window.document.getElementById('pagesignal-releases').hidden,true);
  assert.equal(window.document.getElementById('sync-v0.1.0').hidden,false);
  window.history.replaceState(null,'','#sync-v0.1.0');

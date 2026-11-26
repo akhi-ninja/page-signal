@@ -4,6 +4,17 @@
   "0.1.0": {"date":"2026-11-17","title":"The first building blocks.","summary":"The initial public npm release introduced the core extraction library, service SDK and React workspace embed.","kind":"initial","breaking":false,"packages":["core","sdk","react"],"github":false},
   "sync": [
     {
+      "version": "0.1.2",
+      "date": "2026-11-26",
+      "title": "Recover sync after a database restore",
+      "summary": "The developer preview now detects stale checkpoints and rebuilds the local server cache after a PostgreSQL restore.",
+      "notes": [
+        "Preserve queued edits and conflict drafts while replaying the restored change feed.",
+        "Surface edits based on revisions missing from the backup as conflicts.",
+        "Upgrade both the client SDK and self-hosted reference server to use restore recovery."
+      ]
+    },
+    {
       "version": "0.1.1",
       "date": "2026-11-25",
       "title": "A refreshed npm listing",
