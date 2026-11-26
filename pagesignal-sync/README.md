@@ -1,5 +1,7 @@
 # PageSignal Sync
 
+![PageSignal Sync — Build web apps that work offline](https://raw.githubusercontent.com/akhi-ninja/page-signal/3595a16c97eb51443ab1a799d89092c35ef1171c/docs/assets/pagesignal-sync-npm-cover.jpg)
+
 An experimental open-source TypeScript library for adding offline writes to web apps. Records live in IndexedDB, queries react to changes, and apps can explicitly sync through an HTTP adapter. The inventory example uses the same data layer in React, Angular, and Vue.
 
 ## Run the browser examples
@@ -26,7 +28,7 @@ Run `docker compose up --build` in this folder. The sample server binds to local
 
 ## Use the TypeScript API
 
-The first npm release is planned under the `next` tag. To try the package from source, run `npm pack` here and install the tarball in your app with `npm install /path/to/pagesignal-sync-0.1.0.tgz`.
+Install the developer preview with `npm install @pagesignal/sync`.
 
 ```ts
 import { SyncDatabase, httpTransport } from '@pagesignal/sync';
@@ -96,4 +98,4 @@ To rehearse locally, sync two inventory browser profiles, delete a record, take 
 - `GET /pull?cursor=0` returns `{cursor, changes}`. Cursors are opaque decimal strings. Pull again with the returned cursor until the server returns an empty page. Keep deletion entries in the feed. Recovery-aware clients include `checkpoint=1` plus their last `history` and `revision` when available. The server returns its history ID and a `reset` flag. A cursor beyond the restored head, a different history ID, or a mismatched revision at the same cursor requires replay from zero. Existing custom transports can opt into pull-before-push by setting `checkpointRecovery: true` and returning this metadata.
 - Both routes require a bearer token. Use the same protocol to connect the SDK to your own backend.
 
-Use demo mode for local evaluation. Its shared token grants access to the demo dataset. Use JWT mode for authenticated deployments. The reference server retains the full change log for replay and write receipts. Log compaction, migrations between deployments, and public npm publication are pending. The package uses the repository’s MIT license.
+Use demo mode for local evaluation. Its shared token grants access to the demo dataset. Use JWT mode for authenticated deployments. The reference server retains the full change log for replay and write receipts. Log compaction and migrations between deployments are pending. The package uses the repository’s MIT license.
