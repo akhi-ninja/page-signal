@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 const escape = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const inline = s => escape(s).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2">$1</a>');
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const lines = readFileSync('README.md','utf8').split('\n');
+const lines = readFileSync('README.md','utf8').replace(/<!-- github-readme-header:start -->[\s\S]*?<!-- github-readme-header:end -->/g,'').split('\n');
 const sections = [];
 let body='', section=null;
 for(let i=0;i<lines.length;) {
