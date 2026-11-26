@@ -546,3 +546,7 @@ db.close();
 The controller resumes queued edits on reconnect. If credentials expire, refresh them and call `controller.retry()`. For manual sync, call `await db.sync(transport)` while connected.
 
 The reference server uses one shared token for local evaluation. Configure application authentication and record-level authorization before exposing a backend to untrusted users. See the [Sync source and HTTP protocol](https://github.com/akhi-ninja/page-signal/tree/development/pagesignal-sync) for configuration and integration details.
+
+## Standalone orchestration preview
+
+The unpublished `@pagesignal/orchestrator` source preview provides server-side LangGraph page workflows with caller-owned extraction and checkpoint adapters. See [installation, migration and security guidance](extensions/orchestrator/README.md). Existing npm consumers do not need to migrate. Hosted production selects its orchestration engine independently of package versions. Do not treat this source preview as an npm release.
