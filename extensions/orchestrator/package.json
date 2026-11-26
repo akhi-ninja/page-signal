@@ -1,0 +1,29 @@
+{
+  "name": "@pagesignal/orchestrator",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "Server-side LangGraph document workflow developer preview",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "files": [
+    "*.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@langchain/langgraph": "1.7.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akhi-ninja/page-signal.git",
+    "directory": "extensions/orchestrator"
+  }
+}
