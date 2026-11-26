@@ -8,12 +8,16 @@
     "node": ">=22"
   },
   "exports": {
-    ".": "./index.mjs"
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs"
+    }
   },
   "files": [
     "*.mjs",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "index.d.ts"
   ],
   "dependencies": {
     "@langchain/langgraph": "1.7.5"
